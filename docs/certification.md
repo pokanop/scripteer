@@ -1,8 +1,9 @@
 # End-to-end release certification
 
-This gate certifies the **provisional identity**, not a final name or PyPI launch.
-No publishing credentials, Trusted Publisher, repository variable or release asset
-is changed. POK-645 owns final naming/publication after the owner's decision.
+This gate verifies the historical **ScriptKit** baseline and the current
+**Scripteer** candidate, not a PyPI launch. No publishing credentials, Trusted
+Publisher, repository variable or release asset is changed. Scripteer was selected
+by the owner on 2026-10-11; publication remains independently human-approved.
 Independent exact-head review and applicable QA are separate acceptance gates;
 author-run tests do not replace them. Their verdicts and exact CI run/head belong
 in the POK-631 handoff, not a self-issued approval in this document.
@@ -32,7 +33,10 @@ seven asset digests and consumer revision. The runner:
    imports checked against the venv prefix. Never runs head tests against an old
    release. Installed resources, POSIX/PowerShell bootstrap, registry consent, tool
    lifecycle, failures, interruption, recovery and AI fixture boundaries are exercised.
-4. The separate 12-cell `runtime` matrix runs the **head** suite against the
+4. Installs the candidate into that verified historical manager root, exercises
+   ScriptKit → Scripteer → ScriptKit rollback → Scripteer forward repair, and checks
+   both command wrappers, receipt-module dispatch and private-state preservation.
+   The separate 12-cell `runtime` matrix runs the **head** suite against the
    **candidate** wheel, including `test_authored_tool_release_journey`:
    installed manager → offline scaffold
    → handwritten handler → fixture-backed AI disclosure/review/apply → two built
@@ -99,7 +103,7 @@ Only then, in a reviewed follow-up change:
    parity and performance comparison; update acquisition docs and rename inventories.
    Review any required historical-suite dependency changes explicitly.
 
-This procedure does not enable PyPI or authorize a final name. Historical fixtures
+This procedure does not enable PyPI or authorize publication. Historical fixtures
 are trusted, verified release code; live GitHub/PyPI/network availability remains a
 CI dependency. Current-head features and failures are covered by current-head tests,
 not claimed to have existed in an earlier release.

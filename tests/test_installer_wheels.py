@@ -2,8 +2,8 @@ from dataclasses import replace
 
 import pytest
 
-from scriptkit.contracts.models import LockedPackage
-from scriptkit.manager.wheels import verify_locks
+from scripteer.contracts.models import LockedPackage
+from scripteer.manager.wheels import verify_locks
 from test_installer import archive, artifact, fixture
 
 

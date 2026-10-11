@@ -1,12 +1,12 @@
 # Data contracts (schema version 1)
 
-`scriptkit.contracts` is a standard-library-only ownership lane. Public records
+`scripteer.contracts` is a standard-library-only ownership lane. Public records
 are frozen dataclasses, with immutable tuple collections and typed constructors.
 Both constructors and parsers validate; JSON arrays decode to tuples. Ports are
 structural `typing.Protocol`s, not service locators or concrete adapters.
 
 ```python
-from scriptkit.contracts import ToolSpec, resource_text
+from scripteer.contracts import ToolSpec, resource_text
 
 spec = ToolSpec.from_json(resource_text("ToolSpec.example.json"))
 assert ToolSpec.from_dict(spec.to_dict()) == spec
@@ -67,7 +67,7 @@ locks for one platform and one concrete compatible Python version.
 Canonical JSON sorts object keys recursively, preserves array order, emits no
 insignificant whitespace, escapes non-ASCII characters and contains only integer
 numeric fields. UTF-8 encoding of this string is the canonical digest input; the
-trailing newline in resource examples is NOT part of it. This is ScriptKit's
+trailing newline in resource examples is NOT part of it. This is Scripteer's
 canonical format, not a claim of RFC 8785 implementation. Array order is meaningful
 and is never silently sorted by parsers. Runtime timestamps are UTC Unix seconds,
 not strings with potentially ambiguous timezones.
@@ -92,7 +92,7 @@ nine versioned document types are exposed as `CONTRACTS`.
 ## JSON schemas and compatibility/migration policy
 
 Wheels and sdists include `<Contract>.schema.json` (Draft 2020-12) and
-`<Contract>.example.json` in `scriptkit.contracts.resources`. Read them with
+`<Contract>.example.json` in `scripteer.contracts.resources`. Read them with
 `resource_text()` or `importlib.resources`, never a checkout-relative path.
 `Contract.json_schema()` derives the structural schema from the same dataclass
 fields and constraints the strict codec uses. JSON Schema validates structural

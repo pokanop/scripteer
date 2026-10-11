@@ -14,13 +14,13 @@ import zipfile
 
 import pytest
 
-from scriptkit import CliError
-from scriptkit.contracts.codec import ContractError
-from scriptkit.contracts.models import LockedPackage
-from scriptkit.manager import storage
-from scriptkit.manager.backend import run
-from scriptkit.registry import RegistryStore
-from scriptkit.state import StateConflict
+from scripteer import CliError
+from scripteer.contracts.codec import ContractError
+from scripteer.contracts.models import LockedPackage
+from scripteer.manager import storage
+from scripteer.manager.backend import run
+from scripteer.registry import RegistryStore
+from scripteer.state import StateConflict
 from test_installer import archive, artifact, fixture, invoke, update
 
 

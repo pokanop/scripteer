@@ -7,8 +7,8 @@ import sys
 
 import pytest
 
-from scriptkit.command import parse_args, run
-from scriptkit.output import OutputContext, OutputPolicy
+from scripteer.command import parse_args, run
+from scripteer.output import OutputContext, OutputPolicy
 
 
 def make_context(machine=True):
@@ -83,8 +83,8 @@ def test_broken_pipe():
 
 PROGRAM = """
 import argparse, sys
-from scriptkit.command import run, parse_args
-from scriptkit.output import OutputContext, OutputPolicy
+from scripteer.command import run, parse_args
+from scripteer.output import OutputContext, OutputPolicy
 out = OutputContext(OutputPolicy(machine=True))
 def main():
     parser = argparse.ArgumentParser()

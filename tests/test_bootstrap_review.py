@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 
-from scriptkit import bootstrap as b
-from scriptkit.entrypoint import main
+from scripteer import bootstrap as b
+from scripteer.entrypoint import main
 from test_bootstrap import manager
 
 
@@ -47,7 +47,7 @@ def test_legacy_no_ledger_moved_python_gives_repair_instructions(tmp_path, monke
     service.install("https://example.org/wheel", digest, "1.3.0")
     (tmp_path / "manager-launchers.json").unlink()
     monkeypatch.setattr(b.sys, "_base_executable", str(tmp_path / "new python"))
-    with pytest.raises(ValueError, match="obsolete ScriptKit launcher, then rerun"):
+    with pytest.raises(ValueError, match="obsolete Scripteer launcher, then rerun"):
         service.install("https://example.org/wheel", digest, "1.3.0")
 
 
@@ -70,10 +70,10 @@ def test_alias_home_and_cli_root(tmp_path, capsys):
     home.mkdir()
     alias = tmp_path / "home"
     alias.symlink_to(home, target_is_directory=True)
-    service, _, digest = manager(alias / ".scriptkit")
+    service, _, digest = manager(alias / ".scripteer")
     service.install("https://example.org/wheel", digest, "1.3.0")
-    assert service.root == home / ".scriptkit"
-    assert main(["--root", str(alias / ".scriptkit"), "--json", "doctor"]) == 0
+    assert service.root == home / ".scripteer"
+    assert main(["--root", str(alias / ".scripteer"), "--json", "doctor"]) == 0
     assert json.loads(capsys.readouterr().out)["data"]["root"] == str(service.root)
     # Trust the resolved entry path, never redirected state inside it.
     (service.root / "manager-launchers.json").unlink()

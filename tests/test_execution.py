@@ -6,9 +6,9 @@ import time
 
 import pytest
 
-from scriptkit.cli import CliError
-from scriptkit.execution import BoundedRunner
-from scriptkit.proc import Result
+from scripteer.cli import CliError
+from scripteer.execution import BoundedRunner
+from scripteer.proc import Result
 
 
 def command(code):
@@ -32,7 +32,7 @@ def test_success_stdin_cwd_environment_and_result_contract(tmp_path):
 
 
 def test_missing_nonzero_and_sanitized_check():
-    assert BoundedRunner().run(["scriptkit-no-such-executable-987654321"]).code == -127
+    assert BoundedRunner().run(["scripteer-no-such-executable-987654321"]).code == -127
     result = BoundedRunner().run(
         command("import sys; print('failure',file=sys.stderr); sys.exit(7)")
     )

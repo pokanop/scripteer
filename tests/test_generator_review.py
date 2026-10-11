@@ -8,11 +8,11 @@ import subprocess
 
 import pytest
 
-from scriptkit.contracts import ToolSpec, resource_text
-from scriptkit.generator import apply, preview, recover, render
-from scriptkit.generator.__main__ import main
-from scriptkit.generator.plan import CONTROL, MANIFEST
-from scriptkit.generator.transaction import AtomicWriter, RecoveryConflict
+from scripteer.contracts import ToolSpec, resource_text
+from scripteer.generator import apply, preview, recover, render
+from scripteer.generator.__main__ import main
+from scripteer.generator.plan import CONTROL, MANIFEST
+from scripteer.generator.transaction import AtomicWriter, RecoveryConflict
 
 
 def spec():
@@ -185,7 +185,7 @@ def test_recover_never_generated_directory_is_read_only(tmp_path, capsys):
 
 def test_recover_rechecks_journal_after_lock(tmp_path, monkeypatch):
     from contextlib import contextmanager
-    from scriptkit.generator import transaction
+    from scripteer.generator import transaction
 
     real_locked = transaction.locked
 

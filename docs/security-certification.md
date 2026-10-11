@@ -66,8 +66,8 @@ python -m ruff check src tests tools
 python -m ruff format --check src tests tools
 python -m mypy
 python -m build
-python tools/check_artifact.py dist/pokanop_scriptkit-1.5.0-py3-none-any.whl
-python tools/check_artifact.py dist/pokanop_scriptkit-1.5.0-py3-none-any.whl --rich
+python tools/check_artifact.py dist/scripteer-1.5.0-py3-none-any.whl
+python tools/check_artifact.py dist/scripteer-1.5.0-py3-none-any.whl --rich
 ```
 
 `check_artifact.py` copies tests to a clean directory, installs the wheel in a

@@ -14,13 +14,13 @@ import pytest
 from test_bootstrap import built_wheel as built_wheel
 from test_bootstrap_shells import release_server as release_server
 
-from scriptkit.contracts import ToolSpec, resource_text
-from scriptkit.contracts.models import CatalogRelease, CommandSpec
-from scriptkit.entrypoint import main
-from scriptkit.generator import apply, preview, render
-from scriptkit.generator.render import canonical, sha256
-from scriptkit.generator.scaffolds import collection, existing, installer, tool
-from scriptkit.scaffold_runtime import tool_main
+from scripteer.contracts import ToolSpec, resource_text
+from scripteer.contracts.models import CatalogRelease, CommandSpec
+from scripteer.entrypoint import main
+from scripteer.generator import apply, preview, render
+from scripteer.generator.render import canonical, sha256
+from scripteer.generator.scaffolds import collection, existing, installer, tool
+from scripteer.scaffold_runtime import tool_main
 
 
 @pytest.fixture
@@ -105,7 +105,7 @@ def test_reserved(spec, field, value):
     elif field == "function":
         spec = dataclasses.replace(spec, entrypoint=f"demo.cli:{value}")
     elif field == "argument":
-        from scriptkit.contracts.models import ArgumentSpec
+        from scripteer.contracts.models import ArgumentSpec
 
         spec = dataclasses.replace(
             spec,
@@ -237,7 +237,7 @@ def test_collection_and_installer(tmp_path, capsys):
 
 
 def test_argument_mapping(spec):
-    from scriptkit.contracts.models import ArgumentSpec
+    from scripteer.contracts.models import ArgumentSpec
 
     args = (
         ArgumentSpec(1, "target", "positional", "string", False, "default", (), ""),
@@ -258,11 +258,11 @@ def test_argument_mapping(spec):
 
 @pytest.fixture(scope="module")
 def runtime_wheel(tmp_path_factory):
-    if "SCRIPTKIT_TEST_WHEEL" in os.environ:
-        return Path(os.environ["SCRIPTKIT_TEST_WHEEL"])
-    import scriptkit
+    if "SCRIPTEER_TEST_WHEEL" in os.environ:
+        return Path(os.environ["SCRIPTEER_TEST_WHEEL"])
+    import scripteer
 
-    root = Path(scriptkit.__file__).resolve().parents[2]
+    root = Path(scripteer.__file__).resolve().parents[2]
     destination = tmp_path_factory.mktemp("scaffold-wheel")
     subprocess.run(
         [sys.executable, "-m", "build", "--wheel", "--outdir", str(destination), str(root)],
@@ -278,7 +278,7 @@ def test_generated_installer_installs_only_manager(tmp_path, built_wheel, releas
         sha256(bootstrap_path.read_bytes()),
         url + built_wheel.name,
         sha256(built_wheel.read_bytes()),
-        "1.5.0",
+        "1.6.0",
     )
     for name, content in pins.items():
         (tmp_path / name).write_bytes(content)
@@ -298,7 +298,7 @@ def test_generated_installer_installs_only_manager(tmp_path, built_wheel, releas
     )
     assert (root / "manager-active.json").is_file()
     assert not (root / "tools").exists()
-    launcher = root / "bin" / ("scriptkit.cmd" if os.name == "nt" else "scriptkit")
+    launcher = root / "bin" / ("scripteer.cmd" if os.name == "nt" else "scripteer")
     subprocess.run([str(launcher), "--json", "doctor"], check=True, capture_output=True)
 
 

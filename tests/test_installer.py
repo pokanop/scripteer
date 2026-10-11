@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from scriptkit.contracts.models import (
+from scripteer.contracts.models import (
     Artifact,
     CatalogRelease,
     CommandSpec,
@@ -24,12 +24,12 @@ from scriptkit.contracts.models import (
     ToolRelease,
     ToolSpec,
 )
-from scriptkit.manager import Installer, PipBackend, UvBackend
-from scriptkit.manager import storage
-from scriptkit.manager.backend import interpreter
-from scriptkit.registry.source import RegistryArtifactSource
-from scriptkit.registry import Registry, RegistryStore, Resolver, VerifiedCache
-from scriptkit.state import StateConflict
+from scripteer.manager import Installer, PipBackend, UvBackend
+from scripteer.manager import storage
+from scripteer.manager.backend import interpreter
+from scripteer.registry.source import RegistryArtifactSource
+from scripteer.registry import Registry, RegistryStore, Resolver, VerifiedCache
+from scripteer.state import StateConflict
 
 
 def artifact(name, data):
@@ -208,7 +208,7 @@ def test_smoke_failure_keeps_previous(tmp_path):
     other.mkdir()
     failing, bad = fixture(other, fail=True)
     manager.source = failing.source
-    from scriptkit.cli import CliError
+    from scripteer.cli import CliError
 
     with pytest.raises(CliError):
         manager.install(update(bad))
@@ -250,7 +250,7 @@ def test_foreign_launcher_never_deleted(tmp_path):
 
 def test_competing_process_and_interruption(tmp_path):
     root = tmp_path / "root"
-    code = "from pathlib import Path; from scriptkit.manager.storage import locked; import sys;\nwith locked(Path(sys.argv[1])): print('locked', flush=True); sys.stdin.read()"
+    code = "from pathlib import Path; from scripteer.manager.storage import locked; import sys;\nwith locked(Path(sys.argv[1])): print('locked', flush=True); sys.stdin.read()"
     child = subprocess.Popen(
         [sys.executable, "-c", code, str(root)],
         stdin=subprocess.PIPE,

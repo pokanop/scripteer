@@ -3,9 +3,9 @@
 import argparse
 import sys
 
-from scriptkit.command import run
-from scriptkit.doctor import Check
-from scriptkit.output import OutputContext, OutputPolicy, TableData, Theme
+from scripteer.command import run
+from scripteer.doctor import Check
+from scripteer.output import OutputContext, OutputPolicy, TableData, Theme
 
 
 def main() -> int:

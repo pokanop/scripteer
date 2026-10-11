@@ -31,7 +31,7 @@ assert importlib.util.find_spec("requests") is None
 assert sk.HAS_RICH == (sys.argv[1] == "rich")
 assert list(sk.track([1, 2])) == [1, 2]
 assert sk.run([sys.executable, "-c", "print('wheel')"]).out == "wheel"
-assert sk.run(["scriptkit-deliberately-missing-executable"]).code == -127
+assert sk.run(["scripteer-deliberately-missing-executable"]).code == -127
 assert sk.run_cli(lambda: None) == 0
 assert sk.run_cli(lambda: True) == 0
 assert sk.run_cli(lambda: 7) == 7
@@ -59,7 +59,7 @@ def main() -> None:
     project = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))["project"]
     cli, entrypoint = next(iter(project["scripts"].items()))
     module = entrypoint.split(".")[0]
-    with tempfile.TemporaryDirectory(prefix="scriptkit-artifact-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="scripteer-artifact-") as tmp:
         work = Path(tmp)
         envdir = work / "venv"
         venv.EnvBuilder(with_pip=True).create(envdir)

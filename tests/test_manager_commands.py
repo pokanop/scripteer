@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from scriptkit.entrypoint import main
-from scriptkit import manager_cli as commands
+from scripteer.entrypoint import main
+from scripteer import manager_cli as commands
 from test_installer import FastBackend, fixture
 
 
@@ -36,7 +36,7 @@ def test_public_lifecycle(tmp_path, monkeypatch, capsys):
     cli("rollback", "hello")
     cli("recover", "hello")
     cli("uninstall", "hello")
-    for target in ("bad", "local/scriptkit@1.3.0"):
+    for target in ("bad", "local/scripteer@1.3.0"):
         assert main(["--root", str(tmp_path), "--json", "install", target]) == 1
         assert not json.loads(capsys.readouterr().out)["ok"]
 
@@ -76,7 +76,7 @@ def test_machine_boundary(args, code, capsys):
 
 def test_default_no_mutation(tmp_path, monkeypatch, capsys):
     root = tmp_path / "absent"
-    monkeypatch.setenv("SCRIPTKIT_ROOT", str(root))
+    monkeypatch.setenv("SCRIPTEER_ROOT", str(root))
     assert main([]) == 0
     assert not root.exists()
     assert main(["doctor"]) == 0

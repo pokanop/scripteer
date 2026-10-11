@@ -5,7 +5,7 @@ commitment exists yet. GitHub artifacts are published; PyPI publication is
 separately gated and must not be inferred from the package name.
 
 Report suspected vulnerabilities using GitHub's enabled
-[private vulnerability reporting](https://github.com/pokanop/scriptkit/security/advisories/new).
+[private vulnerability reporting](https://github.com/pokanop/scripteer/security/advisories/new).
 Do not put credentials, exploit payloads containing personal data or unpublished
 details in public issues. Include affected revision, minimal reproduction and impact.
 There is no promised response SLA or bounty program.

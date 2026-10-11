@@ -1,11 +1,11 @@
 # Trusted registry resolution
 
-`scriptkit.registry` is an opt-in library API, composed by the public
-`scriptkit registry` / `catalog` / `install` CLI. It never
+`scripteer.registry` is an opt-in library API, composed by the public
+`scripteer registry` / `catalog` / `install` CLI. It never
 imports the manager, executes tools, resolves public package indexes, or installs
 packages. The registry owns trust records, transport, cache and exact resolution;
 contracts own release/lock validation. The only runtime dependency is the narrow
-`scriptkit.state` atomic persistence adapter. Transport, StateIO and clock are
+`scripteer.state` atomic persistence adapter. Transport, StateIO and clock are
 injectable; state uses compare-and-swap and propagates interruptions.
 
 ## Trust and usage

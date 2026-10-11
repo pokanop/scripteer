@@ -8,7 +8,7 @@ fi
 url=$1
 hash=$2
 shift 2
-python=${SCRIPTKIT_PYTHON:-python3}
+python=${SCRIPTEER_PYTHON:-${SCRIPTKIT_PYTHON:-python3}}
 if ! command -v "$python" >/dev/null 2>&1; then
     echo 'Python 3.11+ is required. Install Python with venv/ensurepip, then rerun.' >&2
     exit 1
@@ -27,7 +27,7 @@ with urllib.request.urlopen(url, timeout=60) as response:
     raw = response.read(1024 * 1024 + 1)
 if len(raw) > 1024 * 1024 or hashlib.sha256(raw).hexdigest() != digest:
     sys.exit("bootstrap SHA-256 mismatch or oversized script")
-with tempfile.TemporaryDirectory(prefix="scriptkit-bootstrap-") as directory:
+with tempfile.TemporaryDirectory(prefix="scripteer-bootstrap-") as directory:
     path = pathlib.Path(directory) / "bootstrap.py"
     path.write_bytes(raw)
     sys.argv = [str(path), *args]

@@ -5,7 +5,7 @@ from threading import Barrier
 
 import pytest
 
-from scriptkit.state import LocalStateIO, StateConflict
+from scripteer.state import LocalStateIO, StateConflict
 
 
 def test_atomic_permissions_and_conflicts(tmp_path):

@@ -1,6 +1,6 @@
 # Provenance
 
-The twelve runtime Python files in `src/scriptkit/` (excluding the new
+The twelve runtime Python files now in `src/scripteer/` (excluding the new
 `entrypoint.py` and `__main__.py`) are imported byte-for-byte from:
 
 - https://github.com/pokanop/scripts

@@ -1,6 +1,6 @@
 import pytest
 
-from scriptkit.entrypoint import main
+from scripteer.entrypoint import main
 
 
 def test_bare_help(capsys):
@@ -13,7 +13,7 @@ def test_metadata(flag, capsys):
     with pytest.raises(SystemExit) as exc:
         main([flag])
     assert exc.value.code == 0
-    assert "scriptkit" in capsys.readouterr().out.lower()
+    assert "scripteer" in capsys.readouterr().out.lower()
 
 
 def test_unknown_command(capsys):

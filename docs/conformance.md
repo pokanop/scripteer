@@ -1,7 +1,7 @@
 # Tool conformance and assistant resources (v1)
 
-`scriptkit validate PROJECT` is read-only. `scriptkit --json validate PROJECT`
-returns a v1 ScriptKit envelope containing a versioned report and sorted diagnostics
+`scripteer validate PROJECT` is read-only. `scripteer --json validate PROJECT`
+returns a v1 Scripteer envelope containing a versioned report and sorted diagnostics
 (code, project-relative path, line, message). Failure exits 1; cancellation exits 130.
 No project imports, build hooks, installers, plugins or formatters run.
 
@@ -10,7 +10,7 @@ metadata, scaffold_runtime.tool_main wiring, declared runtime imports and a JSON
 object config.example.json. Both scaffold layouts and user-owned extensions work.
 Handwritten tools can omit the ownership manifest; when present, all generated file
 hashes and the spec hash are checked. A narrow semantic exception permits added
-`project.dependencies` and `[tool.scriptkit.*]` tables in `pyproject.toml`: validation
+`project.dependencies` and `[tool.scripteer.*]` tables in `pyproject.toml`: validation
 reconstructs the recorded template baseline and verifies its hash before comparing
 all other fields, including the exact framework dependency pin, build-system,
 metadata, scripts and package discovery. An unreconstructable baseline fails closed
@@ -49,7 +49,7 @@ conventions. Custom runtime implementations are intentionally not auto-certified
 Import/distribution differences are explicit, never guessed from the host environment:
 
 ```toml
-[tool.scriptkit.conformance.imports]
+[tool.scripteer.conformance.imports]
 PIL = "Pillow"
 ```
 
@@ -66,7 +66,7 @@ separate review and tests. Filesystem races and hostile projects require OS isol
 
 ## Explicit runtime reference checks
 
-`scriptkit validate PROJECT --runtime-fixtures --allow-execution` additionally copies
+`scripteer validate PROJECT --runtime-fixtures --allow-execution` additionally copies
 the packaged example into a disposable directory and executes it with bounded output,
 timeout and process cleanup. Success, failure and cancellation envelopes are checked.
 This verifies installed reference interfaces, **not project behavior**. It never executes
@@ -76,12 +76,12 @@ and an appropriate disposable sandbox; do not use validation as an authorization
 
 ## Installed authoring guidance
 
-The wheel and sdist contain `scriptkit.conformance.resources`: `AGENTS.md`, `SKILL.md`,
+The wheel and sdist contain `scripteer.conformance.resources`: `AGENTS.md`, `SKILL.md`,
 and runnable `example.py`. Resource contract version is v1; no AI extras or provider
 integration are required. Read/copy them with `importlib.resources.files`, as shown in
 the skill. Use the rules in any assistant's standard instruction mechanism.
 
-Run the example with `python -m scriptkit.conformance.resources.example --json`.
+Run the example with `python -m scripteer.conformance.resources.example --json`.
 Omit `--json` for a table; use `--fail` or `--cancel` for failure/interruption. The recipe
 separates invoice business logic from OutputContext/command.run, renders TableData,
 and scopes progress cleanup. Scaffold handlers simply return data: do not nest run()

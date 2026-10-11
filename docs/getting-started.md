@@ -1,9 +1,11 @@
-# Start from a verified GitHub release
+# Historical ScriptKit v1.5.0 onboarding
 
-ScriptKit is a working name; `pokanop-scriptkit` is provisional metadata, not a
-PyPI launch. The supported acquisition channel is the immutable **v1.5.0 GitHub
-release**, not `pip install pokanop-scriptkit` from an index. Final naming and
-publication are POK-645, gated on the owner's explicit decision.
+These instructions intentionally retain the **old** distribution, module, command,
+artifact filenames and signing identity. They are verified rollback/baseline inputs,
+not Scripteer 1.6.0 installation instructions. Repository URLs redirect after the
+rename; provenance must still match the original signer. For the selected identity,
+local candidate installation and migration, see [Scripteer launch](scripteer-launch.md).
+Do not mechanically rename these immutable v1.5.0 pins.
 
 ## Prerequisites and verification (all systems)
 

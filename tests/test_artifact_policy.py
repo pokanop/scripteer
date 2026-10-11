@@ -3,9 +3,9 @@ import zipfile
 
 import pytest
 
-from scriptkit.contracts import ArtifactPolicy, ContractError
-from scriptkit.contracts.archives import validate_archive
-from scriptkit.registry.source import RegistryArtifactSource
+from scripteer.contracts import ArtifactPolicy, ContractError
+from scripteer.contracts.archives import validate_archive
+from scripteer.registry.source import RegistryArtifactSource
 from test_installer import fixture, invoke
 
 
@@ -156,7 +156,7 @@ def test_permissive_ascii_acceptance(name):
 @pytest.mark.parametrize("char", [*[chr(i) for i in range(32)], chr(127), "é", "\u00a0", "\u2003"])
 def test_permissive_controls_and_non_ascii(char):
     # Direct grammar check avoids ZipFile's writer truncating NUL names.
-    from scriptkit.contracts.archives import _safe_member_name
+    from scripteer.contracts.archives import _safe_member_name
 
     assert not _safe_member_name(f"a{char}b", grammar="permissive-wheel")
     assert not _safe_member_name("valid.py", grammar="unknown")
@@ -172,8 +172,8 @@ def test_repeated_directory_separator_is_rejected(policy):
 
 
 def test_grammar_opt_in_keeps_collisions_and_catalog_paths_rejected():
-    from scriptkit.contracts.models import Artifact
-    from scriptkit.registry.cache import HTTPTransport
+    from scripteer.contracts.models import Artifact
+    from scripteer.registry.cache import HTTPTransport
 
     policy = ArtifactPolicy(member_name_grammar="permissive-wheel")
     with pytest.raises(ContractError, match="unsafe"):
@@ -196,7 +196,7 @@ def test_malformed_and_crc(tmp_path):
 
 def test_policy_timeout(tmp_path):
     manager, _ = fixture(tmp_path)
-    from scriptkit.manager import Installer
+    from scripteer.manager import Installer
 
     manager = Installer(
         manager.root, manager.bin_dir, manager.source, policy=ArtifactPolicy(command_timeout=900)

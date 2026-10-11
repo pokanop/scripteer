@@ -1,13 +1,17 @@
 # Compatibility and versions
 
-The initial standalone build is 1.3.0 to match the extracted runtime. Distribution
-metadata uses the provisional name `pokanop-scriptkit`; the import remains
-`scriptkit`. No PyPI availability or publication is implied. Python 3.11 is the
-minimum. Rich is optional; requests is not required.
+Scripteer 1.6.0 is the renamed distribution formerly published as
+`pokanop-scriptkit` 1.5.0 on GitHub. The new distribution, import and CLI are
+`scripteer`; version lineage is retained. This is an explicit identity migration,
+not a drop-in index upgrade of the old distribution. No `scriptkit` import alias
+is shipped (that namespace also belongs to an unrelated PyPI project).
+See [migration and release gates](scripteer-launch.md). Python 3.11 is the minimum.
+Rich is optional; requests is not required. PyPI publication is not yet implied.
 
-Public API comprises `scriptkit.__all__` and the documented runtime entry points.
+Public API comprises `scripteer.__all__` and the documented runtime entry points.
 The original exported callable signatures are checked against a golden snapshot,
-and all twelve inherited source files remain unchanged. Return/exit semantics:
+and inherited runtime behavior is retained; identity-bearing documentation and
+imports have changed. Return/exit semantics:
 
 - `run_cli`: None, bool and non-int results mean 0; int results pass through.
 - `CliError`: stderr diagnostic and 1; unexpected exceptions propagate.

@@ -73,7 +73,7 @@ def test_normalized_sdist_and_checksum_detect_tampering(tmp_path):
 
 
 def test_resources_must_be_in_wheel(tmp_path):
-    package = tmp_path / "src" / "scriptkit"
+    package = tmp_path / "src" / "scripteer"
     package.mkdir(parents=True)
     (package / "template.txt").write_text("resource")
     wheel = tmp_path / "package.whl"
@@ -82,7 +82,7 @@ def test_resources_must_be_in_wheel(tmp_path):
     with pytest.raises(ValueError, match="resource"):
         release.validate_resources(wheel, tmp_path)
     with zipfile.ZipFile(wheel, "w") as archive:
-        archive.writestr("scriptkit/template.txt", "resource")
+        archive.writestr("scripteer/template.txt", "resource")
     with pytest.raises(ValueError, match="license"):
         release.validate_resources(wheel, tmp_path)
     with zipfile.ZipFile(wheel, "a") as archive:

@@ -39,9 +39,7 @@ def check_pin_identity(pins, metadata):
     )
 
 
-@pytest.mark.parametrize(
-    "version,name", [("1.6.0", "pokanop-scriptkit"), ("1.5.0", "renamed-fixture")]
-)
+@pytest.mark.parametrize("version,name", [("1.6.0", "scripteer"), ("1.5.0", "renamed-fixture")])
 def test_historical_pins_survive_version_bump_and_rename(version, name):
     pins = json.loads((ROOT / "docs/release-pins.json").read_text())
     check_pin_identity(pins, {"version": version, "name": name})
@@ -204,6 +202,6 @@ def test_renaming_inventory_finds_paths_and_variants(tmp_path, monkeypatch):
     )
     inventory = importlib.util.module_from_spec(inventory_spec)
     inventory_spec.loader.exec_module(inventory)
-    (tmp_path / "scriptkit.py").write_text("SCRIPTKIT_ROOT = 'pokanop_scriptkit'\n")
-    monkeypatch.setattr(inventory.subprocess, "check_output", lambda *a, **k: b"scriptkit.py\0")
-    assert "| `scriptkit.py` | 1 |" in inventory.inventory(tmp_path)
+    (tmp_path / "scripteer.py").write_text("SCRIPTEER_ROOT = 'scripteer'\n")
+    monkeypatch.setattr(inventory.subprocess, "check_output", lambda *a, **k: b"scripteer.py\0")
+    assert "| `scripteer.py` | 1 |" in inventory.inventory(tmp_path)

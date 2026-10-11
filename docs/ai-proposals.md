@@ -1,15 +1,15 @@
 # Reviewable AI proposals (v1)
 
-AI is optional. `scriptkit.generator` does not import AI code; manual/offline generation remains byte-identical without a provider. Inference is **nondeterministic**. Reproducibility begins at saved, approved inputs, not at a prompt or model name.
+AI is optional. `scripteer.generator` does not import AI code; manual/offline generation remains byte-identical without a provider. Inference is **nondeterministic**. Reproducibility begins at saved, approved inputs, not at a prompt or model name.
 
 This release provides a typed provider port, offline `FakeProvider` contract harness, optional OpenAI/Ollama HTTP adapters and a file-based review CLI. It never sends context automatically, installs dependencies or runs proposed code/tests. There is deliberately **no execution option**, including no host-based opt-in runner. Use an independently reviewed disposable sandbox (no credentials, network disabled) if you later choose to execute untrusted code; a venv or temporary directory alone is not a sandbox.
 
 ## Select, preview, propose, review, apply
 
-Start with a v2 `scriptkit new-tool` project. Select individual extension files; no automatic repository/home-directory context collection:
+Start with a v3 `scripteer new-tool` project (upgrade legacy projects explicitly first). Select individual extension files; no automatic repository/home-directory context collection:
 
 ```sh
-python -m scriptkit.ai context ./demo src/demo/_handlers.py tests/test_ai_handler.py examples/ai_usage.md > context.json
+python -m scripteer.ai context ./demo src/demo/_handlers.py tests/test_ai_handler.py examples/ai_usage.md > context.json
 ```
 
 Inspect **all** of `context.json` before sharing it. It contains the ToolSpec and exactly the selected file contents (null for a new file). There is no reliable general secret detector: remove credentials or personal information embedded in otherwise allowed descriptions/code before disclosure. Context is untrusted data, not instructions; providers must preserve that distinction.
@@ -40,16 +40,16 @@ The provider interface is `Provider.propose(Context, max_response_bytes=...) -> 
 `description: null` leaves the description unchanged; empty arrays mean no changes. `base_hash: null` asserts that a selected target does not exist. Patches replace full files, not fuzzy hunks. Spec deltas may only edit the tool description and existing command help: not names, arguments, versions, platforms, entrypoints or trust controls. The trusted renderer derives any resulting generated changes, including its own manifest; the provider cannot supply ownership metadata.
 
 ```sh
-python -m scriptkit.ai review ./demo context.json proposal.json > review.json
+python -m scripteer.ai review ./demo context.json proposal.json > review.json
 # Inspect every unified diff and dependency suggestion, then copy approval_hash:
-python -m scriptkit.ai apply ./demo context.json proposal.json --approve <approval_hash>
+python -m scripteer.ai apply ./demo context.json proposal.json --approve <approval_hash>
 ```
 
 Review is read-only against the project. It builds a data-only scratch snapshot and uses the existing static conformance checker, including syntax/import/output checks for proposed tests. Tests may import the scaffold's `pytest` runner; that permission never applies to runtime modules. It never imports that snapshot. Undeclared statically visible imports fail even when listed as dependency suggestions. Suggestions are informational: a human must separately review/edit dependency metadata. Sanctioned additive dependency/import-alias metadata extensions are preserved and hash-bound for handler-only or command-help proposals, provided rendering leaves the recorded metadata baseline unchanged. A description change that would rewrite such metadata still requires manual reconciliation. Other generated drift blocks AI application rather than being overwritten. Non-source build/desktop artifacts under `src/` are ignored; symlinks/reparse points remain forbidden.
 
 Apply recomputes review, checks approval against the envelope/diffs and checked base bytes, then uses the generator's locked, journaled transaction. Any malformed, oversized, forbidden, stale or statically invalid proposal fails before project writes. Context permits 32 files, 64 KiB per file and 512 KiB serialized total; responses permit 32 patches and 256 KiB serialized total. Static snapshots are limited to 256 source/base files and 2 MiB. Filesystem concurrency assumes a trusted project directory, not hostile concurrent writers.
 
-If interrupted during publication, do not execute the project until `python -m scriptkit.generator PROJECT/tool.json PROJECT --recover` completes (the existing generator recovery command). Multi-file atomic visibility is not claimed. The persisted journal permits deterministic roll-forward and refuses intervening edits. Keep original `context.json`, `proposal.json`, the reviewed hash and the original project revision outside the project: replay on the same base produces identical approved files. Afterwards, normal regeneration from saved `tool.json` preserves the user-owned handler/tests/examples.
+If interrupted during publication, do not execute the project until `python -m scripteer.generator PROJECT/tool.json PROJECT --recover` completes (the existing generator recovery command). Multi-file atomic visibility is not claimed. The persisted journal permits deterministic roll-forward and refuses intervening edits. Keep original `context.json`, `proposal.json`, the reviewed hash and the original project revision outside the project: replay on the same base produces identical approved files. Afterwards, normal regeneration from saved `tool.json` preserves the user-owned handler/tests/examples.
 
 ## Guided BYOK authoring (optional)
 
@@ -57,20 +57,20 @@ A complete offline-first flow (shell redirections work in PowerShell too):
 
 ```sh
 # Prepare a ToolSpec offline; the example must use the generated package convention.
-python -c "from scriptkit.contracts import ToolSpec, resource_text; from dataclasses import replace; print(replace(ToolSpec.from_json(resource_text('ToolSpec.example.json')), entrypoint='demo.cli:main').canonical_json())" > demo-spec.json
+python -c "from scripteer.contracts import ToolSpec, resource_text; from dataclasses import replace; print(replace(ToolSpec.from_json(resource_text('ToolSpec.example.json')), entrypoint='demo.cli:main').canonical_json())" > demo-spec.json
 mkdir demo
-scriptkit new-tool demo --spec demo-spec.json --apply
-scriptkit validate demo
-python -m scriptkit.ai context demo src/demo/_handlers.py > context.json
+scripteer new-tool demo --spec demo-spec.json --apply
+scripteer validate demo
+python -m scripteer.ai context demo src/demo/_handlers.py > context.json
 # Preview only: no key lookup or request. Choose a model already installed in Ollama.
-python -m scriptkit.ai propose demo src/demo/_handlers.py --provider ollama --model YOUR_LOCAL_MODEL --goal 'Implement the hello handler' > disclosure.json
+python -m scripteer.ai propose demo src/demo/_handlers.py --provider ollama --model YOUR_LOCAL_MODEL --goal 'Implement the hello handler' > disclosure.json
 # Inspect the full disclosure (including selected context), copy its approval_hash,
 # then repeat EXACTLY the same arguments and add approval:
-python -m scriptkit.ai propose demo src/demo/_handlers.py --provider ollama --model YOUR_LOCAL_MODEL --goal 'Implement the hello handler' --approve-disclosure EXACT_DISCLOSURE_HASH > proposal.json
-python -m scriptkit.ai review demo context.json proposal.json > review.json
+python -m scripteer.ai propose demo src/demo/_handlers.py --provider ollama --model YOUR_LOCAL_MODEL --goal 'Implement the hello handler' --approve-disclosure EXACT_DISCLOSURE_HASH > proposal.json
+python -m scripteer.ai review demo context.json proposal.json > review.json
 # Inspect every diff, copy review approval_hash; neither operation runs proposed code.
-python -m scriptkit.ai apply demo context.json proposal.json --approve EXACT_REVIEW_HASH
-scriptkit validate demo
+python -m scripteer.ai apply demo context.json proposal.json --approve EXACT_REVIEW_HASH
+scripteer validate demo
 ```
 
 Keep review/context/proposal files outside the scaffold. If a proposal fails static
@@ -82,8 +82,8 @@ For OpenAI, replace `--provider ollama --model ...` with `--provider openai --mo
 YOUR_OPENAI_MODEL` in BOTH preview and approved commands. Select a chat-completions
 model supporting JSON mode and `max_completion_tokens`. Provide `OPENAI_API_KEY`
 through your shell's secret injection facilities, never a command argument or
-project file. Alternatively install the optional `pokanop-scriptkit[ai-keyring]`
-extra yourself and store a password in your OS keyring under service `scriptkit.ai`,
+project file. Alternatively install the optional `scripteer[ai-keyring]`
+extra yourself and store a password in your OS keyring under service `scripteer.ai`,
 username `openai`; pass `--keyring` to opt into lookup. Environment takes precedence.
 No package is installed automatically. Missing keys/keyring backends fail with
 manual-edit guidance, without project changes. There are no provider SDK requirements:
@@ -94,7 +94,7 @@ Ollama defaults to `http://127.0.0.1:11434/api/chat`; `--endpoint` accepts only 
 IPv4/IPv6 loopback HTTP URLs with an explicit port and `/api/chat` path (no userinfo,
 query or fragment). Local endpoints never load or receive cloud credentials.
 Proxies, redirects, cookies and automatic authentication discovery are disabled.
-The endpoint process itself is trusted; ScriptKit cannot stop it forwarding data.
+The endpoint process itself is trusted; Scripteer cannot stop it forwarding data.
 No automatic model downloads are requested. Context selection never crawls the
 repository/home directory and excludes `.env`, configuration and arbitrary files.
 A common-secret check inspects raw file/ToolSpec strings and the goal for PEM keys,
@@ -131,7 +131,7 @@ only versioned JSON (preview/proposal/review); diagnostics go to stderr, no anim
 Provider error bodies, transport exception text and credentials are never logged.
 A provider echo of the loaded key is rejected, not persisted. Proposal text still
 requires human inspection for other sensitive content. Shell redirection may create
-an empty output file on failure, but ScriptKit never modifies the scaffold until
+an empty output file on failure, but Scripteer never modifies the scaffold until
 explicit `apply`. Routine CI uses synthetic wire fixtures, not live keys or models.
 
 ## Trust limits

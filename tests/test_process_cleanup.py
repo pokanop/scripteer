@@ -5,7 +5,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from scriptkit.execution import _kill_group
+from scripteer.execution import _kill_group
 
 
 @pytest.fixture(autouse=True)

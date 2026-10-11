@@ -3,7 +3,7 @@
 For explicit large-wheel budgets, streaming local sources, hard ceilings and
 backend timeout configuration, see [artifact policy](artifact-policy.md).
 
-`scriptkit.manager.Installer` is a reusable library service, not bootstrap/self-update
+`scripteer.manager.Installer` is a reusable library service, not bootstrap/self-update
 or a new CLI command. It consumes data-only `ResolvedPlan` records and injected
 `InstallationSource` / `EnvironmentBackend` ports. The registry, runtime and AI do
 not import the manager. Registry's historical record/validator imports remain
@@ -12,8 +12,8 @@ need not depend on a registry provider.
 
 ```python
 from pathlib import Path
-from scriptkit.manager import Installer
-from scriptkit.registry.source import RegistryArtifactSource
+from scripteer.manager import Installer
+from scripteer.registry.source import RegistryArtifactSource
 
 # resolver and resolved are supplied by the composition root (see registry.md).
 source = RegistryArtifactSource(resolver, resolved.registry.namespace, offline=True)
@@ -100,9 +100,9 @@ data. Reclaim retired generations explicitly after stopping readers of retired
 versions (including processes holding a snapshot across update/uninstall):
 
 ```sh
-scriptkit prune --dry-run
-scriptkit prune
-scriptkit prune --keep 2 --uninstalled
+scripteer prune --dry-run
+scripteer prune
+scripteer prune --keep 2 --uninstalled
 ```
 
 The default keeps the active generation and its immediate rollback target;
@@ -123,14 +123,14 @@ A generation containing foreign/edited files is preserved and reported. Failed
 stages without receipts are reported, not automatically deleted. Pruning never
 changes active pointers, launchers, user config or data. A durable prune journal
 precedes atomic detachment; interruption or a Windows sharing violation leaves
-protected generations intact. Close retired readers, then run `scriptkit recover
+protected generations intact. Close retired readers, then run `scripteer recover
 TOOL` to finish cleanup before retrying prune. Recovery removes the prune journal
 and orphaned receipts after cleanup; it does not resurrect deleted versions.
 
 ### Manual space reclamation (fallback)
 
 Stop tool processes and prevent new invocations first. Run recovery, then hold the
-root's `scriptkit.manager.storage.locked(root)` lock while inspecting/deleting;
+root's `scripteer.manager.storage.locked(root)` lock while inspecting/deleting;
 recheck that no tool journal exists after acquiring the lock. Never delete the
 active generation, any journal target/previous generation, or generations in the
 receipt's previous-generation chain that you still want available for rollback.

@@ -7,8 +7,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
-from scriptkit.doctor import Check
-from scriptkit.output import OutputContext, OutputPolicy, TableData, Theme
+from scripteer.doctor import Check
+from scripteer.output import OutputContext, OutputPolicy, TableData, Theme
 
 
 class Terminal(io.StringIO):

@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-from scriptkit.contracts import (
+from scripteer.contracts import (
     AIProposal,
     ArgumentSpec,
     Artifact,
@@ -57,7 +57,7 @@ def main():
     proposal = AIProposal(
         1, "request-1", "fake", "offline-v1", None, "Demonstrate validated data only", tool
     )
-    root = Path(__file__).resolve().parents[1] / "src/scriptkit/contracts/resources"
+    root = Path(__file__).resolve().parents[1] / "src/scripteer/contracts/resources"
     for value in (argument, command, tool, lock, catalog, plan, receipt, generation, proposal):
         cls = type(value)
         (root / f"{cls.__name__}.example.json").write_text(

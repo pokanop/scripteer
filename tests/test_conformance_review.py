@@ -5,13 +5,13 @@ import json
 import pytest
 
 from test_conformance import project as project, codes
-from scriptkit.conformance import validate
-from scriptkit.conformance.ownership import metadata_extension
-from scriptkit.contracts import ToolSpec
-from scriptkit.generator import preview
-from scriptkit.generator.plan import MANIFEST
-from scriptkit.generator.render import render, sha256
-from scriptkit.generator.scaffolds import tool
+from scripteer.conformance import validate
+from scripteer.conformance.ownership import metadata_extension
+from scripteer.contracts import ToolSpec
+from scripteer.generator import preview
+from scripteer.generator.plan import MANIFEST
+from scripteer.generator.render import render, sha256
+from scripteer.generator.scaffolds import tool
 
 
 def test_add_dependency_keeps_manifest_and_generator_conflict(project):
@@ -35,10 +35,10 @@ def test_add_dependency_keeps_manifest_and_generator_conflict(project):
         ("An offline example", "different description"),
         ("setuptools>=68", "setuptools>=70"),
         ("setuptools.build_meta", "custom.backend"),
-        ("pokanop-scriptkit==1.5.0", "pokanop-scriptkit>=1.5.0"),
-        ("dependencies = [", 'dependencies = ["pokanop-scriptkit>=1", '),
-        ('dependencies = ["pokanop-scriptkit==1.5.0"]', "dependencies = []"),
-        ('dependencies = ["pokanop-scriptkit==1.5.0"]', "dependencies = 1"),
+        ("scripteer==1.6.0", "scripteer>=1.6.0"),
+        ("dependencies = [", 'dependencies = ["scripteer>=1", '),
+        ('dependencies = ["scripteer==1.6.0"]', "dependencies = []"),
+        ('dependencies = ["scripteer==1.6.0"]', "dependencies = 1"),
         ('where = ["src"]', 'where = ["other"]'),
     ],
 )
@@ -73,7 +73,7 @@ def test_package_entrypoints(project, entrypoint):
     launcher.parent.mkdir(exist_ok=True)
     (project / "src/demo/cli.py").unlink()
     launcher.write_text(
-        "import json\nfrom scriptkit.scaffold_runtime import tool_main\n"
+        "import json\nfrom scripteer.scaffold_runtime import tool_main\n"
         + f"SPEC = json.loads({json.dumps(value)!r})\n"
         + "def main():\n    return tool_main(SPEC, lambda name, values: None)\n"
     )
@@ -112,8 +112,8 @@ def test_metadata_extension_failure_modes(project):
     spec = ToolSpec.from_json((project / "tool.json").read_text())
     baseline = tool(spec).generated["pyproject.toml"]
     for invalid in (b"broken [", b"project = 1", baseline + b"\n[tool.other]\nx = 1\n"):
-        assert not metadata_extension(spec, "2.0.0", sha256(baseline), invalid)
+        assert not metadata_extension(spec, "3.0.0", sha256(baseline), invalid)
     legacy = render(spec).generated["pyproject.toml"]
     assert metadata_extension(
-        spec, "1.0.0", sha256(legacy), legacy + b"\n[tool.scriptkit]\nx = 1\n"
+        spec, "1.0.0", sha256(legacy), legacy + b"\n[tool.scripteer]\nx = 1\n"
     )

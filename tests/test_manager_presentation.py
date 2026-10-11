@@ -9,8 +9,8 @@ import sys
 
 import pytest
 
-from scriptkit import bootstrap as b, entrypoint, manager_cli
-from scriptkit.output import OutputContext
+from scripteer import bootstrap as b, entrypoint, manager_cli
+from scripteer.output import OutputContext
 from test_bootstrap import manager, wheel_bytes
 from test_installer import FastBackend, fixture
 
@@ -73,7 +73,7 @@ def test_standalone_launcher_errors(tmp_path, machine, failure):
     service, _, digest = manager(tmp_path)
     receipt = service.install("https://example.org/wheel", digest, "1.3.0")
     # Fake staging intentionally has no interpreter: exercise the actual generated
-    # launcher without importing ScriptKit or requiring an installed runtime.
+    # launcher without importing Scripteer or requiring an installed runtime.
     pointer = tmp_path / "manager-active.json"
     expected = "is missing or incomplete"
     if failure == "generation":

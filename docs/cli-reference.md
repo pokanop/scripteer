@@ -1,7 +1,7 @@
 # CLI and API reference index
 
 Canonical identity is declared by `pyproject.toml`; this reference describes the
-provisional v1.5.0 `scriptkit` command and `scriptkit` import. Run `COMMAND --help`
+provisional v1.5.0 `scripteer` command and `scripteer` import. Run `COMMAND --help`
 for argument types/defaults. Global `--root PATH`, `--json`, `--quiet` precede
 subcommands. Bare invocation and help are read-only. `--version` reports the
 installed framework, not a selected tool's version.
@@ -32,7 +32,7 @@ for required inputs during recovery. Collection/installer pin arguments are
 `--bootstrap-sha256`, `--wheel`, `--wheel-sha256`, `--manager-version`.
 `validate --help` documents separately consented runtime checks; static success
 never certifies arbitrary Python safe. AI has a deliberately separate command
-boundary: `python -m scriptkit.ai {context,propose,review,apply}`; disclosure and
+boundary: `python -m scripteer.ai {context,propose,review,apply}`; disclosure and
 application require different exact approval hashes. See [AI guide](ai-proposals.md).
 
 Human diagnostics are readable; `--json` uses the versioned output envelope

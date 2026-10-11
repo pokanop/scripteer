@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from scriptkit.safe_config import ConfigError, SafeConfig
-from scriptkit.state import StateConflict
+from scripteer.safe_config import ConfigError, SafeConfig
+from scripteer.state import StateConflict
 
 
 @pytest.mark.parametrize(
