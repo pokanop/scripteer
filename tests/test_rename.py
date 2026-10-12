@@ -71,6 +71,30 @@ def legacy_project(root):
     return handler
 
 
+@pytest.mark.parametrize("template", ["1.0.0", "2.0.0"])
+def test_legacy_validation_explains_explicit_upgrade(tmp_path, capsys, template):
+    from scripteer.generator import render
+    from scripteer.generator.plan import MANIFEST
+
+    legacy_project(tmp_path)
+    root = tmp_path
+    if template == "1.0.0":
+        spec, _ = existing(tmp_path)
+        root = tmp_path / "v1"
+        root.mkdir()
+        apply(root, preview(root, render(spec)))
+    before = {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()}
+    assert main(["--json", "validate", str(root)]) == 1
+    report = json.loads(capsys.readouterr().out)
+    diagnostics = report["data"]["diagnostics"]
+    upgrade = next(d for d in diagnostics if d["code"] == "SKV013" and d["path"] == MANIFEST)
+    assert f"legacy template {template}" in upgrade["message"]
+    assert "scripteer template-upgrade PROJECT --check" in upgrade["message"]
+    assert "scripteer template-upgrade PROJECT --apply" in upgrade["message"]
+    assert "re-validate" in upgrade["message"]
+    assert before == {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()}
+
+
 def test_real_v2_scaffold_upgrade(tmp_path, capsys):
     handler = legacy_project(tmp_path)
     before = handler.read_bytes()

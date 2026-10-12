@@ -46,7 +46,7 @@ until the rollback window is explicitly over. Config/data must remain unchanged.
 For source/runtime extraction rollback, restore the exact old collection source
 AND its old distribution together; first remove the new runtime/distribution
 ownership, then install the retained old wheel. Never leave overlapping old/new
-owners of `scripteer` files. The supported consumer installer detects/removes old
+owners of `scriptkit` files. The supported consumer installer detects/removes old
 ownership before repairing framework files. `tests/rehearse_runtime_migration.py`
 builds the real legacy wheel, tests interrupted uninstall/repair, old editable
 ownership and used clones with orphaned bytecode, then reverts source and ownership

@@ -14,6 +14,7 @@ from typing import Any
 from scripteer.contracts import ToolSpec
 from scripteer.generator.plan import MANIFEST, Manifest, read
 from scripteer.generator.render import sha256
+from scripteer.generator.scaffolds import VERSION
 
 
 @dataclass(frozen=True, order=True)
@@ -256,6 +257,14 @@ def validate(root: Path, *, test_paths: tuple[str, ...] = ()) -> Report:
     if manifest is not None:
         try:
             owned = Manifest.from_json(manifest.decode())
+            if owned.template != VERSION:
+                issue(
+                    "SKV013",
+                    MANIFEST,
+                    f"Generated with legacy template {owned.template}; run "
+                    "`scripteer template-upgrade PROJECT --check`, inspect the preview, then "
+                    "`scripteer template-upgrade PROJECT --apply` and re-validate",
+                )
             if owned.spec_hash != sha256(spec.canonical_json().encode()):
                 issue("SKV013", "tool.json", "Spec changed; preview regeneration before applying")
             for item in owned.generated:

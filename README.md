@@ -14,7 +14,7 @@ reviewed proposals; manual generation works entirely offline.
 > [rename, migration and publication guide](docs/scripteer-launch.md). Historical
 > ScriptKit artifacts remain immutable; no affiliation with other similarly named projects is implied.
 
-## Install a verified release
+## Try the release candidate
 
 Start with [candidate installation and migration](docs/scripteer-launch.md).
 [Historical v1.5.0 onboarding](docs/getting-started.md) remains available for rollback.
@@ -23,7 +23,7 @@ Then see the
 [generator upgrades](docs/generator-upgrades.md), [migration/rollback](docs/migration.md)
 and [support matrix](docs/support.md). [Certification](docs/certification.md)
 records artifact/platform/performance evidence; the [rename inventory](docs/rename-inventory.md)
-keeps this provisional identity ready for the owner-approved rename.
+records the selected identity and intentional historical/compatibility references.
 
 ## Build and try
 

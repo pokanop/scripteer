@@ -55,7 +55,7 @@ are excluded to avoid self-reference. Line numbers are revision-specific.
 | `docs/certification.md` | 3, 4, 5, 37 |
 | `docs/cli-reference.md` | 4, 35 |
 | `docs/compatibility.md` | 3, 4, 5, 6, 8, 11 |
-| `docs/conformance.md` | 3, 4, 13, 52, 69, 79, 84 |
+| `docs/conformance.md` | 3, 4, 13, 28, 53, 70, 80, 85 |
 | `docs/contracts.md` | 3, 9, 70, 95 |
 | `docs/generator-upgrades.md` | 3, 7, 8, 15, 16, 19, 23, 35, 37 |
 | `docs/generator.md` | 8, 14, 15, 16, 17, 38, 51, 52, 74, 117 |
@@ -99,7 +99,7 @@ are excluded to avoid self-reference. Line numbers are revision-specific.
 | `src/scripteer/conformance/resources/__init__.py` | path only |
 | `src/scripteer/conformance/resources/example.py` | 5, 6 |
 | `src/scripteer/conformance/runtime.py` | 11, 23, 27 |
-| `src/scripteer/conformance/static.py` | 14, 15, 16, 49, 113, 114, 116, 124, 191, 235 |
+| `src/scripteer/conformance/static.py` | 14, 15, 16, 17, 50, 114, 115, 117, 125, 192, 236, 265, 266 |
 | `src/scripteer/console.py` | 30 |
 | `src/scripteer/contracts/__init__.py` | path only |
 | `src/scripteer/contracts/archives.py` | 10, 14, 15 |
@@ -210,7 +210,7 @@ are excluded to avoid self-reference. Line numbers are revision-specific.
 | `tests/test_pruning.py` | 10, 11, 68, 97, 98, 128, 129, 148, 149, 150 |
 | `tests/test_registry.py` | 13, 14, 15, 16, 17, 56 |
 | `tests/test_registry_review.py` | 10, 11, 12, 13, 14 |
-| `tests/test_rename.py` | 11, 12, 13, 14, 15, 21, 22, 23, 24, 25, 26, 27, 28, 30, 35, 41, 42, 54, 60, 84, 85, 87, 108, 121 |
+| `tests/test_rename.py` | 11, 12, 13, 14, 15, 21, 22, 23, 24, 25, 26, 27, 28, 30, 35, 41, 42, 54, 60, 76, 77, 92, 93, 108, 109, 111, 132, 145 |
 | `tests/test_runtime_sweep.py` | 8, 9, 10, 11 |
 | `tests/test_safe_config.py` | 5, 6 |
 | `tests/test_scaffold_review.py` | 12, 13, 14, 15, 16, 17 |

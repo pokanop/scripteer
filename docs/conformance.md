@@ -23,10 +23,11 @@ baseline temporarily, apply the reviewed generator plan, then reapply only the
 user dependency/settings additions to the new baseline and validate again. Never
 delete the manifest or discard user extensions to force an apply.
 
-This checks recorded ownership drift, not whether
-a manifest was honestly authored or whether the latest templates were used.
-Legacy generator-v1 tools should use template-upgrade to adopt doctor/config/output
-conventions. Custom runtime implementations are intentionally not auto-certified.
+This checks recorded ownership drift and supported template identity, not whether
+a manifest was honestly authored. Legacy v1/v2 manifests emit SKV013 with explicit
+`scripteer template-upgrade PROJECT --check` and `--apply` guidance. Inspect that
+migration before trying to repair individual dependency/import/runtime diagnostics;
+then re-validate the upgraded project. Custom runtime implementations are intentionally not auto-certified.
 
 | Code | Repair |
 |---|---|
@@ -42,7 +43,7 @@ conventions. Custom runtime implementations are intentionally not auto-certified
 | SKV010 | Replace print with returned data or OutputContext |
 | SKV011 | Wire the sanctioned doctor/config/output runtime |
 | SKV012 | Supply a non-secret JSON object config example |
-| SKV013 | Inspect generated drift and preview regeneration |
+| SKV013 | Inspect generated drift; for legacy templates, preview and apply template-upgrade, then re-validate |
 | SKV014 | Repair ownership manifest |
 | SKV015 | Align literal embedded launcher spec with tool.json |
 
