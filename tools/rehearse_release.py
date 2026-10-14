@@ -47,7 +47,7 @@ def hashes(directory: Path) -> dict[str, str]:
 def validate_resources(wheel: Path, root: Path) -> None:
     with zipfile.ZipFile(wheel) as archive:
         names = set(archive.namelist())
-        for source in (root / "src" / "scriptkit").rglob("*"):
+        for source in (root / "src" / "scripteer").rglob("*"):
             if source.is_file() and "__pycache__" not in source.parts:
                 relative = source.relative_to(root / "src").as_posix()
                 if relative not in names:
@@ -61,7 +61,7 @@ def main() -> None:
     epoch = int(subprocess.check_output(["git", "show", "-s", "--format=%ct", "HEAD"], cwd=root))
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
     env = {**os.environ, "SOURCE_DATE_EPOCH": str(epoch), "PYTHONHASHSEED": "0"}
-    with tempfile.TemporaryDirectory(prefix="scriptkit-release-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="scripteer-release-") as temporary:
         work = Path(temporary)
         archive = work / "source.zip"
         run("git", "archive", "--format=zip", f"--output={archive}", "HEAD", cwd=root, env=env)
@@ -102,7 +102,7 @@ def main() -> None:
             )
             for installer in ("install.sh", "install.ps1"):
                 shutil.copy2(clean / installer, clean / "dist" / installer)
-            shutil.copy2(clean / "src/scriptkit/bootstrap.py", clean / "dist/bootstrap.py")
+            shutil.copy2(clean / "src/scripteer/bootstrap.py", clean / "dist/bootstrap.py")
             results.append(hashes(clean / "dist"))
         if results[0] != results[1]:
             raise ValueError(f"Non-reproducible release: {results}")

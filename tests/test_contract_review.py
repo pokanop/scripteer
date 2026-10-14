@@ -6,7 +6,7 @@ import json
 from jsonschema import Draft202012Validator
 import pytest
 
-from scriptkit.contracts import (
+from scripteer.contracts import (
     AIProposal,
     ArgumentSpec,
     Artifact,
@@ -21,7 +21,7 @@ from scriptkit.contracts import (
     ToolSpec,
     resource_text,
 )
-from scriptkit.contracts import codec
+from scripteer.contracts import codec
 
 
 def example(cls):

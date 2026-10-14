@@ -7,7 +7,7 @@ import sys
 
 import pytest
 
-from scriptkit.ai import (
+from scripteer.ai import (
     CommandHelp,
     Context,
     ContextFile,
@@ -21,13 +21,13 @@ from scriptkit.ai import (
     review,
     select,
 )
-from scriptkit.ai.__main__ import bounded, main
-from scriptkit.ai.contracts import MAX_RESPONSE
-from scriptkit.contracts import ToolSpec, resource_text
-from scriptkit.generator import apply as generate, preview
-from scriptkit.generator.plan import MANIFEST
-from scriptkit.generator.scaffolds import existing, tool
-from scriptkit.generator.transaction import AtomicWriter, recover
+from scripteer.ai.__main__ import bounded, main
+from scripteer.ai.contracts import MAX_RESPONSE
+from scripteer.contracts import ToolSpec, resource_text
+from scripteer.generator import apply as generate, preview
+from scripteer.generator.plan import MANIFEST
+from scripteer.generator.scaffolds import existing, tool
+from scripteer.generator.transaction import AtomicWriter, recover
 
 HANDLER = "src/demo/_handlers.py"
 TEST = "tests/test_ai_handler.py"
@@ -352,7 +352,7 @@ def test_drift_and_v1_rejected(project):
     with pytest.raises(ValueError, match="drift"):
         review(project, context, proposal(context))
     (project / MANIFEST).unlink()
-    with pytest.raises(ValueError, match="v2"):
+    with pytest.raises(ValueError, match="v3"):
         selected(project)
 
 
@@ -402,11 +402,11 @@ def test_pytest_allowed_only_in_proposed_tests(project):
 
 @pytest.mark.parametrize("help_only", [False, True])
 def test_sanctioned_dependency_extensions_preserved(project, help_only):
-    from scriptkit.conformance.static import validate
+    from scripteer.conformance.static import validate
 
     metadata = project / "pyproject.toml"
     extended = metadata.read_bytes().replace(b"dependencies = [", b'dependencies = ["Pillow>=10", ')
-    extended += b'\n[tool.scriptkit.conformance.imports]\nPIL = "Pillow"\n'
+    extended += b'\n[tool.scripteer.conformance.imports]\nPIL = "Pillow"\n'
     metadata.write_bytes(extended)
     assert validate(project).valid
     context = selected(project)
@@ -445,7 +445,7 @@ def test_dependency_exception_does_not_adopt_other_drift(project, mutation):
     if mutation == "entrypoint":
         extended = extended.replace(b"demo.cli:main", b"evil.cli:main")
     elif mutation == "runtime-pin":
-        extended = extended.replace(b"pokanop-scriptkit==", b"other-runtime==")
+        extended = extended.replace(b"scripteer==", b"other-runtime==")
     else:
         (project / "requirements.txt").write_bytes(b"foreign\n")
     metadata.write_bytes(extended)
@@ -511,6 +511,6 @@ def test_cli(project, tmp_path_factory, capsys):
     with pytest.raises(ValueError, match="budget"):
         bounded(c, 1)
     result = subprocess.run(
-        [sys.executable, "-m", "scriptkit.ai", "--help"], capture_output=True, text=True
+        [sys.executable, "-m", "scripteer.ai", "--help"], capture_output=True, text=True
     )
     assert result.returncode == 0 and "review" in result.stdout

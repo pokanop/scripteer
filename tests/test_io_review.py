@@ -6,9 +6,9 @@ from types import SimpleNamespace
 
 import pytest
 
-from scriptkit.regions import OwnedRegion
-from scriptkit.safe_config import SafeConfig
-from scriptkit.state import LocalStateIO, StateConflict
+from scripteer.regions import OwnedRegion
+from scripteer.safe_config import SafeConfig
+from scripteer.state import LocalStateIO, StateConflict
 
 
 @pytest.mark.parametrize("mode", [0o600, 0o644, 0o640, 0o755])

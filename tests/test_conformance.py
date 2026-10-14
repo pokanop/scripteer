@@ -6,13 +6,13 @@ from types import SimpleNamespace
 
 import pytest
 
-from scriptkit.conformance import validate
-from scriptkit.conformance.runtime import check_fixtures
-from scriptkit.contracts import ToolSpec, resource_text
-from scriptkit.entrypoint import main
-from scriptkit.generator import apply, preview
-from scriptkit.generator.scaffolds import tool
-from scriptkit.generator.plan import MANIFEST
+from scripteer.conformance import validate
+from scripteer.conformance.runtime import check_fixtures
+from scripteer.contracts import ToolSpec, resource_text
+from scripteer.entrypoint import main
+from scripteer.generator import apply, preview
+from scripteer.generator.scaffolds import tool
+from scripteer.generator.plan import MANIFEST
 
 
 @pytest.fixture
@@ -48,7 +48,7 @@ def test_valid_extended_no_execution(project):
         ("pyproject.toml", "project = 42", "SKV003"),
         ("pyproject.toml", "[project]\ndependencies = 5", "SKV006"),
         ("pyproject.toml", "[project]\nscripts = 5", "SKV005"),
-        ("pyproject.toml", "[project]\n[tool.scriptkit.conformance]\nimports = 5", "SKV006"),
+        ("pyproject.toml", "[project]\n[tool.scripteer.conformance]\nimports = 5", "SKV006"),
         ("src/demo/cli.py", "def other(): pass", "SKV008"),
         ("src/demo/cli.py", "def main(): pass", "SKV011"),
         ("src/demo/cli.py", "import json\nSPEC = json.loads('{}')\ndef main(): pass", "SKV015"),
@@ -85,7 +85,7 @@ def test_extended_dependencies_aliases(project, manifest):
         (project / MANIFEST).unlink()
     metadata = project / "pyproject.toml"
     text = metadata.read_text().replace("dependencies = [", 'dependencies = ["Pillow(>=1)", ')
-    metadata.write_text(text + '\n[tool.scriptkit.conformance.imports]\nPIL = "Pillow"\n')
+    metadata.write_text(text + '\n[tool.scripteer.conformance.imports]\nPIL = "Pillow"\n')
     (project / "src/demo/_handlers.py").write_text("import PIL\nfrom .business import total\n")
     assert validate(project).valid
 
@@ -155,11 +155,11 @@ def test_runtime_consent_and_failure():
 @pytest.mark.parametrize("flag,code", [("", 0), ("--json", 0), ("--fail", 1), ("--cancel", 130)])
 def test_example_in_process(flag, code, monkeypatch, capsys):
     from importlib.resources import files
-    from scriptkit.conformance.resources.example import main as example
+    from scripteer.conformance.resources.example import main as example
 
-    resources = files("scriptkit.conformance.resources")
+    resources = files("scripteer.conformance.resources")
     assert "contract v1" in resources.joinpath("AGENTS.md").read_text(encoding="utf-8")
-    assert "scriptkit-command-writing" in resources.joinpath("SKILL.md").read_text(encoding="utf-8")
+    assert "scripteer-command-writing" in resources.joinpath("SKILL.md").read_text(encoding="utf-8")
     monkeypatch.setattr(sys, "argv", ["example.py", flag])
     assert example() == code
     capsys.readouterr()
@@ -174,7 +174,7 @@ def test_packaged_example_human():
     result = subprocess.run(
         # Installed tests run under -I, which ignores PYTHONUTF8 in the parent.
         # Pin both ends of the pipe rather than decoding UTF-8 Rich glyphs as cp1252.
-        [sys.executable, "-X", "utf8", "-m", "scriptkit.conformance.resources.example"],
+        [sys.executable, "-X", "utf8", "-m", "scripteer.conformance.resources.example"],
         capture_output=True,
         encoding="utf-8",
     )

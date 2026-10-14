@@ -6,9 +6,9 @@ import traceback
 
 import pytest
 
-from scriptkit.ai import apply, review, select
-from scriptkit.ai.contracts import MAX_RESPONSE
-from scriptkit.ai.providers import HTTPProvider, ProviderError
+from scripteer.ai import apply, review, select
+from scripteer.ai.contracts import MAX_RESPONSE
+from scripteer.ai.providers import HTTPProvider, ProviderError
 from test_ai import HANDLER, project as project, proposal, selected, snapshot
 
 
@@ -72,7 +72,7 @@ def test_keyring_backend_failure_is_sanitized(project, monkeypatch):
         assert name == "keyring"
         raise RuntimeError(sentinel)
 
-    monkeypatch.setattr("scriptkit.ai.providers.importlib.import_module", broken_import)
+    monkeypatch.setattr("scripteer.ai.providers.importlib.import_module", broken_import)
     client = HTTPProvider("openai", "synthetic", "Improve help", use_keyring=True)
     before = snapshot(project)
     with pytest.raises(ProviderError, match="keyring unavailable") as caught:

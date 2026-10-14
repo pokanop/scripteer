@@ -1,19 +1,21 @@
 # Manager bootstrap, recovery and self-update
 
-The bootstrap installs **only** the dependency-free ScriptKit manager. Tools are
+The bootstrap installs **only** the dependency-free Scripteer manager. Tools are
 explicit subsequent installs in separate environments. Python 3.11+ (including
 `venv` and `ensurepip`) is a prerequisite; no system packages, sudo, registry
 PATH values, shell profiles or execution policies are changed automatically.
 
 ## Release selection and verification
 
-The verified **manager-capable** GitHub release is
-[`v1.5.0`](https://github.com/pokanop/scriptkit/releases/tag/v1.5.0).
-Start with the concrete [onboarding commands](getting-started.md) and the reviewed
-[release pins](release-pins.json). Its scripts, wheel, sdist, checksum manifest and
-build metadata have pinned GitHub provenance. The historical runtime-only
+The current Scripteer candidate is **1.6.0**, not yet a public release. Commands
+below describe the new identity and require verified Scripteer release artifacts.
+The historical **ScriptKit** [`v1.5.0`](https://github.com/pokanop/scripteer/releases/tag/v1.5.0)
+remains available under its original filenames. Use its separate
+[historical onboarding commands](getting-started.md) and [release pins](release-pins.json),
+not the new filenames below, when installing the old version. See the
+[launch/migration guide](scripteer-launch.md) for the approval and release sequence. The historical runtime-only
 `runtime-1.3.0-7c17061` is **not** a manager release; do not use it here.
-GitHub release availability is not PyPI publication or final-name approval.
+GitHub release availability is not PyPI publication or human release approval.
 Never overwrite an existing release or reuse 1.3.0 for manager artifacts.
 
 Obtain `RELEASE_URL` (the exact `/releases/download/<tag>` URL), `VERSION`,
@@ -30,8 +32,8 @@ Pinned curl-to-shell (variables below must come from the verified release inputs
 ```sh
 curl --fail --silent --show-error --location "$RELEASE_URL/install.sh" |
   sh -s -- "$RELEASE_URL/bootstrap.py" "$BOOTSTRAP_SHA256" \
-    --wheel "$RELEASE_URL/pokanop_scriptkit-$VERSION-py3-none-any.whl" \
-    --sha256 "$WHEEL_SHA256" --version "$VERSION" --root "$HOME/ScriptKit café"
+    --wheel "$RELEASE_URL/scripteer-$VERSION-py3-none-any.whl" \
+    --sha256 "$WHEEL_SHA256" --version "$VERSION" --root "$HOME/Scripteer café"
 ```
 
 Curl-to-shell executes the shell wrapper before inspection. Prefer downloading
@@ -43,7 +45,7 @@ curl -fLO "$RELEASE_URL/install.sh"
 curl -fLO "$RELEASE_URL/bootstrap.py"
 # Compare sha256sum (Linux) / shasum -a 256 (macOS) with authenticated release hashes.
 less install.sh bootstrap.py
-python3 -I bootstrap.py --wheel "$RELEASE_URL/pokanop_scriptkit-$VERSION-py3-none-any.whl" \
+python3 -I bootstrap.py --wheel "$RELEASE_URL/scripteer-$VERSION-py3-none-any.whl" \
   --sha256 "$WHEEL_SHA256" --version "$VERSION"
 ```
 
@@ -57,26 +59,31 @@ Group Policy still takes precedence):
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./install.ps1 `
   "$ReleaseUrl/bootstrap.py" $BootstrapSha256 `
-  --wheel "$ReleaseUrl/pokanop_scriptkit-$Version-py3-none-any.whl" `
-  --sha256 $WheelSha256 --version $Version --root "$HOME/ScriptKit café"
+  --wheel "$ReleaseUrl/scripteer-$Version-py3-none-any.whl" `
+  --sha256 $WheelSha256 --version $Version --root "$HOME/Scripteer café"
 ```
 
 For PowerShell 7, substitute `pwsh` for `powershell.exe` in the same command.
 
-Set `SCRIPTKIT_PYTHON` to the **path of an executable**, not a command with flags,
-to select Python for either wrapper. Both wrappers verify the downloaded Python
+Set `SCRIPTEER_PYTHON` to the **path of an executable**, not a command with flags,
+to select Python for either wrapper (`SCRIPTKIT_PYTHON` is the legacy fallback).
+Both wrappers verify the downloaded Python
 bootstrap hash before running it and propagate its exit status. The standalone
 bootstrap needs only the standard library and never imports the installed
 runtime, including when repairing a broken installation.
 
 ## PATH and the public CLI
 
-Default root: `~/.scriptkit`; commands are under `<root>/bin`. Bootstrap and CLI
+Default root: reuse `~/.scriptkit` if it exists; otherwise `~/.scripteer`.
+No directory is moved. `--root` overrides `SCRIPTEER_ROOT`, which overrides the
+legacy `SCRIPTKIT_ROOT`, which overrides this default. If both default directories
+exist, the legacy root wins to preserve existing state; use `--root` to select the
+other explicitly. Commands are under `<root>/bin`. Bootstrap and CLI
 canonicalize the selected root once, so symlinked homes and `/tmp` are supported;
 symlinks redirecting state inside that canonical root remain forbidden. Invoke
-`<root>/bin/scriptkit` (Unix) or `<root>/bin/scriptkit.cmd` (Windows) directly for
+`<root>/bin/scripteer` (Unix) or `<root>/bin/scripteer.cmd` (Windows) directly for
 no-PATH operation. The stable launcher supplies its root to the CLI. When using
-an unrelated Python's `python -m scriptkit`, use `--root` or `SCRIPTKIT_ROOT`.
+an unrelated Python's `python -m scripteer`, use `--root` or `SCRIPTEER_ROOT`.
 Global flags precede subcommands. `--json` always emits a v1 output envelope on
 stdout; phase messages/child output use stderr, without redirected animation.
 Without `--json`, doctor prints readable key/value checks, registries and catalog
@@ -91,35 +98,36 @@ Windows cmd launcher paths cannot contain `%`, `!`, quotes or newlines; spaces
 and non-ASCII are supported. Windows wrappers temporarily select UTF-8 parsing
 and restore the console code page afterward; manager Python uses explicit UTF-8
 mode even with isolated `-I` startup. Like other `.cmd` launchers, these are not a secure
-transport for untrusted shell metacharacters; use `python -m scriptkit` for that.
+transport for untrusted shell metacharacters; use `python -m scripteer` for that.
 
 ```sh
-scriptkit --json doctor
-scriptkit registry add registry.json --trust-origin https://tools.example.org/
-scriptkit registry list
-scriptkit catalog example
-scriptkit install example/tool@1.2.3 --dry-run
-scriptkit install example/tool@1.2.3
-scriptkit update example/tool@1.2.4
-scriptkit rollback tool
-scriptkit recover tool
-scriptkit uninstall tool
+scripteer --json doctor
+scripteer registry add registry.json --trust-origin https://tools.example.org/
+scripteer registry list
+scripteer catalog example
+scripteer install example/tool@1.2.3 --dry-run
+scripteer install example/tool@1.2.3
+scripteer update example/tool@1.2.4
+scripteer rollback tool
+scripteer recover tool
+scripteer uninstall tool
 ```
 
 `registry.json` is the [pinned Registry contract](registry.md), not arbitrary
 package-index access. Trust requires explicit origin consent. Offline mode uses
 only reverified cached artifacts and does not waive expiry. Install and update
 share the transactional installer; both accept exact versions, with stale
-lineage rechecked under the tool-state lock. `scriptkit` is a reserved tool name.
+lineage rechecked under the tool-state lock. Both `scripteer` and the legacy
+`scriptkit` are reserved tool names.
 Uninstall preserves data/config and generations. Tool dispatchers use the base
 Python, not the manager venv, so repairing that venv cannot break tool commands.
 
 ## Update, interruption and recovery
 
 ```sh
-scriptkit self-update --wheel "$WHEEL_URL" --sha256 "$WHEEL_SHA256" --version "$VERSION"
-scriptkit self-rollback
-# If scriptkit itself cannot start, use the independently verified bootstrap:
+scripteer self-update --wheel "$WHEEL_URL" --sha256 "$WHEEL_SHA256" --version "$VERSION"
+scripteer self-rollback
+# If scripteer itself cannot start, use the independently verified bootstrap:
 python3 -I bootstrap.py --root "$ROOT" --rollback
 # If no previous healthy generation exists, rerun the pinned install command.
 ```
@@ -150,7 +158,7 @@ running Windows environments. Plan disk capacity accordingly. The system/base
 Python must remain installed. If it moves, run the standalone pinned bootstrap
 with the new Python: receipt-owned manager launchers are atomically refreshed.
 For a pre-ledger installation (or edited launcher), the error identifies the
-file to inspect and move aside only if it is your obsolete ScriptKit launcher;
+file to inspect and move aside only if it is your obsolete Scripteer launcher;
 bootstrap will not guess ownership. Existing tool launchers may still require
 `uninstall <tool>` followed by `install namespace/tool@version` after a base-Python
 move: a plain reinstall preserves the old launcher. Local root/state and PATH

@@ -9,11 +9,11 @@ import tomllib
 
 import pytest
 
-from scriptkit.contracts import ToolSpec, resource_text
-from scriptkit.generator import apply, normalize, preview, recover, render
-from scriptkit.generator.__main__ import main
-from scriptkit.generator.plan import Change, Manifest, Plan, CONTROL, target
-from scriptkit.generator.transaction import (
+from scripteer.contracts import ToolSpec, resource_text
+from scripteer.generator import apply, normalize, preview, recover, render
+from scripteer.generator.__main__ import main
+from scripteer.generator.plan import Change, Manifest, Plan, CONTROL, target
+from scripteer.generator.transaction import (
     AtomicWriter,
     Journal,
     Operation,
@@ -39,7 +39,7 @@ def test_deterministic_offline_backend_contract(tmp_path, spec, monkeypatch):
     monkeypatch.setattr(socket, "socket", lambda *a, **kw: pytest.fail("network"))
     first = render(spec)
     assert first == render(normalize(spec))
-    from scriptkit.generator.render import canonical, sha256
+    from scripteer.generator.render import canonical, sha256
 
     inventory = {p: sha256(b) for p, b in (first.generated | first.user).items()}
     assert sha256(canonical(inventory)) == (
@@ -200,9 +200,9 @@ def test_process_death_releases_lock_and_recovers(tmp_path, spec):
             """
 import os, sys
 from pathlib import Path
-from scriptkit.contracts import ToolSpec
-from scriptkit.generator import render, preview, apply
-from scriptkit.generator.transaction import AtomicWriter
+from scripteer.contracts import ToolSpec
+from scripteer.generator import render, preview, apply
+from scripteer.generator.transaction import AtomicWriter
 class Crash(AtomicWriter):
     def replace(self, path, data, staging):
         super().replace(path, data, staging)
@@ -228,7 +228,7 @@ def test_lock_excludes_concurrent_writer(tmp_path):
                 """
 import sys
 from pathlib import Path
-from scriptkit.generator.transaction import locked, StateConflict
+from scripteer.generator.transaction import locked, StateConflict
 try:
     with locked(Path(sys.argv[1])):
         sys.exit(3)
@@ -263,7 +263,7 @@ def test_cli_check_apply_recover_errors(tmp_path, spec, capsys):
     file.write_text("{")
     assert main(args) == 2
     capsys.readouterr()
-    run = subprocess.run([sys.executable, "-m", "scriptkit.generator", *args], capture_output=True)
+    run = subprocess.run([sys.executable, "-m", "scripteer.generator", *args], capture_output=True)
     assert run.returncode == 2 and b'"error"' in run.stdout
 
 
@@ -285,7 +285,7 @@ def test_render_rejects_versions_reserved_modules_and_hook_data(spec, monkeypatc
             ToolSpec.from_dict({**value, key: ["touch pwned"]})
     import importlib
 
-    backend = importlib.import_module("scriptkit.generator.render")
+    backend = importlib.import_module("scripteer.generator.render")
     monkeypatch.setattr(backend, "TEMPLATE_SHA256", "bad")
     with pytest.raises(ValueError, match="integrity"):
         render(spec)

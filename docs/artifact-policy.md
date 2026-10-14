@@ -39,10 +39,10 @@ merely because its name is a digest: both resolver and installer verify the
 size/hash against the currently pinned, unexpired registry catalog.
 
 ```python
-from scriptkit.contracts import ArtifactPolicy
-from scriptkit.manager import Installer
-from scriptkit.registry import Resolver
-from scriptkit.registry.source import RegistryArtifactSource
+from scripteer.contracts import ArtifactPolicy
+from scripteer.manager import Installer
+from scripteer.registry import Resolver
+from scripteer.registry.source import RegistryArtifactSource
 
 policy = ArtifactPolicy(
     max_archive_bytes=2 * 1024**3,
@@ -131,7 +131,7 @@ code in an explicitly trusted package.
 
 Old `fetch() -> bytes` sources remain compatible, but may materialize one entire
 artifact. Large sources implement the optional
-`scriptkit.contracts.ports.StreamingInstallationSource` protocol, extending
+`scripteer.contracts.ports.StreamingInstallationSource` protocol, extending
 `InstallationSource` with `fetch_into(artifact, destination)` and bounded writes.
 The installer detects this additive protocol; byte-only sources remain valid.
 Source adapters are trusted injected code, not an adversarial

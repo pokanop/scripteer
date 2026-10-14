@@ -12,7 +12,7 @@ import zipfile
 from email.parser import BytesParser
 from pathlib import Path
 
-from scriptkit.contracts import (
+from scripteer.contracts import (
     Artifact,
     ArtifactPolicy,
     CatalogRelease,
@@ -24,9 +24,9 @@ from scriptkit.contracts import (
     ToolRelease,
     ToolSpec,
 )
-from scriptkit.manager import Installer
-from scriptkit.registry import Registry, RegistryStore, Resolver, VerifiedCache
-from scriptkit.registry.source import RegistryArtifactSource
+from scripteer.manager import Installer
+from scripteer.registry import Registry, RegistryStore, Resolver, VerifiedCache
+from scripteer.registry.source import RegistryArtifactSource
 
 TORCH_NAME = "torch-2.14.1-cp313-cp313-manylinux_2_28_x86_64.whl"
 TORCH_HASH = "c8f71aabc67bcbfc9373dc131537a5968d04edce73e88add21354a7cd0a76985"
@@ -73,7 +73,7 @@ def synthetic(root: Path, *, large: bool = True, torch: bool = False) -> Path:
 
 def scan_members(root: Path, wheels: list[Path]) -> None:
     from collections import Counter
-    from scriptkit.contracts.archives import _safe_member_name
+    from scripteer.contracts.archives import _safe_member_name
 
     groups: Counter[str] = Counter()
     admitted = []

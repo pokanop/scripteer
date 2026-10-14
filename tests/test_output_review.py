@@ -6,9 +6,9 @@ from pathlib import Path
 
 import pytest
 
-from scriptkit.command import run
-from scriptkit.doctor import Check
-from scriptkit.output import CommandResult, OutputContext, OutputPolicy, TableData
+from scripteer.command import run
+from scripteer.doctor import Check
+from scripteer.output import CommandResult, OutputContext, OutputPolicy, TableData
 
 
 @pytest.mark.parametrize("rich", [True, False])

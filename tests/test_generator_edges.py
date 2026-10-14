@@ -9,10 +9,10 @@ import tomllib
 
 import pytest
 
-from scriptkit.contracts import ToolSpec, resource_text
-from scriptkit.generator import apply, preview, recover, render
-from scriptkit.generator.plan import CONTROL, MANIFEST
-from scriptkit.generator.transaction import AtomicWriter, StateConflict
+from scripteer.contracts import ToolSpec, resource_text
+from scripteer.generator import apply, preview, recover, render
+from scripteer.generator.plan import CONTROL, MANIFEST
+from scripteer.generator.transaction import AtomicWriter, StateConflict
 
 
 def example():

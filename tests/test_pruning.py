@@ -7,8 +7,8 @@ import sys
 
 import pytest
 
-from scriptkit.manager import storage
-from scriptkit.state import StateConflict
+from scripteer.manager import storage
+from scripteer.state import StateConflict
 from test_installer import fixture, update, invoke
 
 
@@ -65,7 +65,7 @@ def test_interruption(tmp_path, phase, hard_exit):
         code = """
 import os, sys
 from pathlib import Path
-from scriptkit.manager import Installer
+from scripteer.manager import Installer
 m = Installer(Path(sys.argv[1]), Path(sys.argv[2]), None,
               checkpoint=lambda p: os._exit(71) if p == sys.argv[3] else None)
 m.prune()
@@ -94,8 +94,8 @@ m.prune()
 
 
 def test_cli(tmp_path, monkeypatch, capsys):
-    from scriptkit.entrypoint import main
-    from scriptkit import manager_cli
+    from scripteer.entrypoint import main
+    from scripteer import manager_cli
 
     manager = generations(tmp_path)
     monkeypatch.setattr(manager_cli, "Installer", lambda *a, **kw: manager)
@@ -125,8 +125,8 @@ def test_keep_after_shortened_lineage(tmp_path):
 @pytest.mark.parametrize("machine", [False, True])
 @pytest.mark.parametrize("pending", ["journal.json", "prune.json"])
 def test_doctor_pending_operation(tmp_path, monkeypatch, capsys, machine, pending):
-    from scriptkit.entrypoint import main
-    from scriptkit import manager_cli
+    from scripteer.entrypoint import main
+    from scripteer import manager_cli
 
     manager = generations(tmp_path)
     monkeypatch.setattr(manager_cli, "Installer", lambda *a, **kw: manager)
@@ -145,9 +145,9 @@ def test_doctor_pending_operation(tmp_path, monkeypatch, capsys, machine, pendin
 
 
 def test_doctor_estimate_under_lock_without_hashing(tmp_path, monkeypatch, capsys):
-    from scriptkit.entrypoint import main
-    from scriptkit import manager_cli
-    from scriptkit.manager import pruning
+    from scripteer.entrypoint import main
+    from scripteer import manager_cli
+    from scripteer.manager import pruning
 
     manager = generations(tmp_path)
     expected = manager.prune(dry_run=True)["bytes"]

@@ -9,12 +9,12 @@ import sys
 
 import pytest
 
-from scriptkit.contracts import ToolSpec, resource_text
-from scriptkit.entrypoint import main
-from scriptkit.generator import apply, preview
-from scriptkit.generator.render import sha256
-from scriptkit.generator.scaffolds import tool, installer
-from scriptkit.scaffold_runtime import tool_main
+from scripteer.contracts import ToolSpec, resource_text
+from scripteer.entrypoint import main
+from scripteer.generator import apply, preview
+from scripteer.generator.render import sha256
+from scripteer.generator.scaffolds import tool, installer
+from scripteer.scaffold_runtime import tool_main
 
 
 def test_preview_presentation_and_structured_failures(tmp_path, capsys):

@@ -44,7 +44,7 @@ configuration to preserve the foundation's unmodified runtime. They still receiv
 syntax/correctness lint, full tests, and changed-line coverage; new modules get
 strict typing and formatting automatically. Ruff's default E4/E7/E9/F rules apply
 to all source, tests and tooling with no lint exclusions. There are
-**no changed-line coverage exclusions** within `src/scriptkit`; tests/tooling are
+**no changed-line coverage exclusions** within `src/scripteer`; tests/tooling are
 not framework runtime and have dedicated behavioral tests. Removal/expansion of
 legacy exceptions or reduction of test floors requires independent review.
 
@@ -79,8 +79,8 @@ an independently reviewed commit and its release tag (or `refs/heads/main` for a
 rehearsal) in this command; do not trust values supplied solely with the artifact:
 
 ```sh
-gh attestation verify artifact.whl --repo pokanop/scriptkit \
-  --signer-workflow pokanop/scriptkit/.github/workflows/release.yml \
+gh attestation verify artifact.whl --repo pokanop/scripteer \
+  --signer-workflow pokanop/scripteer/.github/workflows/release.yml \
   --source-digest "$EXPECTED_COMMIT" --signer-digest "$EXPECTED_COMMIT" \
   --source-ref "$EXPECTED_REF" --deny-self-hosted-runners
 ```
@@ -91,17 +91,17 @@ is complete. PR CI validates pins but intentionally cannot exercise OIDC signing
 
 ## Deferred owner setup before PyPI publication (POK-645 only)
 
-The following is a future launch checklist, **not authorization to configure or
-publish now**. Verified GitHub v1.5.0 artifacts already exist under the provisional
-identity. Do not set `PYPI_PUBLISH_ENABLED`, configure a Trusted Publisher or choose
-a final name in POK-631. The version-bump prerequisite below was fulfilled by the
-manager releases; never rewrite their immutable artifacts.
+Sahel selected **Scripteer** on 2026-10-11. The repository is now
+`pokanop/scripteer`; current distribution/import/command are all `scripteer`.
+Naming approval is **not publication approval**. Historical v1.5.0 assets and
+signatures retain their original ScriptKit identities. See the concrete
+[owner setup and migration checklist](scripteer-launch.md).
 
-1. Resolve the ScriptKit collision with johnlindquist/kit and confirm ownership/
-   availability of provisional distribution `pokanop-scriptkit`. Do not publish
-   under an unrelated name or create a tag merely to exercise publication.
+1. Recheck PyPI name eligibility immediately before publication. A 404 or pending
+   publisher does not reserve the name. Candidate version is **1.6.0**; never
+   overwrite historical releases or create a tag merely to test publication.
 2. In PyPI configure a pending/trusted publisher: owner `pokanop`, repository
-   `scriptkit`, workflow `release.yml`, environment `pypi`. No long-lived API token.
+   `scripteer`, workflow `release.yml`, environment `pypi`. No long-lived API token.
 3. **Hard publication precondition:** retain `can_admins_bypass=false` and
    prevent-self-review on `pypi`, and add an independent human reviewer with
    repository access, distinct from the shared agent identity. The current sole
@@ -111,8 +111,8 @@ manager releases; never rewrite their immutable artifacts.
 4. Only after naming, publisher, independent reviewer, bypass-off and tag policy
    are confirmed, set the
    repository variable `PYPI_PUBLISH_ENABLED=true`. It is absent/disabled by default.
-5. **Before the first manager release, bump both distribution/runtime versions and
-   update versioned artifact references/tests.** Do not reuse `1.3.0`: the published
+5. **Publish the reviewed 1.6.0 candidate only after explicit human merge/release
+   approval.** Do not reuse `1.3.0`: the published
    `runtime-1.3.0-7c17061` wheel already identifies different, runtime-only bytes.
    Record the new version and release hashes in the release ticket. The publishing
    workflow rejects `1.3.0`, even if metadata/tag equality would otherwise pass.

@@ -10,10 +10,10 @@ from types import SimpleNamespace
 
 import pytest
 
-from scriptkit.ai import select
-from scriptkit.ai.__main__ import main
-from scriptkit.ai.contracts import MAX_RESPONSE, Patch, Proposal, SpecDelta
-from scriptkit.ai.providers import (
+from scripteer.ai import select
+from scripteer.ai.__main__ import main
+from scripteer.ai.contracts import MAX_RESPONSE, Patch, Proposal, SpecDelta
+from scripteer.ai.providers import (
     HTTPProvider,
     Limits,
     ProviderError,
@@ -21,9 +21,9 @@ from scriptkit.ai.providers import (
     destination,
     http_post,
 )
-from scriptkit.contracts import ToolSpec, resource_text
-from scriptkit.generator import apply as generate, preview
-from scriptkit.generator.scaffolds import tool
+from scripteer.contracts import ToolSpec, resource_text
+from scripteer.generator import apply as generate, preview
+from scripteer.generator.scaffolds import tool
 
 FIXTURES = json.loads((Path(__file__).parent / "fixtures/ai-providers.json").read_text())
 
@@ -312,8 +312,8 @@ def test_raw_file_and_goal_secrets_refused(project, text):
 
 @pytest.mark.parametrize("shape", ["openai", "ollama"])
 def test_ordinary_handler_above_token_count_bytes_is_reviewable(project, shape):
-    from scriptkit.ai import apply, parse_response, review
-    from scriptkit.conformance import validate
+    from scripteer.ai import apply, parse_response, review
+    from scripteer.conformance import validate
 
     context = select(project, ("src/demo/_handlers.py",))
     content = (
@@ -456,7 +456,7 @@ def test_cli_preview_propose_review_apply(project, capsys, monkeypatch):
         )
         == 0
     )
-    from scriptkit.conformance import validate
+    from scripteer.conformance import validate
 
     assert validate(project).valid
 
@@ -506,7 +506,7 @@ def test_transport_closes_and_refuses_redirect(monkeypatch, status, body):
         def close(self):
             Connection.closed = True
 
-    monkeypatch.setattr("scriptkit.ai.providers.http.client.HTTPSConnection", Connection)
+    monkeypatch.setattr("scripteer.ai.providers.http.client.HTTPSConnection", Connection)
     if len(body) > 10:
         with pytest.raises(ProviderError):
             http_post("https://api.openai.com/v1/chat/completions", b"{}", {}, 1, 10)
@@ -599,7 +599,7 @@ def test_transport_closes_on_interrupt(monkeypatch):
         def close(self):
             Connection.closed = True
 
-    monkeypatch.setattr("scriptkit.ai.providers.http.client.HTTPConnection", Connection)
+    monkeypatch.setattr("scripteer.ai.providers.http.client.HTTPConnection", Connection)
     with pytest.raises(KeyboardInterrupt):
         http_post("http://127.0.0.1:11434/api/chat", b"{}", {}, 1, 10)
     assert Connection.closed
@@ -607,7 +607,7 @@ def test_transport_closes_on_interrupt(monkeypatch):
 
 def test_installed_cli_help():
     result = subprocess.run(
-        [sys.executable, "-I", "-m", "scriptkit.ai", "propose", "--help"],
+        [sys.executable, "-I", "-m", "scripteer.ai", "propose", "--help"],
         capture_output=True,
         text=True,
     )

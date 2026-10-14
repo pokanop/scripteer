@@ -5,7 +5,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from scriptkit._windows_job import WindowsJob
+from scripteer._windows_job import WindowsJob
 
 
 class Function:

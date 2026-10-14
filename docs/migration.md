@@ -18,7 +18,7 @@ and user data. See [installation](installation.md) for safe manual space reclama
 
 The collection is a **consumer adapter**, not another framework registry. Its
 `scripts` CLI owns discovery, per-tool dependency snapshots and migration routing;
-ScriptKit owns verified environments, receipts and activation. The consumer pinned
+Scripteer owns verified environments, receipts and activation. The consumer pinned
 by [release-pins.json](release-pins.json) is version 1.2.0 of its distribution
 (the historical `scripts --version` banner is 1.3.0); the framework is 1.5.0.
 Do not confuse these independent versions.

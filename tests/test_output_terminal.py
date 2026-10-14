@@ -7,7 +7,7 @@ import sys
 
 import pytest
 
-from scriptkit.output import OutputContext, OutputPolicy, TableData
+from scripteer.output import OutputContext, OutputPolicy, TableData
 
 
 @pytest.mark.parametrize("rich", [False, True])
@@ -38,7 +38,7 @@ def test_subprocess_real_tty():
     master, slave = pty.openpty()
     try:
         code = """
-from scriptkit.output import OutputContext, OutputPolicy
+from scripteer.output import OutputContext, OutputPolicy
 out = OutputContext(OutputPolicy(color='never', ascii=True))
 assert out.stderr.isatty()
 with out.progress('work', total=1) as task:

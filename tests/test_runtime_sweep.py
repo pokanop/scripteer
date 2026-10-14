@@ -5,10 +5,10 @@ import sys
 
 import pytest
 
-from scriptkit.contracts import ToolSpec, resource_text
-from scriptkit.entrypoint import main
-from scriptkit.execution import BoundedRunner
-from scriptkit.scaffold_runtime import tool_main
+from scripteer.contracts import ToolSpec, resource_text
+from scripteer.entrypoint import main
+from scripteer.execution import BoundedRunner
+from scripteer.scaffold_runtime import tool_main
 
 
 @pytest.mark.parametrize("machine", [False, True])

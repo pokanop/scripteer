@@ -1,4 +1,4 @@
-# 🧰 scriptkit — Shared CLI scaffolding
+# 🧰 scripteer — Shared CLI scaffolding
 
 > Adapted from `pokanop/scripts@458104a` for the standalone installed runtime.
 > See [provenance](../NOTICE.md). Consumer tools, installers and templates are
@@ -8,10 +8,10 @@
 prompts, progress, tables, three-tier config, subprocess handling,
 human-friendly formatting, and CLI dispatch.**
 
-`scriptkit` · Python 3.11+ · `rich` (optional, graceful fallback) · zero other deps
+`scripteer` · Python 3.11+ · `rich` (optional, graceful fallback) · zero other deps
 
 ```python
-import scriptkit as sk
+import scripteer as sk
 
 sk.success("done")                       # ✅ green, stdout
 sk.error("nope")                         # ❌ red, stderr
@@ -29,7 +29,7 @@ sys.exit(sk.run_cli(main))               # CliError → exit 1, Ctrl-C → exit 
 ## Why
 
 Every tool had grown its own copy of the same helpers — ANSI codes, `print_success`,
-a `run()` wrapper, dot-path config, a progress bar. `scriptkit` is the single,
+a `run()` wrapper, dot-path config, a progress bar. `scripteer` is the single,
 tested home for those patterns. Change the house style in one place; every tool
 updates. New tools start beautiful for free.
 
@@ -47,17 +47,17 @@ From this repository, with a Python 3.11+ virtual environment activated:
 ```sh
 python -m pip install '.[dev]'
 python -m build
-python -m pip install dist/pokanop_scriptkit-1.5.0-py3-none-any.whl
+python -m pip install dist/scripteer-1.5.0-py3-none-any.whl
 # Optional: install the wheel's declared Rich extra instead.
-python -m pip install 'dist/pokanop_scriptkit-1.5.0-py3-none-any.whl[rich]'
+python -m pip install 'dist/scripteer-1.5.0-py3-none-any.whl[rich]'
 ```
 
-Tools then use `import scriptkit as sk` from any working directory. Do not
+Tools then use `import scripteer as sk` from any working directory. Do not
 vendor the package, search parent directories or modify `sys.path`. Distribution
-metadata uses the provisional name `pokanop-scriptkit`; the import is `scriptkit`.
+metadata uses the provisional name `scripteer`; the import is `scripteer`.
 No public package release or namespace availability is implied.
 
-`scriptkit --help` and `python -m scriptkit --version` expose the foundation's
+`scripteer --help` and `python -m scripteer --version` expose the foundation's
 help/version CLI only, not an installer or generator. See the
 [compatibility policy](compatibility.md) for API and exit guarantees.
 
@@ -65,7 +65,7 @@ help/version CLI only, not an installer or generator. See the
 
 ## API at a glance
 
-### Messages (`scriptkit.console`)
+### Messages (`scripteer.console`)
 | Call | Output |
 |------|--------|
 | `sk.success(text)` | `  ✅ text` — bold green, stdout |
@@ -80,14 +80,14 @@ help/version CLI only, not an installer or generator. See the
 | `sk.ask(prompt, default)` | line input, `default` on empty/EOF |
 | `sk.confirm(prompt, default)` | yes/no, returns bool |
 
-### Color & icons (`scriptkit.style`)
+### Color & icons (`scripteer.style`)
 - `sk.styled(text, *codes)` — wrap in ANSI, or strip codes when color is off.
 - `sk.use_color(stream=None)` / `sk.set_color(True|False|None)` — honors
   `NO_COLOR` and `FORCE_COLOR`; auto-detects TTY otherwise.
 - `sk.icon(name)` — semantic emoji lookup (`success`, `warn`, `clock`, `rocket`, …).
 - Color constants: `sk.style.RED`, `BOLD`, `DIM`, `CYAN`, …
 
-### Progress (`scriptkit.progress`)
+### Progress (`scripteer.progress`)
 - `sk.track(iterable, "desc")` — iterate with a spinner+bar+M/N+elapsed (rich) or plainly.
 - `sk.track_bytes(chunks, "Downloading", total=bytes)` — stream byte chunks with a
   spinner, bar, transferred size, speed, and ETA; omitted `total` pulses indeterminately.
@@ -95,7 +95,7 @@ help/version CLI only, not an installer or generator. See the
 - `sk.parallel_map(fn, items, "desc", max_workers=8)` — threaded map with combined progress.
 - `sk.bar(pct, width=30)` — a pure-string `[████░░░] 50%` for inline `\r` updates.
 
-### Tables (`scriptkit.tables`)
+### Tables (`scripteer.tables`)
 ```python
 sk.table(
     [{"name": "#", "justify": "right"}, "Host", {"name": "Status"}],
@@ -106,7 +106,7 @@ sk.table(
 Columns are strings or dicts (`name`, `justify`, `style`, `width`, `max_width`,
 `no_wrap`). Falls back to an aligned text grid without `rich`.
 
-### Config (`scriptkit.config`)
+### Config (`scripteer.config`)
 ```python
 cfg = sk.Config(path, defaults={"web": {"port": 8765}},
                 env_prefix="MYTOOL", coerce_env=True)
@@ -118,7 +118,7 @@ cfg.save(data)                    # pretty JSON, chmod 0600
 `coerce_env`/`coerce=True` turns scalar strings (`"true"`, `"9000"`, `"3.5"`)
 into their natural types — handy for env-var overrides.
 
-### Managed blocks (`scriptkit.blocks`)
+### Managed blocks (`scripteer.blocks`)
 ```python
 block = sk.ManagedBlock("# >>> mytool >>>", "# <<< mytool <<<")
 block.apply(rc_path, 'export FOO="bar"')   # insert/replace; .bak'd once before first write
@@ -130,7 +130,7 @@ and it's a no-op; `clear` is the exact inverse of `apply`. Pure helpers
 the splicing if you'd rather operate on strings. Built for shell rc env blocks and
 any managed config stanza a tool must add and later take back out cleanly.
 
-### Subprocess (`scriptkit.proc`)
+### Subprocess (`scripteer.proc`)
 ```python
 res = sk.run(["git", "rev-parse", "HEAD"])   # Result(code, out, err); res.ok / bool(res)
 res = sk.run(cmd, check=True)                 # non-zero → CliError
@@ -140,12 +140,12 @@ sk.require("ffmpeg", hint="brew install ffmpeg")  # missing → CliError
 Timeouts return code `-1`; a missing binary returns `-127`. Never raises for a
 non-zero exit unless `check=True`.
 
-### Text (`scriptkit.text`)
+### Text (`scripteer.text`)
 `sk.human_size(1536) → "1.5 KB"` · `sk.human_duration(185) → "3m 5s"` ·
 `sk.format_timecode(75.5) → "1:15.50"` · `sk.human_count(2, "host") → "2 hosts"` ·
 `sk.truncate("hello world", 8) → "hello w…"`
 
-### CLI lifecycle (`scriptkit.cli`)
+### CLI lifecycle (`scripteer.cli`)
 
 One lifecycle for every tool — parse → (optional default command) → dispatch →
 clean exit. A tool's `main` collapses to four lines:
@@ -181,7 +181,7 @@ if __name__ == "__main__":
   `banner` **to stderr** (always visible, never pollutes piped stdout); a bare
   invocation with no `default` prints banner-led help and exits 0.
 
-### Doctor (`scriptkit.doctor`)
+### Doctor (`scripteer.doctor`)
 
 Every tool's `doctor` uses **one renderer** so they look identical: an
 auto-generated **System** section, your **check sections**, a rolled-up
@@ -214,7 +214,7 @@ def cmd_doctor(args) -> int:
 `sk.doctor` omits the banner because `dispatch` already prints it (to stderr);
 pass `show_banner=True` only when calling `doctor` outside the dispatch flow.
 
-### Identity & CLI framing (`scriptkit.app`)
+### Identity & CLI framing (`scripteer.app`)
 
 Every tool presents the **same first impression** — one identity line, a
 `-v/--version` flag, and an aligned `Examples:` epilog — by building its parser
@@ -258,7 +258,7 @@ the framework checkout:
 
 ```python
 import sys
-import scriptkit as sk
+import scripteer as sk
 
 
 def main() -> int:
@@ -293,8 +293,8 @@ python -m pip install -e '.[dev,rich]'
 python -m pytest
 python -m mypy
 python -m build
-python tools/check_artifact.py dist/pokanop_scriptkit-1.5.0-py3-none-any.whl
-python tools/check_artifact.py dist/pokanop_scriptkit-1.5.0-py3-none-any.whl --rich
+python tools/check_artifact.py dist/scripteer-1.5.0-py3-none-any.whl
+python tools/check_artifact.py dist/scripteer-1.5.0-py3-none-any.whl --rich
 ```
 
 - `tests/test_{app,blocks,cli,cli_progress_tables,config,console,doctor,proc,style,text}.py`

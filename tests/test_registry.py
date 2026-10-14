@@ -10,11 +10,11 @@ from importlib.resources import files
 
 import pytest
 
-from scriptkit.contracts.codec import ContractError
-from scriptkit.contracts.models import Artifact, Platform
-from scriptkit.registry import Registry, RegistryStore, Resolver, VerifiedCache
-from scriptkit.registry.archives import validate_archive
-from scriptkit.registry.cache import HTTPTransport, NoRedirect
+from scripteer.contracts.codec import ContractError
+from scripteer.contracts.models import Artifact, Platform
+from scripteer.registry import Registry, RegistryStore, Resolver, VerifiedCache
+from scripteer.registry.archives import validate_archive
+from scripteer.registry.cache import HTTPTransport, NoRedirect
 
 ORIGIN = "https://fixture.example/releases/"
 
@@ -53,7 +53,7 @@ def fixture(tmp_path):
     tool = artifact("tool.whl", wheel)
     dependency = artifact("dependency.whl", archive({"dep.dist-info/WHEEL": b"Wheel-Version: 1.0"}))
     catalog = json.loads(
-        files("scriptkit.contracts.resources").joinpath("CatalogRelease.example.json").read_text()
+        files("scripteer.contracts.resources").joinpath("CatalogRelease.example.json").read_text()
     )
     catalog["releases"][0]["artifact"] = tool.to_dict()
     catalog["releases"][0]["locks"][0]["packages"] = [

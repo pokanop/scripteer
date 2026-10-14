@@ -5,7 +5,7 @@ param(
     [Parameter(ValueFromRemainingArguments=$true)][string[]]$BootstrapArgs
 )
 $ErrorActionPreference = 'Stop'
-$python = if ($env:SCRIPTKIT_PYTHON) { $env:SCRIPTKIT_PYTHON } else { 'python' }
+$python = if ($env:SCRIPTEER_PYTHON) { $env:SCRIPTEER_PYTHON } elseif ($env:SCRIPTKIT_PYTHON) { $env:SCRIPTKIT_PYTHON } else { 'python' }
 if (-not (Get-Command $python -ErrorAction SilentlyContinue)) {
     [Console]::Error.WriteLine('Python 3.11+ with venv/ensurepip is required. Install Python, then rerun.')
     exit 1
@@ -23,7 +23,7 @@ with urllib.request.urlopen(url, timeout=60) as response:
     raw = response.read(1024 * 1024 + 1)
 if len(raw) > 1024 * 1024 or hashlib.sha256(raw).hexdigest() != digest:
     sys.exit('bootstrap SHA-256 mismatch or oversized script')
-with tempfile.TemporaryDirectory(prefix='scriptkit-bootstrap-') as directory:
+with tempfile.TemporaryDirectory(prefix='scripteer-bootstrap-') as directory:
     path = pathlib.Path(directory) / 'bootstrap.py'
     path.write_bytes(raw)
     sys.argv = [str(path), *args]

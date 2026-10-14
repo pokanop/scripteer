@@ -5,13 +5,13 @@ import json
 from pathlib import Path
 
 import pytest
-import scriptkit as sk
+import scripteer as sk
 
 
 def test_public_exports_and_signatures():
     golden = json.loads(Path(__file__).with_name("public_api_1_3_0.json").read_text())
     assert sk.__all__ == golden["exports"]
-    assert sk.__version__ == "1.5.0"
+    assert sk.__version__ == "1.6.0"
     for name in golden["exports"]:
         assert hasattr(sk, name)
     for name, signature in golden["signatures"].items():
@@ -22,11 +22,11 @@ def test_public_exports_and_signatures():
 
 
 def test_additive_artifact_policy_api():
-    from scriptkit.contracts import ArtifactPolicy
-    from scriptkit.contracts.ports import StreamingInstallationSource
-    from scriptkit.manager import Installer
-    from scriptkit.registry import Resolver
-    from scriptkit.registry.source import RegistryArtifactSource
+    from scripteer.contracts import ArtifactPolicy
+    from scripteer.contracts.ports import StreamingInstallationSource
+    from scripteer.manager import Installer
+    from scripteer.registry import Resolver
+    from scripteer.registry.source import RegistryArtifactSource
 
     import re
 

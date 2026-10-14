@@ -1,20 +1,20 @@
 # Deterministic project generation
 
-This page documents the retained low-level v1 renderer. For the public v2
-`new-tool`, `add-command`, collection/installer commands and explicit v1→v2
+This page documents the retained low-level v1 renderer. For the public v3
+`new-tool`, `add-command`, collection/installer commands and explicit v1/v2→v3
 `template-upgrade`, see [scaffolds.md](scaffolds.md). Cross-version preview is
 still refused unless that named migration is explicitly selected.
 
-The opt-in `scriptkit.generator` layer consumes the version-1 `ToolSpec` contract.
+The opt-in `scripteer.generator` layer consumes the version-1 `ToolSpec` contract.
 It never imports the tool's modules, fetches templates, runs tasks, invokes an
 external formatter or contacts a registry. Runtime imports remain unchanged.
 
 ```sh
 mkdir my-project
-python -m scriptkit.generator spec.json my-project            # JSON preview + unified diffs
-python -m scriptkit.generator spec.json my-project --check    # no writes, including locks
-python -m scriptkit.generator spec.json my-project --apply
-python -m scriptkit.generator spec.json my-project --recover  # finish an interrupted apply
+python -m scripteer.generator spec.json my-project            # JSON preview + unified diffs
+python -m scripteer.generator spec.json my-project --check    # no writes, including locks
+python -m scripteer.generator spec.json my-project --apply
+python -m scripteer.generator spec.json my-project --recover  # finish an interrupted apply
 ```
 
 Check exits 0 for clean, 1 for drift, 2 for conflict/error. All operational results

@@ -34,7 +34,7 @@ def measure(action, repeats):
     return {"samples_seconds": samples, "median_seconds": statistics.median(samples)}
 
 
-def collect(single=False, *, package="scriptkit", tests=None):
+def collect(single=False, *, package="scripteer", tests=None):
     runtime = import_module(package)
     contracts = import_module(package + ".contracts")
     generator = import_module(package + ".generator")
@@ -122,7 +122,7 @@ def save(path, report):
 
 
 def compare(
-    peer_python, output, *, package="scriptkit", tests=None, peer_package=None, peer_tests=None
+    peer_python, output, *, package="scripteer", tests=None, peer_package=None, peer_tests=None
 ):
     # Measure both environments after provisioning, interleaved rather than before
     # and after build/pip/AV activity. Fixed rounds, no retry-until-green policy.
@@ -159,7 +159,7 @@ def compare(
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("output", type=Path)
-    parser.add_argument("--package", default="scriptkit")
+    parser.add_argument("--package", default="scripteer")
     parser.add_argument("--tests", type=Path, default=Path.cwd() / "tests")
     parser.add_argument("--peer-package")
     parser.add_argument("--peer-tests", type=Path)

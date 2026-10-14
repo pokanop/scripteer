@@ -8,7 +8,7 @@ created or migrated on import or path resolution. No runtime dependency was adde
 
 ```python
 from pathlib import Path
-from scriptkit.safe_config import SafeConfig, ConfigError
+from scripteer.safe_config import SafeConfig, ConfigError
 
 
 def validate(data):
@@ -97,7 +97,7 @@ overrides and unsafe application identifiers fail.
 ## Owned text regions / PATH edits
 
 ```python
-from scriptkit.regions import OwnedRegion
+from scripteer.regions import OwnedRegion
 
 region = OwnedRegion("tool.path")
 receipt = region.apply(rc_path, 'export PATH="/opt/tool/bin:$PATH"')
@@ -124,7 +124,7 @@ shell escaping and PATH syntax.
 ## Bounded processes
 
 ```python
-from scriptkit.execution import BoundedRunner
+from scripteer.execution import BoundedRunner
 result = BoundedRunner(cancelled=stop_event.is_set).run(
     ["tool", "--version"], timeout=10, max_output=64 * 1024)
 ```

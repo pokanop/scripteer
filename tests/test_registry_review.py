@@ -7,11 +7,11 @@ import zlib
 
 import pytest
 
-from scriptkit.contracts.codec import ContractError
-from scriptkit.contracts.ports import ArtifactSource
-from scriptkit.registry import RegistryArtifactSource
-from scriptkit.registry.archives import validate_archive
-from scriptkit.state import LocalStateIO, StateConflict
+from scripteer.contracts.codec import ContractError
+from scripteer.contracts.ports import ArtifactSource
+from scripteer.registry import RegistryArtifactSource
+from scripteer.registry.archives import validate_archive
+from scripteer.state import LocalStateIO, StateConflict
 
 from test_registry import ORIGIN, artifact, fixture as fixture
 

@@ -19,7 +19,7 @@ def pytest_collection_modifyitems(items):
 
 @pytest.fixture(autouse=True)
 def _reset_color(monkeypatch):
-    import scriptkit.style as style
+    import scripteer.style as style
 
     monkeypatch.delenv("NO_COLOR", raising=False)
     monkeypatch.delenv("FORCE_COLOR", raising=False)
@@ -30,7 +30,7 @@ def _reset_color(monkeypatch):
 
 @pytest.fixture
 def no_color():
-    import scriptkit.style as style
+    import scripteer.style as style
 
     style.set_color(False)
     return style

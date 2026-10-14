@@ -84,7 +84,7 @@ def main():
     env.update(PYTHONUTF8="1", PIP_DISABLE_PIP_VERSION_CHECK="1", NO_COLOR="1")
     report = {"pins": pins, "steps": [], "complete": False}
     try:
-        with tempfile.TemporaryDirectory(prefix="scriptkit-certification-") as temporary:
+        with tempfile.TemporaryDirectory(prefix="scripteer-certification-") as temporary:
             work = Path(temporary)
             assets = work / "assets"
             run(
@@ -193,6 +193,20 @@ def main():
                 "pytest==9.1.1",
                 cwd=work,
                 env=env,
+            )
+            run(
+                candidate_python,
+                "-I",
+                "-X",
+                "utf8",
+                ROOT / "tools/check_rename.py",
+                manager_root,
+                next(candidate.glob("*.whl")),
+                cwd=work,
+                env=env,
+            )
+            report["steps"].append(
+                "real legacy manager rename, rollback and forward repair; state/wrapper preserved"
             )
             baseline_env = work / "baseline-env"
             venv.EnvBuilder(with_pip=True).create(baseline_env)

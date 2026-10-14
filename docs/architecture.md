@@ -1,19 +1,19 @@
 # Ownership and dependency direction
 
-Authoritative framework repository: https://github.com/pokanop/scriptkit.
+Authoritative framework repository: https://github.com/pokanop/scripteer.
 `pokanop/scripts` remains the consumer; migration is separate work (POK-628).
 
 | Component / path | Ownership / dependency rule |
 | --- | --- |
-| Runtime: `src/scriptkit/{app,blocks,cli,config,console,doctor,proc,progress,style,tables,text}.py`, `__init__.py` | Existing 1.3.0 API, dependency-light, never imports manager/registry/generator/AI. |
+| Runtime: `src/scripteer/{app,blocks,cli,config,console,doctor,proc,progress,style,tables,text}.py`, `__init__.py` | Existing 1.3.0 API, dependency-light, never imports manager/registry/generator/AI. |
 | Runtime IO: `safe_config.py`, `state.py`, `paths.py`, `regions.py`, `execution.py`, `_windows_job.py` | Opt-in strict/persistent/platform adapters; runtime-only imports. See [runtime IO](runtime-io.md). Composition roots inject these into upper-layer ports, except the narrow registry/manager IO edges below; no manager filesystem/sandbox semantics are implied. |
 | Composition root: `entrypoint.py`, `__main__.py` | Typed `main(argv: Sequence[str] \| None) -> int` injectable argument boundary. Help/version only. Do not put business logic here. |
-| Contracts: `scriptkit.contracts` (POK-617) | Versioned frozen records, strict codec, resource schemas/examples and injected ports; depends only on stdlib. See [contracts](contracts.md). |
-| Manager: `scriptkit.manager` (POK-621) | Per-tool transactions, stable launchers and rollback; inject `InstallationSource` / `EnvironmentBackend`. See [installation](installation.md). CLI orchestration remains POK-622. |
-| Registry: `scriptkit.registry` (POK-620) | Resolution, verification/cache and `RegistryArtifactSource` port adapter; no CLI or AI dependency. |
-| Generator: future `scriptkit.generator` (POK-623/624) | Deterministic spec-to-files logic, independent from manager and AI. |
-| Conformance: `scriptkit.conformance` (POK-625) | Static data/AST checks reuse contracts and generator ownership readers; opt-in reference fixtures use narrow output/command/execution adapters. Never imports manager, registry or AI. Installed rules/examples are provider-independent. |
-| AI: future `scriptkit.ai` (POK-626/627) | Optional proposal/provider adapters; calls generator contracts, never imported by runtime. |
+| Contracts: `scripteer.contracts` (POK-617) | Versioned frozen records, strict codec, resource schemas/examples and injected ports; depends only on stdlib. See [contracts](contracts.md). |
+| Manager: `scripteer.manager` (POK-621) | Per-tool transactions, stable launchers and rollback; inject `InstallationSource` / `EnvironmentBackend`. See [installation](installation.md). CLI orchestration remains POK-622. |
+| Registry: `scripteer.registry` (POK-620) | Resolution, verification/cache and `RegistryArtifactSource` port adapter; no CLI or AI dependency. |
+| Generator: future `scripteer.generator` (POK-623/624) | Deterministic spec-to-files logic, independent from manager and AI. |
+| Conformance: `scripteer.conformance` (POK-625) | Static data/AST checks reuse contracts and generator ownership readers; opt-in reference fixtures use narrow output/command/execution adapters. Never imports manager, registry or AI. Installed rules/examples are provider-independent. |
+| AI: future `scripteer.ai` (POK-626/627) | Optional proposal/provider adapters; calls generator contracts, never imported by runtime. |
 
 Runtime, CLI composition boundary and contracts exist today; concrete upper-layer
 adapters remain in their owning tickets. Existing typed result records
@@ -37,11 +37,11 @@ output, command and execution runtime adapters. Runtime must never import confor
 
 Other upper layers may import themselves and contracts, not one another. Cross-layer
 calls use injected ports; composition roots wire concrete implementations.
-The explicit exception is `registry → scriptkit.state`: registry stores/cache reuse
+The explicit exception is `registry → scripteer.state`: registry stores/cache reuse
 `LocalStateIO` as a default atomic persistence adapter and accept injected `StateIO`
 for testing/custom storage. No other runtime imports are allowed from registry.
-Manager additionally reuses only `scriptkit.state.StateConflict` and the narrow
-`scriptkit.execution` process-tree adapter, not runtime UI/config or providers.
+Manager additionally reuses only `scripteer.state.StateConflict` and the narrow
+`scripteer.execution` process-tree adapter, not runtime UI/config or providers.
 These edges are encoded in `ALLOWED` and negative fixtures in the architecture test.
 Registry owns `RegistryArtifactSource`, implementing `ArtifactSource` and
 `InstallationSource` (including current-pin authorization) for manager consumption; composition roots bind namespace/offline policy and
@@ -57,7 +57,7 @@ Run `python -m pytest tests/test_architecture.py` to check ownership boundaries.
 ## Template resources
 
 No templates or consumer-specific `template` scripts ship in this slice.
-POK-624 owns `scriptkit.generator.templates` as an importable resource package,
+POK-624 owns `scripteer.generator.templates` as an importable resource package,
 with immutable versioned directories and a manifest recording template/schema
 versions and checksums. Load text via `importlib.resources.files()`; use
 `as_file()` only for adapters requiring a temporary filesystem path. Never

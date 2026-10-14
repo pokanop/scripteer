@@ -1,7 +1,7 @@
 # Tool conformance and assistant resources (v1)
 
-`scriptkit validate PROJECT` is read-only. `scriptkit --json validate PROJECT`
-returns a v1 ScriptKit envelope containing a versioned report and sorted diagnostics
+`scripteer validate PROJECT` is read-only. `scripteer --json validate PROJECT`
+returns a v1 Scripteer envelope containing a versioned report and sorted diagnostics
 (code, project-relative path, line, message). Failure exits 1; cancellation exits 130.
 No project imports, build hooks, installers, plugins or formatters run.
 
@@ -10,7 +10,7 @@ metadata, scaffold_runtime.tool_main wiring, declared runtime imports and a JSON
 object config.example.json. Both scaffold layouts and user-owned extensions work.
 Handwritten tools can omit the ownership manifest; when present, all generated file
 hashes and the spec hash are checked. A narrow semantic exception permits added
-`project.dependencies` and `[tool.scriptkit.*]` tables in `pyproject.toml`: validation
+`project.dependencies` and `[tool.scripteer.*]` tables in `pyproject.toml`: validation
 reconstructs the recorded template baseline and verifies its hash before comparing
 all other fields, including the exact framework dependency pin, build-system,
 metadata, scripts and package discovery. An unreconstructable baseline fails closed
@@ -23,10 +23,11 @@ baseline temporarily, apply the reviewed generator plan, then reapply only the
 user dependency/settings additions to the new baseline and validate again. Never
 delete the manifest or discard user extensions to force an apply.
 
-This checks recorded ownership drift, not whether
-a manifest was honestly authored or whether the latest templates were used.
-Legacy generator-v1 tools should use template-upgrade to adopt doctor/config/output
-conventions. Custom runtime implementations are intentionally not auto-certified.
+This checks recorded ownership drift and supported template identity, not whether
+a manifest was honestly authored. Legacy v1/v2 manifests emit SKV013 with explicit
+`scripteer template-upgrade PROJECT --check` and `--apply` guidance. Inspect that
+migration before trying to repair individual dependency/import/runtime diagnostics;
+then re-validate the upgraded project. Custom runtime implementations are intentionally not auto-certified.
 
 | Code | Repair |
 |---|---|
@@ -42,14 +43,14 @@ conventions. Custom runtime implementations are intentionally not auto-certified
 | SKV010 | Replace print with returned data or OutputContext |
 | SKV011 | Wire the sanctioned doctor/config/output runtime |
 | SKV012 | Supply a non-secret JSON object config example |
-| SKV013 | Inspect generated drift and preview regeneration |
+| SKV013 | Inspect generated drift; for legacy templates, preview and apply template-upgrade, then re-validate |
 | SKV014 | Repair ownership manifest |
 | SKV015 | Align literal embedded launcher spec with tool.json |
 
 Import/distribution differences are explicit, never guessed from the host environment:
 
 ```toml
-[tool.scriptkit.conformance.imports]
+[tool.scripteer.conformance.imports]
 PIL = "Pillow"
 ```
 
@@ -66,7 +67,7 @@ separate review and tests. Filesystem races and hostile projects require OS isol
 
 ## Explicit runtime reference checks
 
-`scriptkit validate PROJECT --runtime-fixtures --allow-execution` additionally copies
+`scripteer validate PROJECT --runtime-fixtures --allow-execution` additionally copies
 the packaged example into a disposable directory and executes it with bounded output,
 timeout and process cleanup. Success, failure and cancellation envelopes are checked.
 This verifies installed reference interfaces, **not project behavior**. It never executes
@@ -76,12 +77,12 @@ and an appropriate disposable sandbox; do not use validation as an authorization
 
 ## Installed authoring guidance
 
-The wheel and sdist contain `scriptkit.conformance.resources`: `AGENTS.md`, `SKILL.md`,
+The wheel and sdist contain `scripteer.conformance.resources`: `AGENTS.md`, `SKILL.md`,
 and runnable `example.py`. Resource contract version is v1; no AI extras or provider
 integration are required. Read/copy them with `importlib.resources.files`, as shown in
 the skill. Use the rules in any assistant's standard instruction mechanism.
 
-Run the example with `python -m scriptkit.conformance.resources.example --json`.
+Run the example with `python -m scripteer.conformance.resources.example --json`.
 Omit `--json` for a table; use `--fail` or `--cancel` for failure/interruption. The recipe
 separates invoice business logic from OutputContext/command.run, renders TableData,
 and scopes progress cleanup. Scaffold handlers simply return data: do not nest run()

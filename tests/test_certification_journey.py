@@ -6,16 +6,16 @@ import os
 import subprocess
 import sys
 
-from scriptkit.ai import FakeProvider, apply, request, review
-from scriptkit.bootstrap import Manager
-from scriptkit.contracts.models import (
+from scripteer.ai import FakeProvider, apply, request, review
+from scripteer.bootstrap import Manager
+from scripteer.contracts.models import (
     CatalogRelease,
     DependencyLock,
     LockedPackage,
     ToolRelease,
     ToolSpec,
 )
-from scriptkit.registry import Registry, VerifiedCache
+from scripteer.registry import Registry, VerifiedCache
 from test_ai import HANDLER, proposal, selected
 from test_bootstrap import built_wheel  # noqa: F401 -- shared installed-release fixture
 from test_installer import Transport, artifact, fixture
@@ -32,9 +32,9 @@ def test_authored_tool_release_journey(tmp_path, built_wheel):  # noqa: F811
     spec_path = tmp_path / "spec.json"
     raw = built_wheel.read_bytes()
     Manager(root, download=lambda _: raw).install(
-        "https://fixture.example/framework.whl", artifact(built_wheel.name, raw).sha256, "1.5.0"
+        "https://fixture.example/framework.whl", artifact(built_wheel.name, raw).sha256, "1.6.0"
     )
-    launcher = root / "bin" / ("scriptkit.cmd" if os.name == "nt" else "scriptkit")
+    launcher = root / "bin" / ("scripteer.cmd" if os.name == "nt" else "scripteer")
 
     def cli(*args):
         completed = subprocess.run(
@@ -86,7 +86,7 @@ def test_authored_tool_release_journey(tmp_path, built_wheel):  # noqa: F811
         host_release.locks[0].platform,
         spec.python,
         "pip",
-        (LockedPackage("pokanop-scriptkit", "1.5.0", framework),),
+        (LockedPackage("scripteer", "1.6.0", framework),),
     )
     releases = tuple(
         ToolRelease(

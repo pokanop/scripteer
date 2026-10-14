@@ -1,7 +1,7 @@
 # Opt-in output contracts (v1)
 
 Import `OutputContext`, `OutputPolicy`, `Theme` and `TableData` from
-`scriptkit.output`; command boundaries live in `scriptkit.command`.
+`scripteer.output`; command boundaries live in `scripteer.command`.
 Existing root exports, signatures, shared legacy Rich consoles, `dispatch`,
 `parse_args` and visual defaults are unchanged. Migration is explicit: pass one
 context through your command/services (it implements `contracts.ports.Output`).
@@ -65,7 +65,7 @@ text is not a machine contract; do not parse stderr.
 exactly one envelope in machine mode. Emitting `result`, `table` or `doctor`
 inside that callback is rejected before writing, producing one failure envelope.
 Return `TableData.to_data()` for tables, or `context.doctor_data(sections)` for
-checks. `CommandResult(data, exit_code, error)` (from `scriptkit.output`) carries
+checks. `CommandResult(data, exit_code, error)` (from `scripteer.output`) carries
 structured data with a nonzero status; a plain integer return is result data.
 Standalone emitting APIs remain usable outside the boundary.
 

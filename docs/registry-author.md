@@ -17,7 +17,7 @@ independently verified Registry record.
    implicit index fallback. Native wheels must match the target interpreter and OS.
 3. Construct a `ToolRelease(tool, artifact, locks)` and a versioned `CatalogRelease`
    with your namespace. Examples and JSON schemas are bundled in
-   `scriptkit.contracts.resources`; see [contracts](contracts.md). Use canonical
+   `scripteer.contracts.resources`; see [contracts](contracts.md). Use canonical
    serialization (`record.canonical_json()`) before computing byte length/digest.
 4. Host catalog and artifacts at a direct, stable HTTPS origin such as
    `https://tools.example.org/releases/v1/`. Serve exactly the recorded bytes, no

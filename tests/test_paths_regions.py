@@ -1,8 +1,8 @@
 import pytest
 
-from scriptkit.paths import resolve_paths
-from scriptkit.regions import OwnedRegion, RegionReceipt
-from scriptkit.state import StateConflict
+from scripteer.paths import resolve_paths
+from scripteer.regions import OwnedRegion, RegionReceipt
+from scripteer.state import StateConflict
 
 
 @pytest.mark.parametrize("platform", ["linux", "darwin", "win32"])

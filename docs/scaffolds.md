@@ -3,7 +3,7 @@
 The public CLI offers `new-tool`, `add-command`, `template-upgrade`,
 `new-collection`, and `generate-installer`. No AI extras, API keys, template
 fetches, package installs or network calls occur during generation. Supply
-versioned JSON contracts (examples are bundled in `scriptkit.contracts.resources`).
+versioned JSON contracts (examples are bundled in `scripteer.contracts.resources`).
 For tool generation, adapt the bundled contract example's entrypoint to
 `example_tool.cli:main`: the generator requires `package.module:function`,
 while the general contract also permits single-module entrypoints.
@@ -17,11 +17,11 @@ envelope, including failures; authoring errors/drift/conflicts exit 1.
 
 ```sh
 mkdir my-tool
-scriptkit new-tool my-tool --spec tool-spec.json --layout standalone --apply
+scripteer new-tool my-tool --spec tool-spec.json --layout standalone --apply
 # Same package, plus an extension-less bin/<tool-name> repository launcher:
-scriptkit new-tool my-tool --spec tool-spec.json --layout repository --apply
-scriptkit add-command my-tool --spec command-spec.json --apply
-scriptkit template-upgrade my-tool --check
+scripteer new-tool my-tool --spec tool-spec.json --layout repository --apply
+scripteer add-command my-tool --spec command-spec.json --apply
+scripteer template-upgrade my-tool --check
 ```
 
 A command spec is a `CommandSpec`, for example:
@@ -41,7 +41,7 @@ wheel-installable; extension-less launchers are a source-checkout convenience.
 and defaults to standalone for a new project. Supply `--layout` to switch deliberately.
 
 **Release channel:** the runtime-only 1.3.0 wheel does not contain these APIs.
-Use the verified GitHub framework 1.5.0 wheel alongside generated wheels
+Use the verified Scripteer 1.6.0 wheel alongside generated wheels
 (`pip install --no-index FRAMEWORK_WHEEL TOOL_WHEEL` with actual filenames).
 See [onboarding](getting-started.md) for acquisition and provenance. Do not assume
 PyPI availability or point generated projects at the old runtime-only wheel.
@@ -63,9 +63,9 @@ must implement explicit user confirmation. `doctor`/`config` command names and
 
 ## Ownership and upgrades
 
-Template 2.0.0 is a composition over the immutable v1 spec renderer; golden hashes
+Template 3.0.0 is a composition over the immutable v1 spec renderer; golden hashes
 cover all resulting files in both layouts. Explicit `template-upgrade` supports
-only the named v1→v2/text-lf-1 migration (and v2 regeneration). No generic or
+only the named v1→v3 and v2→v3/text-lf-1 migrations (and v3 regeneration). No generic or
 executable migrations exist. The migration retains ownership of launchers,
 changes only hash-matching generated files, and leaves all handwritten modules,
 initializers, documentation, config examples, tests and CI intact. The existing
@@ -87,14 +87,14 @@ No registration, trust consent, download, or tool selection happens implicitly.
 
 ```sh
 mkdir collection
-scriptkit new-collection collection --catalog catalog-source.json \
+scripteer new-collection collection --catalog catalog-source.json \
   --origin https://tools.example.org/releases/ --expires-at 2000000000 \
   --bootstrap-sha256 "$BOOTSTRAP_SHA256" --wheel "$MANAGER_WHEEL" \
   --wheel-sha256 "$WHEEL_SHA256" --manager-version "$VERSION" --apply
-python collection/install.py --bootstrap verified-bootstrap.py --root "$HOME/.scriptkit"
+python collection/install.py --bootstrap verified-bootstrap.py --root "$HOME/.scripteer"
 # After publishing the catalog and artifacts:
-scriptkit registry add collection/registry.json --trust-origin https://tools.example.org/releases/
-scriptkit install collection-name/tool-name@1.0.0
+scripteer registry add collection/registry.json --trust-origin https://tools.example.org/releases/
+scripteer install collection-name/tool-name@1.0.0
 ```
 
 `generate-installer` takes the same manager pin flags in a separate directory,

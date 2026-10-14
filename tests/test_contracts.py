@@ -8,7 +8,7 @@ from pathlib import Path
 from jsonschema import Draft202012Validator
 import pytest
 
-from scriptkit.contracts import (
+from scripteer.contracts import (
     AIProposal,
     ArgumentSpec,
     Artifact,
@@ -321,7 +321,7 @@ def test_resource_path_confined():
 
 def test_offline_injected_ports(tmp_path):
     """Local artifact catalog and fake ports: no production credentials or services."""
-    from scriptkit.contracts import (
+    from scripteer.contracts import (
         ArtifactSource,
         Clock,
         FileSystem,

@@ -11,9 +11,9 @@ from pathlib import Path
 
 import pytest
 
-from scriptkit.manager import Installer, UvBackend
-from scriptkit.manager import storage
-from scriptkit.state import StateConflict
+from scripteer.manager import Installer, UvBackend
+from scripteer.manager import storage
+from scripteer.state import StateConflict
 from test_installer import fixture, invoke, update
 
 

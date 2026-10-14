@@ -10,11 +10,11 @@ from pathlib import Path
 
 import pytest
 
-from scriptkit.contracts.codec import ContractError
-from scriptkit.contracts.models import DependencyLock
-from scriptkit.manager import launchers, storage
-from scriptkit.manager import backend as adapters
-from scriptkit.state import StateConflict
+from scripteer.contracts.codec import ContractError
+from scripteer.contracts.models import DependencyLock
+from scripteer.manager import launchers, storage
+from scripteer.manager import backend as adapters
+from scripteer.state import StateConflict
 from test_installer import fixture, invoke, update
 
 
@@ -27,10 +27,10 @@ def test_hard_exit_recovery(tmp_path, phase):
     code = """
 import os, sys
 from pathlib import Path
-from scriptkit.contracts.catalog import ResolvedPlan
-from scriptkit.manager import Installer
-from scriptkit.registry import Resolver, RegistryStore, VerifiedCache
-from scriptkit.registry.source import RegistryArtifactSource
+from scripteer.contracts.catalog import ResolvedPlan
+from scripteer.manager import Installer
+from scripteer.registry import Resolver, RegistryStore, VerifiedCache
+from scripteer.registry.source import RegistryArtifactSource
 root = Path(sys.argv[1])
 source = RegistryArtifactSource(Resolver(RegistryStore(root / 'registries.json'), VerifiedCache(root / 'cache')), 'local', offline=True)
 def checkpoint(phase):

@@ -14,7 +14,7 @@ with tempfile.TemporaryDirectory() as directory:
     shutil.copytree(project / "src", root / "src")
     (root / "tests").mkdir()
     (root / "tests" / "test_failure.py").write_text("def test_failure():\n    assert False\n")
-    (root / "src" / "scriptkit" / "gate_probe.py").write_text(
+    (root / "src" / "scripteer" / "gate_probe.py").write_text(
         'value: int = "not an integer"\ndef untyped(value):\n    return value\n'
     )
     # No file-selection or strictness overrides: discovery and policy come from

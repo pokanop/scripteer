@@ -11,14 +11,14 @@ import zipfile
 
 import pytest
 
-from scriptkit import bootstrap as b
+from scripteer import bootstrap as b
 
 
-def wheel_bytes(version="1.3.0", name="pokanop-scriptkit", newline="\n"):
+def wheel_bytes(version="1.3.0", name="scripteer", newline="\n"):
     stream = io.BytesIO()
     with zipfile.ZipFile(stream, "w") as archive:
         archive.writestr(
-            f"pokanop_scriptkit-{version}.dist-info/METADATA",
+            f"scripteer-{version}.dist-info/METADATA",
             f"Metadata-Version: 2.1\nName: {name}\nVersion: {version}\n".replace("\n", newline),
         )
     return stream.getvalue()
@@ -234,8 +234,8 @@ def test_main_errors_and_path_file(tmp_path, monkeypatch, capsys):
 
 @pytest.fixture(scope="session")
 def built_wheel(tmp_path_factory):
-    if "SCRIPTKIT_TEST_WHEEL" in os.environ:
-        return Path(os.environ["SCRIPTKIT_TEST_WHEEL"])
+    if "SCRIPTEER_TEST_WHEEL" in os.environ:
+        return Path(os.environ["SCRIPTEER_TEST_WHEEL"])
     directory = tmp_path_factory.mktemp("manager-wheel")
     subprocess.run(
         [sys.executable, "-m", "build", "--wheel", "--outdir", str(directory)],
@@ -254,10 +254,10 @@ def test_real_manager_install_repair_and_tool(tmp_path, built_wheel):
     raw = built_wheel.read_bytes()
     service = b.Manager(root, download=lambda _: raw)
     first = service.install(
-        "https://example.org/pinned.whl", hashlib.sha256(raw).hexdigest(), "1.5.0"
+        "https://example.org/pinned.whl", hashlib.sha256(raw).hexdigest(), "1.6.0"
     )
     assert not (root / "tools").exists()
-    command = root / "bin" / ("scriptkit.cmd" if os.name == "nt" else "scriptkit")
+    command = root / "bin" / ("scripteer.cmd" if os.name == "nt" else "scripteer")
 
     def cli(*args):
         result = subprocess.run(
@@ -269,8 +269,8 @@ def test_real_manager_install_repair_and_tool(tmp_path, built_wheel):
     assert json.loads(cli("doctor").stdout)["data"]["root"] == str(root)
     if os.name == "nt":
         legacy_console = subprocess.run(
-            'cmd /d /s /c "chcp 437 >nul & call "%SCRIPTKIT_TEST_COMMAND%" --json doctor & chcp"',
-            env={**os.environ, "SCRIPTKIT_TEST_COMMAND": str(command)},
+            'cmd /d /s /c "chcp 437 >nul & call "%SCRIPTEER_TEST_COMMAND%" --json doctor & chcp"',
+            env={**os.environ, "SCRIPTEER_TEST_COMMAND": str(command)},
             capture_output=True,
             text=True,
             encoding="utf-8",
@@ -303,7 +303,7 @@ def test_real_manager_install_repair_and_tool(tmp_path, built_wheel):
         else:
             assert broken.stdout == ""
     assert subprocess.check_output([str(tool)], text=True).strip() == "working"
-    service.install("https://example.org/pinned.whl", hashlib.sha256(raw).hexdigest(), "1.5.0")
+    service.install("https://example.org/pinned.whl", hashlib.sha256(raw).hexdigest(), "1.6.0")
     assert json.loads(cli("doctor").stdout)["ok"]
     cli("uninstall", "hello")
     assert not tool.exists()
