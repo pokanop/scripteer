@@ -9,14 +9,13 @@ PATH values, shell profiles or execution policies are changed automatically.
 
 The current Scripteer candidate is **1.6.0**, not yet a public release. Commands
 below describe the new identity and require verified Scripteer release artifacts.
-The historical **ScriptKit** [`v1.5.0`](https://github.com/pokanop/scripteer/releases/tag/v1.5.0)
-remains available under its original filenames. Use its separate
-[historical onboarding commands](getting-started.md) and [release pins](release-pins.json),
-not the new filenames below, when installing the old version. See the
-[launch/migration guide](scripteer-launch.md) for the approval and release sequence. The historical runtime-only
-`runtime-1.3.0-7c17061` is **not** a manager release; do not use it here.
-GitHub release availability is not PyPI publication or human release approval.
-Never overwrite an existing release or reuse 1.3.0 for manager artifacts.
+The pre-rename GitHub releases were removed by owner decision (POK-696);
+installations made before that removal remain supported and locally
+rollback-capable through their receipts and the compatibility identifiers in
+the [launch/migration guide](scripteer-launch.md). See that guide for the approval
+and release sequence. GitHub release availability is not PyPI publication or
+human release approval. Never overwrite an existing release or reuse the
+runtime-only 1.3.0 lineage for manager artifacts.
 
 Obtain `RELEASE_URL` (the exact `/releases/download/<tag>` URL), `VERSION`,
 `BOOTSTRAP_SHA256`, and `WHEEL_SHA256` from the verified release. Verify provenance

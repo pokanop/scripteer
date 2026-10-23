@@ -8,16 +8,16 @@ an opt-in [deterministic project generator](docs/generator.md),
 Optional [BYOK AI authoring](docs/ai-proposals.md) uses explicit disclosure and
 reviewed proposals; manual generation works entirely offline.
 
-> **Scripteer** is the owner-approved name (POK-645, 2026-10-11), formerly
-> Pokanop ScriptKit. Distribution, Python import and CLI are all `scripteer`.
-> Version 1.6.0 is a release candidate, **not yet published to PyPI**. Follow the
-> [rename, migration and publication guide](docs/scripteer-launch.md). Historical
-> ScriptKit artifacts remain immutable; no affiliation with other similarly named projects is implied.
+> Distribution, Python import and CLI are all **`scripteer`** (owner-approved
+> name, POK-645, 2026-10-11). Version 1.6.0 is a release candidate; the PyPI
+> project is registered and the first publish follows the
+> [rename, migration and publication guide](docs/scripteer-launch.md). Pre-rename
+> compatibility identifiers are documented there; no affiliation with other
+> similarly named projects is implied.
 
 ## Try the release candidate
 
 Start with [candidate installation and migration](docs/scripteer-launch.md).
-[Historical v1.5.0 onboarding](docs/getting-started.md) remains available for rollback.
 Then see the
 [CLI/API reference](docs/cli-reference.md), [registry-author guide](docs/registry-author.md),
 [generator upgrades](docs/generator-upgrades.md), [migration/rollback](docs/migration.md)

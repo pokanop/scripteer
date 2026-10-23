@@ -31,18 +31,16 @@ def assets(tmp_path):
     }
 
 
-def check_pin_identity(pins, metadata):
-    assert Version(pins["version"]) <= Version(metadata["version"])
-    assert (
-        pins["wheel"]
-        == pins["distribution"].replace("-", "_") + "-" + pins["version"] + "-py3-none-any.whl"
-    )
-
-
-@pytest.mark.parametrize("version,name", [("1.6.0", "scripteer"), ("1.5.0", "renamed-fixture")])
-def test_historical_pins_survive_version_bump_and_rename(version, name):
-    pins = json.loads((ROOT / "docs/release-pins.json").read_text())
-    check_pin_identity(pins, {"version": version, "name": name})
+def test_release_metadata_and_document_links():
+    metadata = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
+    command, entrypoint = next(iter(metadata["scripts"].items()))
+    assert entrypoint == metadata["name"].replace("-", "_") + ".entrypoint:main"
+    assert Version("1.6.0") <= Version(metadata["version"])
+    for document in [ROOT / "README.md", ROOT / "CONTRIBUTING.md", *(ROOT / "docs").glob("*.md")]:
+        prose = re.sub(r"```.*?```|`[^`]*`", "", document.read_text(encoding="utf-8"), flags=re.S)
+        for target in re.findall(r"\]\(([^)\s]+)\)", prose):
+            if "://" not in target and not target.startswith("#"):
+                assert (document.parent / target.split("#")[0]).exists(), (document, target)
 
 
 def test_extract_historical_suite_identity_and_reject_links(tmp_path):
@@ -70,25 +68,6 @@ def test_extract_historical_suite_identity_and_reject_links(tmp_path):
         archive.addfile(member)
     with pytest.raises(ValueError, match="non-regular"):
         module.extract_suite(sdist, tmp_path / "bad-link", pins)
-
-
-def test_release_metadata_and_document_links():
-    metadata = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]
-    pins = json.loads((ROOT / "docs/release-pins.json").read_text())
-    check_pin_identity(pins, metadata)
-    assert pins["tag"] == "v" + pins["version"]
-    assert (
-        pins["wheel"]
-        == pins["distribution"].replace("-", "_") + "-" + pins["version"] + "-py3-none-any.whl"
-    )
-    assert (
-        pins["sdist"] == pins["distribution"].replace("-", "_") + "-" + pins["version"] + ".tar.gz"
-    )
-    for document in [ROOT / "README.md", ROOT / "CONTRIBUTING.md", *(ROOT / "docs").glob("*.md")]:
-        prose = re.sub(r"```.*?```|`[^`]*`", "", document.read_text(encoding="utf-8"), flags=re.S)
-        for target in re.findall(r"\]\(([^)\s]+)\)", prose):
-            if "://" not in target and not target.startswith("#"):
-                assert (document.parent / target.split("#")[0]).exists(), (document, target)
 
 
 def test_verified_manifest(tmp_path):

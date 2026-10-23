@@ -43,7 +43,7 @@ and defaults to standalone for a new project. Supply `--layout` to switch delibe
 **Release channel:** the runtime-only 1.3.0 wheel does not contain these APIs.
 Use the verified Scripteer 1.6.0 wheel alongside generated wheels
 (`pip install --no-index FRAMEWORK_WHEEL TOOL_WHEEL` with actual filenames).
-See [onboarding](getting-started.md) for acquisition and provenance. Do not assume
+See [bootstrap](bootstrap.md) for acquisition and provenance. Do not assume
 PyPI availability or point generated projects at the old runtime-only wheel.
 No existing release is overwritten.
 
