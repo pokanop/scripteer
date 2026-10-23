@@ -75,7 +75,7 @@ are excluded to avoid self-reference. Line numbers are revision-specific.
 | `examples/output.py` | 6, 7, 8 |
 | `install.ps1` | 8, 26 |
 | `install.sh` | 11, 30 |
-| `pyproject.toml` | 6, 27, 30, 31, 37, 38, 39, 47, 52, 64, 67 |
+| `pyproject.toml` | 6, 39, 42, 43, 44, 45, 51, 52, 53, 61, 66, 78, 81 |
 | `src/scripteer/__init__.py` | 1, 10 |
 | `src/scripteer/__main__.py` | 1 |
 | `src/scripteer/_windows_job.py` | path only |
