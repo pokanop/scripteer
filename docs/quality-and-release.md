@@ -93,8 +93,9 @@ is complete. PR CI validates pins but intentionally cannot exercise OIDC signing
 
 Sahel selected **Scripteer** on 2026-10-11. The repository is now
 `pokanop/scripteer`; current distribution/import/command are all `scripteer`.
-Naming approval is **not publication approval**. Historical v1.5.0 assets and
-signatures retain their original ScriptKit identities. See the concrete
+Naming approval is **not publication approval**. The pre-rename releases were
+removed by owner decision (POK-696); their attestations retain the original
+signer identity. See the concrete
 [owner setup and migration checklist](scripteer-launch.md).
 
 1. Recheck PyPI name eligibility immediately before publication. A 404 or pending

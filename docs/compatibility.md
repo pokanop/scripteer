@@ -1,10 +1,11 @@
 # Compatibility and versions
 
-Scripteer 1.6.0 is the renamed distribution formerly published as
-`pokanop-scriptkit` 1.5.0 on GitHub. The new distribution, import and CLI are
-`scripteer`; version lineage is retained. This is an explicit identity migration,
-not a drop-in index upgrade of the old distribution. No `scriptkit` import alias
-is shipped (that namespace also belongs to an unrelated PyPI project).
+Scripteer 1.6.0 continues the framework's version lineage from the
+previous-generation distribution (1.5.0, GitHub-only; its releases were removed
+by owner decision in POK-696). The distribution, import and CLI are `scripteer`.
+This is an explicit identity migration, not a drop-in index upgrade of the
+previous distribution. No legacy import alias is shipped (the previous
+namespace also belongs to an unrelated PyPI project).
 See [migration and release gates](scripteer-launch.md). Python 3.11 is the minimum.
 Rich is optional; requests is not required. PyPI publication is not yet implied.
 

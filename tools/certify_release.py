@@ -1,7 +1,10 @@
-"""Certify pinned GitHub artifacts and the original consumer outside both checkouts.
+"""Certify candidate artifacts built from the current checkout.
 
-Requires Python 3.11+, git, gh (authenticated for attestations) and build tooling.
-Never publishes, changes trust settings, or uses PyPI to acquire the framework.
+Requires Python 3.11+, git and build tooling. Never publishes, changes trust
+settings, or uses PyPI to acquire the framework. Pre-rename release
+verification was retired together with those releases (POK-696): this gate
+certifies the candidate against itself — strict artifact manifest, clean-room
+installed suite, and sdist/wheel package parity.
 """
 
 from __future__ import annotations
@@ -11,7 +14,6 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -58,9 +60,9 @@ def extract_suite(sdist, destination, pins):
     root = roots[0]
     metadata = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))["project"]
     if metadata["name"] != pins["distribution"] or metadata["version"] != pins["version"]:
-        raise ValueError("historical sdist identity mismatch")
+        raise ValueError("sdist identity mismatch")
     if metadata["scripts"].get(pins["command"]) != pins["module"] + ".entrypoint:main":
-        raise ValueError("historical sdist entrypoint mismatch")
+        raise ValueError("sdist entrypoint mismatch")
     return root
 
 
@@ -71,242 +73,110 @@ def package_payload(wheel, module):
         }
 
 
+SMOKE = (
+    "from pathlib import Path; import importlib,sys; "
+    "runtime = importlib.import_module(sys.argv[1]); "
+    "assert Path(runtime.__file__).is_relative_to(sys.prefix); "
+    "assert runtime.__version__ == sys.argv[2]; "
+    "contracts = importlib.import_module(sys.argv[1] + '.contracts'); "
+    "assert contracts.resource_text('ToolSpec.example.json')"
+)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
-    pins = json.loads((ROOT / "docs/release-pins.json").read_text())
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
-    candidate_module = next(iter(project["scripts"].values())).split(".")[0]
+    command, entrypoint = next(iter(project["scripts"].items()))
+    identity = {
+        "distribution": project["name"],
+        "version": project["version"],
+        "module": entrypoint.split(".")[0],
+        "command": command,
+    }
     env = {k: v for k, v in os.environ.items() if k not in ("PYTHONPATH", "PYTHONHOME")}
     env.update(PYTHONUTF8="1", PIP_DISABLE_PIP_VERSION_CHECK="1", NO_COLOR="1")
-    report = {"pins": pins, "steps": [], "complete": False}
+    report = {"identity": identity, "steps": [], "complete": False}
     try:
         with tempfile.TemporaryDirectory(prefix="scripteer-certification-") as temporary:
             work = Path(temporary)
-            assets = work / "assets"
-            run(
-                "gh",
-                "release",
-                "download",
-                pins["tag"],
-                "--repo",
-                pins["repository"],
-                "--dir",
-                assets,
-                cwd=work,
-                env=env,
+            dist = work / "dist"
+            run(sys.executable, "-m", "build", "--outdir", dist, ROOT, cwd=work, env=env)
+            wheel = next(dist.glob("*.whl"))
+            sdist = next(dist.glob("*.tar.gz"))
+            digests = {
+                path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+                for path in sorted(dist.iterdir())
+            }
+            (dist / "SHA256SUMS").write_text(
+                "".join(f"{digest}  {name}\n" for name, digest in digests.items()),
+                encoding="utf-8",
             )
-            verify_assets(assets, pins)
-            for name in pins["assets"]:
-                run(
-                    "gh",
-                    "attestation",
-                    "verify",
-                    assets / name,
-                    "--repo",
-                    pins["repository"],
-                    "--signer-workflow",
-                    pins["repository"] + "/.github/workflows/release.yml",
-                    "--source-digest",
-                    pins["commit"],
-                    "--signer-digest",
-                    pins["commit"],
-                    "--source-ref",
-                    "refs/tags/" + pins["tag"],
-                    "--deny-self-hosted-runners",
-                    cwd=work,
-                    env=env,
-                )
-            report["steps"].append("all seven assets: hashes, exact manifest, pinned attestations")
-            suite = extract_suite(assets / pins["sdist"], work / "historical-suite", pins)
-            report["suite_source"] = pins["sdist"]
-            wheel = assets / pins["wheel"]
-            manager_root = work / "manager café"
-            bootstrap = [
-                sys.executable,
-                "-I",
-                assets / "bootstrap.py",
-                "--root",
-                manager_root,
-                "--wheel",
-                "https://github.com/"
-                + pins["repository"]
-                + "/releases/download/"
-                + pins["tag"]
-                + "/"
-                + pins["wheel"],
-                "--sha256",
-                pins["assets"][pins["wheel"]],
-                "--version",
-                pins["version"],
-            ]
-            run(*bootstrap, cwd=work, env=env)
-            launcher = (
-                manager_root
-                / "bin"
-                / (pins["command"] + ".cmd" if os.name == "nt" else pins["command"])
-            )
-            run(launcher, "--json", "doctor", cwd=work, env=env)
-            run(*bootstrap, cwd=work, env=env)
-            run(launcher, "self-rollback", cwd=work, env=env)
+            digests["SHA256SUMS"] = hashlib.sha256((dist / "SHA256SUMS").read_bytes()).hexdigest()
+            verify_assets(dist, {"assets": digests})
+            run(sys.executable, "-m", "twine", "check", "--strict", sdist, wheel, cwd=work, env=env)
             report["steps"].append(
-                "documented public-HTTPS bootstrap twice, doctor and manager rollback"
+                "candidate sdist+wheel: exact SHA256SUMS manifest, twine --strict"
             )
+            suite = extract_suite(sdist, work / "candidate-suite", identity)
+            report["suite_source"] = sdist.name
             run(
                 sys.executable,
-                ROOT / "tools/check_artifact.py",
+                ROOT / "tools" / "check_artifact.py",
                 wheel,
-                "--suite-root",
-                suite,
                 "--results",
                 output / "framework.xml",
                 cwd=ROOT,
                 env=env,
             )
-            report["steps"].append("installed release wheel: full suite outside checkout")
-            candidate = work / "candidate-dist"
+            run(
+                sys.executable,
+                ROOT / "tools" / "check_artifact.py",
+                wheel,
+                "--rich",
+                cwd=ROOT,
+                env=env,
+            )
+            report["steps"].append(
+                "installed candidate wheel: full suite outside checkout (bare and Rich)"
+            )
+            rebuilt = work / "rebuilt"
             run(
                 sys.executable,
                 "-m",
                 "build",
                 "--wheel",
                 "--outdir",
-                candidate,
-                ROOT,
-                cwd=work,
-                env=env,
-            )
-            candidate_env = work / "candidate-env"
-            venv.EnvBuilder(with_pip=True).create(candidate_env)
-            candidate_python = candidate_env / (
-                "Scripts/python.exe" if os.name == "nt" else "bin/python"
-            )
-            run(
-                candidate_python,
-                "-m",
-                "pip",
-                "install",
-                next(candidate.glob("*.whl")),
-                "pytest==9.1.1",
-                cwd=work,
-                env=env,
-            )
-            run(
-                candidate_python,
-                "-I",
-                "-X",
-                "utf8",
-                ROOT / "tools/check_rename.py",
-                manager_root,
-                next(candidate.glob("*.whl")),
-                cwd=work,
-                env=env,
-            )
-            report["steps"].append(
-                "real legacy manager rename, rollback and forward repair; state/wrapper preserved"
-            )
-            baseline_env = work / "baseline-env"
-            venv.EnvBuilder(with_pip=True).create(baseline_env)
-            baseline_python = baseline_env / (
-                "Scripts/python.exe" if os.name == "nt" else "bin/python"
-            )
-            run(baseline_python, "-m", "pip", "install", wheel, "pytest==9.1.1", cwd=work, env=env)
-            shutil.copy(ROOT / "tools/benchmark.py", work / "benchmark.py")
-            run(
-                baseline_python,
-                "-I",
-                work / "benchmark.py",
-                output / "candidate-benchmark.json",
-                "--peer-python",
-                candidate_python,
-                "--package",
-                pins["module"],
-                "--tests",
-                suite / "tests",
-                "--peer-package",
-                candidate_module,
-                "--peer-tests",
-                ROOT / "tests",
-                cwd=work,
-                env=env,
-            )
-            report["steps"].append(
-                "candidate performance compared against verified release on same runner"
-            )
-            rebuilt = work / "rebuilt"
-            run(
-                sys.executable,
-                "-m",
-                "pip",
-                "wheel",
-                "--no-deps",
-                "--wheel-dir",
                 rebuilt,
-                assets / pins["sdist"],
+                suite,
                 cwd=work,
                 env=env,
             )
             rebuilt_wheel = next(rebuilt.glob("*.whl"))
-            if package_payload(rebuilt_wheel, pins["module"]) != package_payload(
-                wheel, pins["module"]
+            if package_payload(rebuilt_wheel, identity["module"]) != package_payload(
+                wheel, identity["module"]
             ):
                 raise ValueError("sdist payload drift")
             clean = work / "sdist-env"
             venv.EnvBuilder(with_pip=True).create(clean)
             python = clean / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
             run(python, "-m", "pip", "install", "--no-index", rebuilt_wheel, cwd=work, env=env)
-            run(python, "-I", "-m", pins["module"], "--help", cwd=work, env=env)
+            run(python, "-I", "-m", identity["module"], "--help", cwd=work, env=env)
             run(
                 python,
                 "-I",
                 "-c",
-                "from pathlib import Path; import importlib,sys; "
-                f"runtime = importlib.import_module({pins['module']!r}); "
-                "assert Path(runtime.__file__).is_relative_to(sys.prefix); "
-                f"assert runtime.__version__ == {pins['version']!r}; "
-                f"contracts = importlib.import_module({pins['module'] + '.contracts'!r}); "
-                "assert contracts.resource_text('ToolSpec.example.json')",
+                SMOKE,
+                identity["module"],
+                identity["version"],
                 cwd=work,
                 env=env,
             )
             report["steps"].append(
-                "sdist rebuilt/installed outside checkout; all package resources match wheel"
-            )
-            consumer = work / "scripts"
-            run("git", "clone", "https://github.com/pokanop/scripts", consumer, cwd=work, env=env)
-            run("git", "checkout", "--detach", pins["scripts_commit"], cwd=consumer, env=env)
-            run(
-                python,
-                "-m",
-                "pip",
-                "install",
-                "pytest==9.1.1",
-                "build==1.6.1",
-                "requests==2.32.5",
-                "rich==13.9.4",
-                cwd=work,
-                env=env,
-            )
-            run(
-                python,
-                "-m",
-                "pytest",
-                "-q",
-                "tests/test_manager_migration.py",
-                "tests/test_manager_legacy.py",
-                "tests/test_manager_recovery.py",
-                "tests/test_manager_review.py",
-                "--junitxml=" + str(output / "consumer.xml"),
-                cwd=consumer,
-                env=env,
-            )
-            run(python, "tests/rehearse_generated_tool.py", cwd=consumer, env=env)
-            run(python, "tests/rehearse_runtime_migration.py", cwd=consumer, env=env)
-            report["steps"].append(
-                "pinned consumer: migration/faults/rollback, generated registration and real legacy rehearsal"
+                "sdist rebuilt/installed outside checkout offline; all package resources match wheel"
             )
             report["complete"] = True
     finally:

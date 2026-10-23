@@ -73,11 +73,12 @@ tool environments are moved, copied or deleted during the rename.
   would let old and new processes bypass each other's serialization. These are
   compatibility protocol identifiers, not stale product branding.
 
-Keep the verified old bootstrap/wheel and its hashes for emergency rollback.
-[Historical onboarding](getting-started.md) and `docs/release-pins.json` retain the
-original artifact names and signer repository. GitHub redirects old repository
-URLs, but attestations must still be checked against the original signing identity.
-Do not create a new repository at the old path, which would break those redirects.
+Keep the verified old bootstrap/wheel and its hashes for emergency rollback if you
+retained them locally; the pre-rename GitHub releases themselves were removed by
+owner decision (POK-696), and the historical onboarding and release pins were
+removed with them. Attestations for the removed assets retain their original
+signer identity. Do not create a new repository at the old path: GitHub redirects
+from it must keep working.
 
 ## Generated projects
 
@@ -100,26 +101,26 @@ user extended a generated pyproject, reconcile the conflict manually using the
 preview rather than force overwrite. Pending legacy AI approvals must be rebuilt
 against the new hashes; AI authoring requires an upgraded v3 project.
 
-## Scripts collection and immutable release pins
+## Scripts collection consumer update
 
-`pokanop/scripts` currently consumes the independently verified historical
-`pokanop-scriptkit` wheel. Keep that consumer functional until a verified Scripteer
-release exists. The framework's preserved historical consumer inventory describes
+`pokanop/scripts` consumes the independently verified pre-rename wheel it already
+pinned. Keep that consumer functional until a verified Scripteer release exists.
+The framework's preserved historical consumer inventory describes
 all imports, lock/bootstrap metadata, docs and tests requiring migration.
 
 Sequence (no invented release URLs/hashes):
 
 1. Review this candidate independently and verify current-head CI on all supported
-   platforms, including installed wheel/sdist, old-to-new bootstrap/rollback and
+   platforms, including installed wheel/sdist, bootstrap/rollback and
    generated-project upgrade evidence. Get human merge/release approval.
 2. Publish/sign verified Scripteer 1.6.0 artifacts from the approved main commit.
 3. In the coordinated consumer update, switch imports and runtime distribution to
    `scripteer`, advance its compatible range and exact wheel URL/SHA-256 together,
    update bootstrap/catalog/docs/fixtures, and rehearse legacy migration, generated
    tool registration and rollback. Do not merge a consumer with an unavailable pin.
-4. Advance the framework's entire release-pin record and compatible consumer
-   revision after reviewing that release's provenance. Historical signatures and
-   hashes are not mechanically renamed. Re-run certification.
+4. Review that release's provenance, advance the consumer revision to it, and
+   re-run certification with consumer rehearsal restored. Historical signatures and
+   hashes are not mechanically renamed.
 
 Thus the candidate PR is not a claim that publication or the consumer-pin phase
 has finished. Existing immutable release hashes and tests remain real inputs.
@@ -128,15 +129,17 @@ has finished. Existing immutable release hashes and tests remain real inputs.
 
 1. Sign into PyPI, verify your email and enable 2FA. Recheck the selected project's
    eligibility. An HTTP 404 does not guarantee that PyPI will permit the upload.
-2. In **Publishing → Add a new pending publisher**, choose GitHub:
+2. In **Publishing**, add the GitHub OpenID Connect publisher (a pending
+   publisher while the project page is still empty) with:
    - PyPI project: **scripteer**
    - GitHub owner: **pokanop**
    - Repository: **scripteer**
    - Workflow filename: **release.yml** (not a path)
    - Environment: **pypi**
-3. This is not a name reservation; the first successful authorized upload creates
-   the project. Do not upload an empty placeholder. No long-lived PyPI API token
-   is needed. TestPyPI, if wanted, requires its own separate publisher.
+3. The PyPI project has been registered by the owner (2026-10-23); the first
+   successful authorized upload publishes 1.6.0. Do not upload an empty
+   placeholder. No long-lived PyPI API token is needed. TestPyPI, if wanted,
+   requires its own separate publisher.
 4. Retain the GitHub `pypi` environment's independent approval, self-review
    prevention, admin-bypass prohibition and `v*` tag restriction. The sole reviewer
    is currently Sahel's shared GitHub identity; a run triggered by that identity
