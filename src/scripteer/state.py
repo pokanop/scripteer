@@ -46,7 +46,7 @@ class LocalStateIO:
     @contextmanager
     def _locked(self, path: Path, expected: bytes | None) -> Iterator[None]:
         path.parent.mkdir(parents=True, exist_ok=True)
-        lock = path.with_name(path.name + ".scriptkit-lock")
+        lock = path.with_name(path.name + ".scripteer-lock")
         try:
             fd = os.open(lock, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
         except FileExistsError:

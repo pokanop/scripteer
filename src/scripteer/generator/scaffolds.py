@@ -12,7 +12,7 @@ from scripteer.contracts.models import CatalogRelease
 from .render import Rendered, canonical, render, sha256
 
 VERSION = "3.0.0"
-INSTALLER_ATTRIBUTES = b"/*.json text eol=lf\n/install.py text eol=lf\n/.scriptkit-generator/manifest.json text eol=lf\n/.scriptkit-generator/.gitignore text eol=lf\n"
+INSTALLER_ATTRIBUTES = b"/*.json text eol=lf\n/install.py text eol=lf\n/.scripteer-generator/manifest.json text eol=lf\n/.scripteer-generator/.gitignore text eol=lf\n"
 CONTROL_IGNORE = b"/*\n!/.gitignore\n!/manifest.json\n"
 
 
@@ -53,9 +53,7 @@ def tool(spec: ToolSpec, layout: str = "standalone") -> Rendered:
             'sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))\n'
             f"from {module} import {function}\nraise SystemExit({function}())\n"
         ).encode()
-    user = {
-        path: content.replace(b"ScriptKit", b"Scripteer") for path, content in base.user.items()
-    }
+    user = dict(base.user)
     user[".gitattributes"] += (
         b"/scaffold.json text eol=lf\n/requirements.txt text eol=lf\n/bin/* text eol=lf\n"
     )
@@ -156,7 +154,7 @@ def collection(
         1, catalog.name, origin, Artifact("catalog.json", sha256(raw), len(raw)), expires_at
     )
     generated = {
-        ".scriptkit-generator/.gitignore": CONTROL_IGNORE,
+        ".scripteer-generator/.gitignore": CONTROL_IGNORE,
         "catalog.json": raw,
         "registry.json": registry.canonical_json().encode() + b"\n",
         **pins,

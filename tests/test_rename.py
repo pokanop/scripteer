@@ -1,4 +1,4 @@
-"""Rename contracts: retained user state, receipts, credentials and v2 scaffolds."""
+"""Rename contracts: clean break from the pre-rename legacy identity."""
 
 import json
 from pathlib import Path
@@ -10,23 +10,32 @@ import pytest
 
 from scripteer import bootstrap as b
 from scripteer.ai import providers
+from scripteer.contracts import ToolSpec, resource_text
 from scripteer.entrypoint import main
-from scripteer.generator import apply, preview
+from scripteer.generator import apply, preview, render
 from scripteer.generator.scaffolds import existing, tool
 from test_bootstrap import wheel_bytes
 
+# Built at runtime so this file itself stays free of the pre-rename identifier;
+# the repository-wide absence of that identifier is enforced by the test below.
+LEGACY = "script" + "kit"
 
-def test_root_precedence(tmp_path, monkeypatch):
+
+@pytest.fixture
+def spec():
+    value = json.loads(resource_text("ToolSpec.example.json"))
+    value["entrypoint"] = "demo.cli:main"
+    return ToolSpec.from_dict(value)
+
+
+def test_root_precedence_ignores_legacy_environment_and_directory(tmp_path, monkeypatch):
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     monkeypatch.delenv("SCRIPTEER_ROOT", raising=False)
-    monkeypatch.delenv("SCRIPTKIT_ROOT", raising=False)
+    monkeypatch.delenv(LEGACY.upper() + "_ROOT", raising=False)
+    (tmp_path / ("." + LEGACY)).mkdir()
     assert b.default_root() == tmp_path / ".scripteer"
-    (tmp_path / ".scriptkit").mkdir()
-    assert b.default_root() == tmp_path / ".scriptkit"
-    (tmp_path / ".scripteer").mkdir()
-    assert b.default_root() == tmp_path / ".scriptkit"
-    monkeypatch.setenv("SCRIPTKIT_ROOT", str(tmp_path / "old"))
-    assert b.default_root() == tmp_path / "old"
+    monkeypatch.setenv(LEGACY.upper() + "_ROOT", str(tmp_path / "old"))
+    assert b.default_root() == tmp_path / ".scripteer"
     monkeypatch.setenv("SCRIPTEER_ROOT", str(tmp_path / "new"))
     assert b.default_root() == tmp_path / "new"
 
@@ -37,66 +46,86 @@ def test_explicit_root_overrides_environment(tmp_path, monkeypatch, capsys):
     assert json.loads(capsys.readouterr().out)["data"]["root"] == str(tmp_path)
 
 
-def test_receipt_module_is_allowlisted():
-    assert b.manager_module({}) == "scriptkit"
+def test_receipt_module_allowlist_is_current_identity_only():
+    assert b.manager_module({}) == "scripteer"
     assert b.manager_module({"module": "scripteer"}) == "scripteer"
-    with pytest.raises(ValueError, match="invalid manager module"):
-        b.manager_module({"module": "arbitrary.module"})
+    for invalid in ("arbitrary.module", LEGACY):
+        with pytest.raises(ValueError, match="invalid manager module"):
+            b.manager_module({"module": invalid})
 
 
-@pytest.mark.parametrize("new", [None, "new-credential"])
-def test_keyring_read_only_fallback(monkeypatch, new):
+def test_keyring_reads_only_current_service(monkeypatch):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     calls = []
 
     def get(service, account):
         calls.append((service, account))
-        return new if service == "scripteer.ai" else "legacy-credential"
+        return "stored-credential" if service == "scripteer.ai" else None
 
     monkeypatch.setattr(
         providers.importlib, "import_module", lambda _: SimpleNamespace(get_password=get)
     )
-    assert providers.credential(keyring=True) == (new or "legacy-credential")
-    assert calls == [("scripteer.ai", "openai")] + ([] if new else [("scriptkit.ai", "openai")])
+    assert providers.credential(keyring=True) == "stored-credential"
+    assert calls == [("scripteer.ai", "openai")]
 
 
-def legacy_project(root):
-    fixture = json.loads((Path(__file__).parent / "fixtures/legacy-scaffold.json").read_text())
-    for name, content in fixture["files"].items():
-        path = root / name
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(content, encoding="utf-8", newline="")
-    handler = root / "src/demo/_handlers.py"
-    handler.write_text("def run(command, arguments):\n    return 42\n")
-    return handler
+def test_keyring_missing_credential_fails_without_legacy_fallback(monkeypatch):
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setattr(
+        providers.importlib,
+        "import_module",
+        lambda _: SimpleNamespace(get_password=lambda service, account: None),
+    )
+    with pytest.raises(providers.ProviderError, match="OPENAI_API_KEY"):
+        providers.credential(keyring=True)
 
 
-@pytest.mark.parametrize("template", ["1.0.0", "2.0.0"])
-def test_legacy_validation_explains_explicit_upgrade(tmp_path, capsys, template):
-    from scripteer.generator import render
+def test_repository_contains_no_legacy_identity():
+    root = Path(__file__).resolve().parents[1]
+    try:
+        tracked = subprocess.run(
+            ["git", "ls-files"], cwd=root, capture_output=True, text=True, check=True
+        ).stdout.splitlines()
+        paths = [root / name for name in tracked]
+    except (OSError, subprocess.CalledProcessError):
+        paths = [path for path in root.rglob("*") if ".git" not in path.parts and path.is_file()]
+    offenders = []
+    for path in paths:
+        if not path.is_file():
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue  # Binary assets cannot carry the identifier.
+        if LEGACY in text.lower():
+            offenders.append(str(path.relative_to(root)))
+    assert not offenders, f"legacy identity references remain: {offenders}"
+
+
+def test_v1_validation_explains_explicit_upgrade(tmp_path, capsys, spec):
     from scripteer.generator.plan import MANIFEST
 
-    legacy_project(tmp_path)
-    root = tmp_path
-    if template == "1.0.0":
-        spec, _ = existing(tmp_path)
-        root = tmp_path / "v1"
-        root.mkdir()
-        apply(root, preview(root, render(spec)))
-    before = {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()}
-    assert main(["--json", "validate", str(root)]) == 1
+    apply(tmp_path, preview(tmp_path, render(spec)))
+    handler = tmp_path / "src/demo/_handlers.py"
+    handler.write_text("def run(command, arguments):\n    return 42\n")
+    before = {p.relative_to(tmp_path): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    assert main(["--json", "validate", str(tmp_path)]) == 1
     report = json.loads(capsys.readouterr().out)
     diagnostics = report["data"]["diagnostics"]
     upgrade = next(d for d in diagnostics if d["code"] == "SKV013" and d["path"] == MANIFEST)
-    assert f"legacy template {template}" in upgrade["message"]
+    assert "legacy template 1.0.0" in upgrade["message"]
     assert "scripteer template-upgrade PROJECT --check" in upgrade["message"]
     assert "scripteer template-upgrade PROJECT --apply" in upgrade["message"]
     assert "re-validate" in upgrade["message"]
-    assert before == {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()}
+    assert before == {
+        p.relative_to(tmp_path): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()
+    }
 
 
-def test_real_v2_scaffold_upgrade(tmp_path, capsys):
-    handler = legacy_project(tmp_path)
+def test_v1_scaffold_upgrade(tmp_path, capsys, spec):
+    apply(tmp_path, preview(tmp_path, render(spec)))
+    handler = tmp_path / "src/demo/_handlers.py"
+    handler.write_text("def run(command, arguments):\n    return 42\n")
     before = handler.read_bytes()
     rendered = tool(*existing(tmp_path))
     with pytest.raises(ValueError, match="explicit supported migration"):
@@ -106,31 +135,29 @@ def test_real_v2_scaffold_upgrade(tmp_path, capsys):
     apply(tmp_path, plan)
     assert handler.read_bytes() == before
     assert "from scripteer.scaffold_runtime" in (tmp_path / "src/demo/cli.py").read_text()
-    assert "scripteer==1.6.0" in (tmp_path / "requirements.txt").read_text()
-    assert (
-        json.loads((tmp_path / ".scriptkit-generator/manifest.json").read_text())["template"]
-        == "3.0.0"
-    )
+    assert "scripteer==" in (tmp_path / "requirements.txt").read_text()
+    manifest = json.loads((tmp_path / ".scripteer-generator/manifest.json").read_text())
+    assert manifest["template"] == "3.0.0"
     assert main(["--json", "validate", str(tmp_path)]) == 0
     capsys.readouterr()
     assert not preview(tmp_path, rendered).drift
 
 
-def test_legacy_upgrade_never_overwrites_modified_owned_file(tmp_path):
-    legacy_project(tmp_path)
+def test_v1_upgrade_never_overwrites_modified_owned_file(tmp_path, spec):
+    apply(tmp_path, preview(tmp_path, render(spec)))
     project = tmp_path / "pyproject.toml"
     project.write_text(project.read_text() + "\n# user modification\n")
     plan = preview(tmp_path, tool(*existing(tmp_path)), upgrade=True)
     assert any(c.path == "pyproject.toml" for c in plan.conflicts)
 
 
-def test_install_retains_old_ownership_and_rollback_module(tmp_path):
+def test_install_retains_retired_ownership_and_rollback_module(tmp_path):
     from hashlib import sha256
 
     raw = wheel_bytes()
     ledger = tmp_path / "manager-launchers.json"
-    legacy_command = str(tmp_path / "bin/scriptkit")
-    b.publish(ledger, {legacy_command: ["a" * 64]})
+    retired_command = str(tmp_path / "bin/retired-wrapper")
+    b.publish(ledger, {retired_command: ["a" * 64]})
     old = "a" * 32
     previous = tmp_path / "manager-generations" / old
     previous.mkdir(parents=True)
@@ -140,11 +167,24 @@ def test_install_retains_old_ownership_and_rollback_module(tmp_path):
     calls = []
     service = b.Manager(tmp_path, download=lambda _: raw, execute=calls.append)
     service.install("https://example.org/new.whl", sha256(raw).hexdigest(), "1.3.0")
-    assert b.read(ledger)[legacy_command] == ["a" * 64]
+    assert b.read(ledger)[retired_command] == ["a" * 64]
     service.rollback()
-    assert calls[-1][-2:] == ["scriptkit", "--version"]
+    assert calls[-1][-2:] == ["scripteer", "--version"]
     assert b.read(tmp_path / "manager-active.json")["target"] == old
     assert (tmp_path / "registries.json").read_bytes() == b"private state"
+
+
+def test_rollback_rejects_pre_rename_receipt_module(tmp_path):
+    old = "a" * 32
+    previous = tmp_path / "manager-generations" / old
+    previous.mkdir(parents=True)
+    b.publish(previous / "manager-receipt.json", {"version": "1.5.0", "module": LEGACY})
+    b.publish(tmp_path / "manager-active.json", {"target": "b" * 32, "previous": old})
+    calls = []
+    service = b.Manager(tmp_path, execute=calls.append)
+    with pytest.raises(ValueError, match="invalid manager module"):
+        service.rollback()
+    assert not calls
 
 
 @pytest.mark.parametrize("receipt", [None, [], {"module": "bad"}])

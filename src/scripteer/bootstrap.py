@@ -29,17 +29,16 @@ import zipfile
 
 
 def default_root() -> Path:
-    """Reuse legacy state in place; never move user data as a naming side effect."""
-    override = os.environ.get("SCRIPTEER_ROOT") or os.environ.get("SCRIPTKIT_ROOT")
+    """Explicit override or the Scripteer home; no legacy-name fallbacks."""
+    override = os.environ.get("SCRIPTEER_ROOT")
     if override:
         return Path(override)
-    legacy = Path.home() / ".scriptkit"
-    return legacy if legacy.exists() else Path.home() / ".scripteer"
+    return Path.home() / ".scripteer"
 
 
 def manager_module(receipt: dict[str, Any]) -> str:
-    module = receipt.get("module", "scriptkit")
-    if module not in ("scriptkit", "scripteer"):
+    module = receipt.get("module", "scripteer")
+    if module != "scripteer":
         raise ValueError("invalid manager module in receipt")
     return str(module)
 
@@ -199,11 +198,11 @@ def launcher_files(root: Path) -> dict[Path, bytes]:
         "if not python.is_file(): fail('manager generation ' + target + ' is missing or incomplete')\n"
         "try:\n"
         "    receipt = json.loads((base / 'manager-receipt.json').read_text(encoding='utf-8'))\n"
-        "    module = receipt.get('module', 'scriptkit')\n"
+        "    module = receipt.get('module', 'scripteer')\n"
         "except (OSError, ValueError, AttributeError): fail('invalid manager receipt')\n"
-        "if module not in ('scriptkit', 'scripteer'): fail('invalid manager module')\n"
+        "if module != 'scripteer': fail('invalid manager module')\n"
         "argv = [str(python), '-I', '-X', 'utf8', '-m', module, *sys.argv[1:]]\n"
-        "os.environ['SCRIPTEER_ROOT'] = os.environ['SCRIPTKIT_ROOT'] = str(root)\n"
+        "os.environ['SCRIPTEER_ROOT'] = str(root)\n"
         "try:\n"
         "    if os.name != 'nt': os.execv(str(python), argv)\n"
         "    sys.exit(subprocess.call(argv))\n"

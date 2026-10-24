@@ -83,7 +83,7 @@ def test_region_new_file_empty_body_and_foreign_substrings(tmp_path):
     region = OwnedRegion("tool")
     receipt = region.apply(path, "")
     assert region.clear(path, receipt=receipt)
-    foreign = b"echo '# >>> scriptkit:tool >>>'\r\nuser\r\n"
+    foreign = b"echo '# >>> scripteer:tool >>>'\r\nuser\r\n"
     path.write_bytes(foreign)
     receipt = region.apply(path, "body")
     # Foreign changes outside the region survive uninstall.

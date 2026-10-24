@@ -65,7 +65,7 @@ must implement explicit user confirmation. `doctor`/`config` command names and
 
 Template 3.0.0 is a composition over the immutable v1 spec renderer; golden hashes
 cover all resulting files in both layouts. Explicit `template-upgrade` supports
-only the named v1→v3 and v2→v3/text-lf-1 migrations (and v3 regeneration). No generic or
+only the named v1→v3/text-lf-1 migration (and v3 regeneration). No generic or
 executable migrations exist. The migration retains ownership of launchers,
 changes only hash-matching generated files, and leaves all handwritten modules,
 initializers, documentation, config examples, tests and CI intact. The existing

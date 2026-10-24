@@ -24,7 +24,7 @@ user dependency/settings additions to the new baseline and validate again. Never
 delete the manifest or discard user extensions to force an apply.
 
 This checks recorded ownership drift and supported template identity, not whether
-a manifest was honestly authored. Legacy v1/v2 manifests emit SKV013 with explicit
+a manifest was honestly authored. Legacy v1 manifests emit SKV013 with explicit
 `scripteer template-upgrade PROJECT --check` and `--apply` guidance. Inspect that
 migration before trying to repair individual dependency/import/runtime diagnostics;
 then re-validate the upgraded project. Custom runtime implementations are intentionally not auto-certified.

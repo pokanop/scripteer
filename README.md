@@ -11,8 +11,8 @@ reviewed proposals; manual generation works entirely offline.
 > Distribution, Python import and CLI are all **`scripteer`** (owner-approved
 > name, POK-645, 2026-10-11). Version 1.6.0 is a release candidate; the PyPI
 > project is registered and the first publish follows the
-> [rename, migration and publication guide](docs/scripteer-launch.md). Pre-rename
-> compatibility identifiers are documented there; no affiliation with other
+> [identity, migration and publication guide](docs/scripteer-launch.md). The
+> pre-rename clean break is documented there; no affiliation with other
 > similarly named projects is implied.
 
 ## Try the release candidate
@@ -22,8 +22,8 @@ Then see the
 [CLI/API reference](docs/cli-reference.md), [registry-author guide](docs/registry-author.md),
 [generator upgrades](docs/generator-upgrades.md), [migration/rollback](docs/migration.md)
 and [support matrix](docs/support.md). [Certification](docs/certification.md)
-records artifact/platform/performance evidence; the [rename inventory](docs/rename-inventory.md)
-records the selected identity and intentional historical/compatibility references.
+records artifact/platform/performance evidence; [identity and migration](docs/scripteer-launch.md)
+records the selected identity and the pre-rename clean break.
 
 ## Build and try
 
