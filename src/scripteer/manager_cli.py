@@ -169,7 +169,7 @@ def dispatch(args: argparse.Namespace, context: OutputContext) -> object:
             name = args.target.split("/")[1].split("@")[0]
         except IndexError as exc:
             raise ValueError("use namespace/tool@exact-version") from exc
-        if name in {"scripteer", "scriptkit"}:
+        if name == "scripteer":
             raise ValueError(f"{name} is reserved for the manager")
         host = Platform(
             {"Linux": "linux", "Darwin": "macos", "Windows": "windows"}[platform.system()],

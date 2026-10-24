@@ -21,10 +21,12 @@ candidate-env/bin/python -m scripteer --help
 
 On Windows use `candidate-env/Scripts/python.exe`. Run these smoke commands from
 outside the checkout as well. The installed console command is `scripteer`.
-There is no `scriptkit` import/console alias in the new distribution: that import
-also belongs to an unrelated PyPI project. Change consumer imports explicitly.
-The public Python API/return semantics remain equivalent; namespace migration is
-an explicit opt-in rather than a transparent upgrade of `pokanop-scriptkit`.
+The distribution provides only the `scripteer` import/console name: every
+pre-rename identifier was removed before the first public release, and that other
+import name also belongs to an unrelated PyPI project. Change consumer imports
+explicitly. The public Python API/return semantics remain equivalent; namespace
+migration is an explicit opt-in rather than a transparent upgrade of the
+pre-rename package.
 
 After the release is genuinely published and verified, public instructions become:
 
@@ -41,37 +43,40 @@ been recorded on POK-645. All package extras, dependency declarations, lockfiles
 PyPI links and generated tools use `scripteer`. Never publish placeholder packages
 or claim the name by speculative uploads.
 
-## Preserve user state and rollback
+## Clean break from pre-rename state
 
-No data directories, credentials, trusted catalogs, caches, receipts or installed
-tool environments are moved, copied or deleted during the rename.
+Nothing has shipped to PyPI, so Scripteer makes a clean break: no pre-rename
+environment variable, home directory, filename, receipt module, keyring service,
+region marker or schema identifier is read or written anywhere. The blast radius
+is pre-rename local installs only. Nothing is moved, copied or deleted
+automatically — old state stays on disk, inert, until you remove it yourself.
 
-- Root precedence is explicit `--root`, then `SCRIPTEER_ROOT`, then legacy
-  `SCRIPTKIT_ROOT`, then `~/.scriptkit` if it exists, otherwise `~/.scripteer`.
-  When both default directories exist the old root wins; select the other with
-  `--root`. This avoids silently abandoning an existing installation.
-- New receipts record `module: scripteer`. Historical receipts without that field
-  mean `scriptkit`. The stable dispatcher/rollback allowlist only those two modules.
-- Use the **new independently verified standalone bootstrap** to install Scripteer
-  into the existing root. The old `scriptkit self-update` only accepts the old
-  distribution and must not be used to cross the rename boundary.
-- The new dispatcher can run either old or new generations. An existing,
-  receipt-owned `scriptkit` wrapper remains untouched and continues through the
-  shared dispatcher; new installs expose only `scripteer`. Neither foreign
-  commands nor user-modified launchers are overwritten. Ownership ledger entries
-  for old wrappers remain available for recovery.
-- `scripteer self-rollback` or the new bootstrap's `--rollback` returns to the old
-  generation without rewriting its environment. The `scripteer` wrapper then
-  dispatches the old manager and reports its old identity/version. To move forward
-  again, rerun the **new** bootstrap, not the old generation's self-update command.
-- Keyring access stays opt-in. Read `scripteer.ai` / `openai` first, then legacy
-  `scriptkit.ai` / `openai`; `OPENAI_API_KEY` still takes precedence. No automatic
-  secret migration/deletion and no key material in logs.
-- File-region markers `# >>> scriptkit:...`, `.scriptkit-lock` lock names,
-  `.scriptkit-generator` ownership/journal directories and `urn:scriptkit:contracts:*:1`
-  schema IDs intentionally retain their on-disk/wire identity. Renaming a lock
-  would let old and new processes bypass each other's serialization. These are
-  compatibility protocol identifiers, not stale product branding.
+- Root precedence is explicit `--root`, then `SCRIPTEER_ROOT`, then `~/.scripteer`.
+  A pre-rename root environment variable or home directory is ignored. To adopt
+  existing tool data, pass `--root <old-root>` explicitly or move the directory to
+  `~/.scripteer` yourself.
+- Receipts record and accept `module: scripteer` only. The stable dispatcher and
+  rollback reject receipts recorded by pre-rename generations. To move a
+  pre-rename manager over, rerun the **new independently verified standalone
+  bootstrap** against the chosen root; to keep a pre-rename generation runnable,
+  reinstall it side by side under a separate `--root` using the old bootstrap you
+  retained. Neither foreign commands nor user-modified launchers are overwritten,
+  and ownership ledger entries for retired wrappers remain available for recovery.
+- `scripteer self-rollback` or the new bootstrap's `--rollback` continues to work
+  between Scripteer generations whose receipts record `module: scripteer`; it
+  does not cross the rename boundary. The `scripteer` wrapper then dispatches
+  that manager and reports its identity/version. To move forward again, rerun
+  the **new** bootstrap.
+- Keyring access stays opt-in and reads only `scripteer.ai` / `openai`;
+  `OPENAI_API_KEY` still takes precedence. To migrate a stored credential, save
+  it under the new service manually; no secret is copied, migrated or deleted for
+  you, and no key material reaches logs.
+- File-region markers `# >>> scripteer:...`, `.scripteer-lock` lock names,
+  `.scripteer-generator` ownership/journal directories and
+  `urn:scripteer:contracts:*:1` schema IDs use the new identity. Locks are
+  transient crash artifacts; older markers and manifests are simply not
+  recognized — re-apply managed regions with the new tool rather than editing
+  receipts by hand.
 
 Keep the verified old bootstrap/wheel and its hashes for emergency rollback if you
 retained them locally; the pre-rename GitHub releases themselves were removed by
@@ -82,9 +87,10 @@ from it must keep working.
 
 ## Generated projects
 
-The immutable v1 template resource is retained byte-for-byte. New public scaffolds
-use **template 3.0.0**, with Scripteer imports, dependency pins and authoring docs.
-Existing v1/v2 projects require an explicit upgrade:
+New public scaffolds use **template 3.0.0**, with Scripteer imports, dependency
+pins and authoring docs; every generated path, marker and docstring uses the new
+identity. Projects generated by the current v1 renderer require an explicit
+upgrade:
 
 ```sh
 scripteer template-upgrade PROJECT --check
@@ -95,7 +101,11 @@ scripteer validate PROJECT
 Inspect the preview first and use version control. The upgrade validates old
 ownership hashes, replaces only owned files and refuses modified/foreign files.
 User-owned handlers, README, configuration and handwritten imports are preserved.
-Update any user-owned `scriptkit` imports and `[tool.scriptkit.*]` settings to
+Projects generated before the rename are not recognized (their ownership manifests
+live under the old control-directory name): regenerate them with
+`scripteer new-tool` into a fresh directory and copy your user-owned files
+(handlers, initializers, README, config examples, tests, CI) back over the
+result. Update any user-owned pre-rename imports and `[tool.*]` settings to
 `scripteer` manually; never blanket-replace user secrets or configuration. If a
 user extended a generated pyproject, reconcile the conflict manually using the
 preview rather than force overwrite. Pending legacy AI approvals must be rebuilt
@@ -104,9 +114,9 @@ against the new hashes; AI authoring requires an upgraded v3 project.
 ## Scripts collection consumer update
 
 `pokanop/scripts` consumes the independently verified pre-rename wheel it already
-pinned. Keep that consumer functional until a verified Scripteer release exists.
-The framework's preserved historical consumer inventory describes
-all imports, lock/bootstrap metadata, docs and tests requiring migration.
+pinned. Keep that consumer functional until a verified Scripteer release exists;
+that repository's own docs describe all imports, lock/bootstrap metadata, docs and
+tests requiring migration.
 
 Sequence (no invented release URLs/hashes):
 

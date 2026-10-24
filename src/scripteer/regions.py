@@ -31,8 +31,8 @@ class OwnedRegion:
         if not re.fullmatch(r"[a-z][a-z0-9_.-]*", owner):
             raise ValueError("invalid region owner")
         self.owner = owner
-        self.begin = f"# >>> scriptkit:{owner} >>>".encode()
-        self.end = f"# <<< scriptkit:{owner} <<<".encode()
+        self.begin = f"# >>> scripteer:{owner} >>>".encode()
+        self.end = f"# <<< scripteer:{owner} <<<".encode()
         self.io = LocalStateIO() if io is None else io
 
     def _span(self, text: bytes) -> tuple[int, int] | None:

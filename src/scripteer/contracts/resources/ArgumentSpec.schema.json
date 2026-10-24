@@ -1,5 +1,5 @@
 {
-  "$id": "urn:scriptkit:contracts:ArgumentSpec:1",
+  "$id": "urn:scripteer:contracts:ArgumentSpec:1",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {

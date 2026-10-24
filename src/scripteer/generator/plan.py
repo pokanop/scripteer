@@ -20,14 +20,14 @@ from scripteer.contracts.models import (
 
 from .render import Rendered, canonical, sha256
 
-CONTROL = ".scriptkit-generator"
+CONTROL = ".scripteer-generator"
 MANIFEST = CONTROL + "/manifest.json"
 
 
 @record
 class OwnedFile(Record):
     path: str = constrained(
-        pattern=rf"(?:{PATH}|^(?:\.gitattributes|\.scriptkit-generator/\.gitignore|README\.md|AUTHORING\.md|\.github/workflows/test\.yml){END})",
+        pattern=rf"(?:{PATH}|^(?:\.gitattributes|\.scripteer-generator/\.gitignore|README\.md|AUTHORING\.md|\.github/workflows/test\.yml){END})",
         maxLength=240,
     )
     sha256: str = digest()
@@ -36,7 +36,7 @@ class OwnedFile(Record):
 @record
 class Manifest(Record):
     schema_version: int = constrained(const=1)
-    template: str = constrained(enum=["1.0.0", "2.0.0", "3.0.0"])
+    template: str = constrained(enum=["1.0.0", "3.0.0"])
     formatter: str = constrained(enum=["text-lf-1"])
     spec_hash: str = digest()
     generated: tuple[OwnedFile, ...]
@@ -147,13 +147,13 @@ def preview(root: Path, rendered: Rendered, *, upgrade: bool = False) -> Plan:
     ):
         if not (
             upgrade
-            and manifest.template in {"1.0.0", "2.0.0"}
+            and manifest.template == "1.0.0"
             and rendered.template == "3.0.0"
             and manifest.formatter == rendered.formatter == "text-lf-1"
         ):
             raise ValueError(
                 "template/formatter migration requires an explicit supported migration; "
-                "for legacy tools use scripteer template-upgrade PROJECT"
+                "for existing projects use scripteer template-upgrade PROJECT"
             )
     old = {f.path: f.sha256 for f in manifest.generated} if manifest else {}
     old_user = set(manifest.user) if manifest else set()

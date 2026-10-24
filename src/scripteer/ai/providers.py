@@ -72,9 +72,6 @@ def credential(*, keyring: bool = False) -> str:
         try:
             backend = importlib.import_module("keyring")
             value = backend.get_password("scripteer.ai", "openai")
-            if not value:
-                # Read-only compatibility: never copy/delete credentials during a rename.
-                value = backend.get_password("scriptkit.ai", "openai")
         except Exception:
             raise ProviderError(
                 "keyring unavailable; use manual editing or OPENAI_API_KEY"

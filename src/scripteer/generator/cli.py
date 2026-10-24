@@ -120,7 +120,7 @@ def dispatch(args: argparse.Namespace) -> AuthoringResult:
             )
         else:
             rendered = Rendered(
-                {**pins, ".scriptkit-generator/.gitignore": CONTROL_IGNORE},
+                {**pins, ".scripteer-generator/.gitignore": CONTROL_IGNORE},
                 {".gitattributes": INSTALLER_ATTRIBUTES},
                 VERSION,
                 "text-lf-1",
