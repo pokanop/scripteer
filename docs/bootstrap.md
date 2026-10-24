@@ -65,7 +65,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./install.ps1 `
 For PowerShell 7, substitute `pwsh` for `powershell.exe` in the same command.
 
 Set `SCRIPTEER_PYTHON` to the **path of an executable**, not a command with flags,
-to select Python for either wrapper (`SCRIPTKIT_PYTHON` is the legacy fallback).
+to select Python for either wrapper.
 Both wrappers verify the downloaded Python
 bootstrap hash before running it and propagate its exit status. The standalone
 bootstrap needs only the standard library and never imports the installed
@@ -73,11 +73,9 @@ runtime, including when repairing a broken installation.
 
 ## PATH and the public CLI
 
-Default root: reuse `~/.scriptkit` if it exists; otherwise `~/.scripteer`.
-No directory is moved. `--root` overrides `SCRIPTEER_ROOT`, which overrides the
-legacy `SCRIPTKIT_ROOT`, which overrides this default. If both default directories
-exist, the legacy root wins to preserve existing state; use `--root` to select the
-other explicitly. Commands are under `<root>/bin`. Bootstrap and CLI
+Default root: `~/.scripteer`. No directory is moved or reused from any
+pre-rename location. `--root` overrides `SCRIPTEER_ROOT`, which overrides this
+default. Commands are under `<root>/bin`. Bootstrap and CLI
 canonicalize the selected root once, so symlinked homes and `/tmp` are supported;
 symlinks redirecting state inside that canonical root remain forbidden. Invoke
 `<root>/bin/scripteer` (Unix) or `<root>/bin/scripteer.cmd` (Windows) directly for
@@ -116,8 +114,7 @@ scripteer uninstall tool
 package-index access. Trust requires explicit origin consent. Offline mode uses
 only reverified cached artifacts and does not waive expiry. Install and update
 share the transactional installer; both accept exact versions, with stale
-lineage rechecked under the tool-state lock. Both `scripteer` and the legacy
-`scriptkit` are reserved tool names.
+lineage rechecked under the tool-state lock. Only `scripteer` is a reserved tool name.
 Uninstall preserves data/config and generations. Tool dispatchers use the base
 Python, not the manager venv, so repairing that venv cannot break tool commands.
 

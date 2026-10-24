@@ -173,14 +173,3 @@ def test_benchmark_canonicalizes_os_temp_alias(tmp_path, monkeypatch):
         assert root == root.resolve()
         assert root.is_dir()
     assert not root.exists()
-
-
-def test_renaming_inventory_finds_paths_and_variants(tmp_path, monkeypatch):
-    inventory_spec = importlib.util.spec_from_file_location(
-        "inventory", ROOT / "tools/rename_inventory.py"
-    )
-    inventory = importlib.util.module_from_spec(inventory_spec)
-    inventory_spec.loader.exec_module(inventory)
-    (tmp_path / "scripteer.py").write_text("SCRIPTEER_ROOT = 'scripteer'\n")
-    monkeypatch.setattr(inventory.subprocess, "check_output", lambda *a, **k: b"scripteer.py\0")
-    assert "| `scripteer.py` | 1 |" in inventory.inventory(tmp_path)

@@ -32,6 +32,7 @@ Submit a focused PR with test evidence. Rebase on main (never merge main into
 feature branches), require current-head green CI and independent review before
 merging. Verified GitHub artifacts are the provisional release channel; do not
 publish to PyPI or choose a final name before the owner-approved POK-645 launch.
-Run `python tools/rename_inventory.py` after identity-bearing edits and include
-its updated inventory. Conformance/assistant rules are shipped in installed
+Keep the repository free of pre-rename identifiers:
+`tests/test_rename.py` enforces this repository-wide, so any identity-bearing edit
+must keep that test green. Conformance/assistant rules are shipped in installed
 resources; see [authoring guidance](docs/conformance.md).

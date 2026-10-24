@@ -111,7 +111,7 @@ def test_existing_empty_region_file_is_not_removed(tmp_path):
 def test_remove_failure_preserves_file_and_lock_ownership(tmp_path, monkeypatch, failure):
     path = tmp_path / "rc"
     path.write_bytes(b"user")
-    lock = tmp_path / "rc.scriptkit-lock"
+    lock = tmp_path / "rc.scripteer-lock"
     expected = b"stale" if failure == "conflict" else b"user"
     error = StateConflict
     if failure == "lock":

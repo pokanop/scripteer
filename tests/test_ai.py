@@ -243,7 +243,7 @@ def test_interruption_uses_existing_recovery(project):
             approved_review_hash=checked.approval_hash,
             writer=Interrupted(),
         )
-    assert (project / ".scriptkit-generator/journal.json").exists()
+    assert (project / ".scripteer-generator/journal.json").exists()
     assert recover(project)
     assert not recover(project)
     spec, layout = existing(project)

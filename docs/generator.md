@@ -1,7 +1,7 @@
 # Deterministic project generation
 
 This page documents the retained low-level v1 renderer. For the public v3
-`new-tool`, `add-command`, collection/installer commands and explicit v1/v2→v3
+`new-tool`, `add-command`, collection/installer commands and explicit v1→v3
 `template-upgrade`, see [scaffolds.md](scaffolds.md). Cross-version preview is
 still refused unless that named migration is explicitly selected.
 
@@ -35,7 +35,7 @@ outside the generated `tool.json` unless you deliberately use that canonical cop
 - `__main__.py`: small CLI composition layer; no manager/registry/AI dependencies.
 
 Generated files are `tool.json`, `pyproject.toml`, the entrypoint module,
-and `.scriptkit-generator/.gitignore`. The control ignore file excludes locks,
+and `.scripteer-generator/.gitignore`. The control ignore file excludes locks,
 journals and staging, but keeps the manifest and ignore file versioned.
 
 `.gitattributes` is **user owned**: created only when absent, never overwritten.
@@ -48,8 +48,8 @@ attributes: generated-file and manifest bytes must remain LF, including in
 
 ```gitattributes
 /.gitattributes text eol=lf
-/.scriptkit-generator/.gitignore text eol=lf
-/.scriptkit-generator/manifest.json text eol=lf
+/.scripteer-generator/.gitignore text eol=lf
+/.scripteer-generator/manifest.json text eol=lf
 /tool.json text eol=lf
 /pyproject.toml text eol=lf
 /src/**/*.py text eol=lf
@@ -71,7 +71,7 @@ already converged if already absent. Likewise an owned file already equal to the
 proposal is converged, not a conflict. Foreign files are never adopted this way. Empty directories
 are retained. Ownership transfers and overlapping paths fail closed.
 
-`.scriptkit-generator/manifest.json` records generated SHA-256 hashes, user paths,
+`.scripteer-generator/manifest.json` records generated SHA-256 hashes, user paths,
 normalized spec hash, schema version, template version and formatter version.
 Preview captures exact base bytes, including unchanged files. Apply rejects stale
 bases before publishing; modified/missing generated files produce explicit conflict
@@ -114,7 +114,7 @@ import base64
 import json
 from pathlib import Path
 
-journal = json.loads(Path(".scriptkit-generator/journal.json").read_text())
+journal = json.loads(Path(".scripteer-generator/journal.json").read_text())
 operation = next(op for op in journal["operations"] if op["path"] == "tool.json")
 proposed = operation["after"]  # use "before" to restore the original baseline
 if proposed is not None:

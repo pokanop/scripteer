@@ -1,10 +1,10 @@
 # Upgrade generated projects without losing manual work
 
 Framework version and template version are different: Scripteer **1.6.0** ships
-template **3.0.0**, composed over the immutable v1 renderer. Only explicit
-v1→v3 and v2→v3/text-lf-1 migrations and v3 regeneration are supported.
+template **3.0.0**, composed over the immutable v1 renderer. Only the explicit
+v1→v3/text-lf-1 migration and v3 regeneration are supported.
 The upgrade replaces owned imports/runtime pins, preserves handwritten files and
-retains `.scriptkit-generator` manifests. Review user-owned imports and dependency
+retains `.scripteer-generator` manifests. Review user-owned imports and dependency
 extensions manually; conflicts fail closed. See [rename migration](scripteer-launch.md). There is no arbitrary
 executable migration/plugin hook.
 
