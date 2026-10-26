@@ -30,7 +30,7 @@ not a silent compatibility change. No deprecated API is removed here.
 
 ## Evidence and limits
 
-The baseline CI runs Python 3.11 on Linux, macOS and Windows. Each job runs the
+The baseline CI runs Python 3.11 on Linux and Python 3.14 on macOS and Windows. Each job runs the
 library tests, checks the typed new CLI boundary, builds an sdist then its wheel,
 and creates separate clean bare/Rich environments. It copies tests outside the
 checkout, verifies installed import location, absence of requests, real process

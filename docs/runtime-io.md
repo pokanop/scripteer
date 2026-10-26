@@ -156,5 +156,5 @@ fault-injected writes/permissions/interruptions, concurrent conflicts, strict
 loading, references, native/platform-injected paths, reversible ownership, process
 limits, cancellation/Ctrl-C, descendant cleanup and unrelated-process survival.
 The existing installed-wheel harness copies and runs these same tests outside the
-checkout, both bare and with Rich, on Linux/macOS/Windows Python 3.11–3.14. WinAPI
+checkout, both bare and with Rich, on Linux 3.11 and macOS/Windows 3.14. WinAPI
 failure paths also have portable fakes; fakes do not replace native CI evidence.
