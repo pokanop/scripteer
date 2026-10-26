@@ -109,6 +109,10 @@ def test_repository_contains_no_legacy_identity():
     for path in paths:
         if not path.is_file():
             continue
+        # Bytecode of this very test legitimately embeds the runtime-assembled
+        # literal; everything else — binary assets included — is scanned raw.
+        if "__pycache__" in path.parts or path.suffix in {".pyc", ".pyo"}:
+            continue
         relative = path.relative_to(root).as_posix().lower()
         if LEGACY in relative or needle in path.read_bytes().lower():
             offenders.append(relative)
