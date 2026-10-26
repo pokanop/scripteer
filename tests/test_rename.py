@@ -20,6 +20,17 @@ from test_bootstrap import wheel_bytes
 # the repository-wide absence of that identifier is enforced by the test below.
 LEGACY = "script" + "kit"
 
+# The genuine receipt shape written by the pre-rename manager (POK-622): five
+# fields and no module key at all — unlike a merely wrong module value, this is
+# the shape real pre-rename installs carry on disk.
+PRE_RENAME_RECEIPT = {
+    "schema_version": 1,
+    "version": "1.5.0",
+    "sha256": "0" * 64,
+    "url": "https://example.org/old.whl",
+    "generation": "0" * 32,
+}
+
 
 @pytest.fixture
 def spec():
@@ -47,11 +58,15 @@ def test_explicit_root_overrides_environment(tmp_path, monkeypatch, capsys):
 
 
 def test_receipt_module_allowlist_is_current_identity_only():
-    assert b.manager_module({}) == "scripteer"
     assert b.manager_module({"module": "scripteer"}) == "scripteer"
-    for invalid in ("arbitrary.module", LEGACY):
+    for receipt in (
+        {},
+        PRE_RENAME_RECEIPT,
+        {"module": "arbitrary.module"},
+        {"module": LEGACY},
+    ):
         with pytest.raises(ValueError, match="invalid manager module"):
-            b.manager_module({"module": invalid})
+            b.manager_module(receipt)
 
 
 def test_keyring_reads_only_current_service(monkeypatch):
@@ -90,15 +105,13 @@ def test_repository_contains_no_legacy_identity():
     except (OSError, subprocess.CalledProcessError):
         paths = [path for path in root.rglob("*") if ".git" not in path.parts and path.is_file()]
     offenders = []
+    needle = LEGACY.encode()
     for path in paths:
         if not path.is_file():
             continue
-        try:
-            text = path.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            continue  # Binary assets cannot carry the identifier.
-        if LEGACY in text.lower():
-            offenders.append(str(path.relative_to(root)))
+        relative = path.relative_to(root).as_posix().lower()
+        if LEGACY in relative or needle in path.read_bytes().lower():
+            offenders.append(relative)
     assert not offenders, f"legacy identity references remain: {offenders}"
 
 
@@ -161,7 +174,7 @@ def test_install_retains_retired_ownership_and_rollback_module(tmp_path):
     old = "a" * 32
     previous = tmp_path / "manager-generations" / old
     previous.mkdir(parents=True)
-    b.publish(previous / "manager-receipt.json", {"version": "1.5.0"})
+    b.publish(previous / "manager-receipt.json", {"module": "scripteer", "version": "1.5.0"})
     b.publish(tmp_path / "manager-active.json", {"target": old})
     (tmp_path / "registries.json").write_bytes(b"private state")
     calls = []
@@ -174,11 +187,19 @@ def test_install_retains_retired_ownership_and_rollback_module(tmp_path):
     assert (tmp_path / "registries.json").read_bytes() == b"private state"
 
 
-def test_rollback_rejects_pre_rename_receipt_module(tmp_path):
+@pytest.mark.parametrize(
+    "receipt",
+    [
+        {"version": "1.5.0", "module": LEGACY},
+        PRE_RENAME_RECEIPT,
+    ],
+    ids=["wrong-module", "module-less-pre-rename"],
+)
+def test_rollback_rejects_pre_rename_receipt_module(tmp_path, receipt):
     old = "a" * 32
     previous = tmp_path / "manager-generations" / old
     previous.mkdir(parents=True)
-    b.publish(previous / "manager-receipt.json", {"version": "1.5.0", "module": LEGACY})
+    b.publish(previous / "manager-receipt.json", receipt)
     b.publish(tmp_path / "manager-active.json", {"target": "b" * 32, "previous": old})
     calls = []
     service = b.Manager(tmp_path, execute=calls.append)
@@ -187,7 +208,11 @@ def test_rollback_rejects_pre_rename_receipt_module(tmp_path):
     assert not calls
 
 
-@pytest.mark.parametrize("receipt", [None, [], {"module": "bad"}])
+@pytest.mark.parametrize(
+    "receipt",
+    [None, [], {}, {"module": "bad"}, PRE_RENAME_RECEIPT],
+    ids=["absent", "non-object", "empty", "wrong-module", "module-less-pre-rename"],
+)
 def test_dispatcher_rejects_invalid_receipt(tmp_path, receipt):
     target = "a" * 32
     base = tmp_path / "manager-generations" / target

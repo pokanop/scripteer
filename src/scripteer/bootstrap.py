@@ -37,7 +37,9 @@ def default_root() -> Path:
 
 
 def manager_module(receipt: dict[str, Any]) -> str:
-    module = receipt.get("module", "scripteer")
+    # The field is required, not defaulted: pre-rename managers wrote receipts
+    # without a module key, and those must be rejected rather than mapped.
+    module = receipt.get("module")
     if module != "scripteer":
         raise ValueError("invalid manager module in receipt")
     return str(module)
@@ -198,7 +200,7 @@ def launcher_files(root: Path) -> dict[Path, bytes]:
         "if not python.is_file(): fail('manager generation ' + target + ' is missing or incomplete')\n"
         "try:\n"
         "    receipt = json.loads((base / 'manager-receipt.json').read_text(encoding='utf-8'))\n"
-        "    module = receipt.get('module', 'scripteer')\n"
+        "    module = receipt.get('module')\n"
         "except (OSError, ValueError, AttributeError): fail('invalid manager receipt')\n"
         "if module != 'scripteer': fail('invalid manager module')\n"
         "argv = [str(python), '-I', '-X', 'utf8', '-m', module, *sys.argv[1:]]\n"
