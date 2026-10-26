@@ -41,7 +41,7 @@ are excluded to avoid self-reference. Line numbers are revision-specific.
 | Framework file | Matching lines |
 | --- | --- |
 | `.gitattributes` | 2 |
-| `.github/workflows/ci.yml` | 37, 38, 41, 79, 108, 109 |
+| `.github/workflows/ci.yml` | 48, 49, 52, 90, 119, 120 |
 | `.github/workflows/release.yml` | 52 |
 | `CONTRIBUTING.md` | 10, 11 |
 | `NOTICE.md` | 3, 8 |
@@ -61,7 +61,7 @@ are excluded to avoid self-reference. Line numbers are revision-specific.
 | `docs/installation.md` | 6, 15, 16, 103, 104, 105, 126, 133 |
 | `docs/migration.md` | 21 |
 | `docs/output.md` | 4, 68 |
-| `docs/quality-and-release.md` | 47, 82, 83, 94, 95, 99, 105 |
+| `docs/quality-and-release.md` | 50, 85, 86, 97, 98, 102, 108 |
 | `docs/registry-author.md` | 20 |
 | `docs/registry.md` | 3, 4, 8 |
 | `docs/runtime-io.md` | 11, 55, 100, 127 |
