@@ -1,6 +1,6 @@
 # Upgrade generated projects without losing manual work
 
-Framework version and template version are different: Scripteer **1.6.0** ships
+Framework version and template version are different: Scripteer **2.0.0** ships
 template **3.0.0**, composed over the immutable v1 renderer. Only the explicit
 v1→v3/text-lf-1 migration and v3 regeneration are supported.
 The upgrade replaces owned imports/runtime pins, preserves handwritten files and

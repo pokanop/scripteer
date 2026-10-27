@@ -35,7 +35,7 @@ def test_release_metadata_and_document_links():
     metadata = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
     command, entrypoint = next(iter(metadata["scripts"].items()))
     assert entrypoint == metadata["name"].replace("-", "_") + ".entrypoint:main"
-    assert Version("1.6.0") <= Version(metadata["version"])
+    assert Version("2.0.0") <= Version(metadata["version"])
     for document in [ROOT / "README.md", ROOT / "CONTRIBUTING.md", *(ROOT / "docs").glob("*.md")]:
         prose = re.sub(r"```.*?```|`[^`]*`", "", document.read_text(encoding="utf-8"), flags=re.S)
         for target in re.findall(r"\]\(([^)\s]+)\)", prose):

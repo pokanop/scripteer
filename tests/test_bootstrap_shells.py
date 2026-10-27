@@ -17,6 +17,7 @@ import threading
 
 import pytest
 
+from scripteer import __version__
 from test_bootstrap import built_wheel as built_wheel  # shared real build fixture
 
 
@@ -84,12 +85,12 @@ def test_shell_clean_install_and_exit_codes(tmp_path, release_server, built_whee
         "--sha256",
         hashlib.sha256(built_wheel.read_bytes()).hexdigest(),
         "--version",
-        "1.6.0",
+        __version__,
     ]
     command = invocation(shell, source, url + "bootstrap.py", digest, args)
     result = subprocess.run(command, env=env, capture_output=True, text=True, encoding="utf-8")
     assert result.returncode == 0, result.stdout + result.stderr
-    assert json.loads(result.stdout)["version"] == "1.6.0"
+    assert json.loads(result.stdout)["version"] == __version__
     assert not (root / "tools").exists()
     launcher = root / "bin" / ("scripteer.cmd" if os.name == "nt" else "scripteer")
     result = subprocess.run(
@@ -109,7 +110,7 @@ def test_shell_clean_install_and_exit_codes(tmp_path, release_server, built_whee
             "--sha256",
             hashlib.sha256(built_wheel.read_bytes()).hexdigest(),
             "--version",
-            "1.6.0",
+            __version__,
         ],
         ["self-rollback"],
         ["doctor"],

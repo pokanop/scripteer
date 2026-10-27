@@ -41,11 +41,11 @@ wheel-installable; extension-less launchers are a source-checkout convenience.
 and defaults to standalone for a new project. Supply `--layout` to switch deliberately.
 
 **Release channel:** the runtime-only 1.3.0 wheel does not contain these APIs.
-Use the verified Scripteer 1.6.0 wheel alongside generated wheels
-(`pip install --no-index FRAMEWORK_WHEEL TOOL_WHEEL` with actual filenames).
-See [bootstrap](bootstrap.md) for acquisition and provenance. Do not assume
-PyPI availability or point generated projects at the old runtime-only wheel.
-No existing release is overwritten.
+Use the verified Scripteer 2.0.0 wheel alongside generated wheels
+(`pip install --no-index FRAMEWORK_WHEEL TOOL_WHEEL` with actual filenames), or
+the published PyPI distribution once verified
+(see [bootstrap](bootstrap.md) and [RELEASING](RELEASING.md) for acquisition and
+provenance). Do not point generated projects at the old runtime-only wheel.
 
 Help, version, doctor and config are read-only. Bare invocation prints help,
 never invokes a handler. `doctor` validates optional `--config file.json` (a JSON

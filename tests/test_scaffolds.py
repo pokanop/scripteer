@@ -14,6 +14,7 @@ import pytest
 from test_bootstrap import built_wheel as built_wheel
 from test_bootstrap_shells import release_server as release_server
 
+from scripteer import __version__
 from scripteer.contracts import ToolSpec, resource_text
 from scripteer.contracts.models import CatalogRelease, CommandSpec
 from scripteer.entrypoint import main
@@ -278,7 +279,7 @@ def test_generated_installer_installs_only_manager(tmp_path, built_wheel, releas
         sha256(bootstrap_path.read_bytes()),
         url + built_wheel.name,
         sha256(built_wheel.read_bytes()),
-        "1.6.0",
+        __version__,
     )
     for name, content in pins.items():
         (tmp_path / name).write_bytes(content)

@@ -6,6 +6,7 @@ import os
 import subprocess
 import sys
 
+from scripteer import __version__
 from scripteer.ai import FakeProvider, apply, request, review
 from scripteer.bootstrap import Manager
 from scripteer.contracts.models import (
@@ -32,7 +33,7 @@ def test_authored_tool_release_journey(tmp_path, built_wheel):  # noqa: F811
     spec_path = tmp_path / "spec.json"
     raw = built_wheel.read_bytes()
     Manager(root, download=lambda _: raw).install(
-        "https://fixture.example/framework.whl", artifact(built_wheel.name, raw).sha256, "1.6.0"
+        "https://fixture.example/framework.whl", artifact(built_wheel.name, raw).sha256, __version__
     )
     launcher = root / "bin" / ("scripteer.cmd" if os.name == "nt" else "scripteer")
 
@@ -86,7 +87,7 @@ def test_authored_tool_release_journey(tmp_path, built_wheel):  # noqa: F811
         host_release.locks[0].platform,
         spec.python,
         "pip",
-        (LockedPackage("scripteer", "1.6.0", framework),),
+        (LockedPackage("scripteer", __version__, framework),),
     )
     releases = tuple(
         ToolRelease(
