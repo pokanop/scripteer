@@ -153,12 +153,17 @@ has finished. Existing immutable release hashes and tests remain real inputs.
    successful authorized upload publishes 2.0.0. Do not upload an empty
    placeholder. No long-lived PyPI API token is needed. TestPyPI, if wanted,
    requires its own separate publisher.
-4. Retain the GitHub `pypi` environment's independent approval, self-review
-   prevention, admin-bypass prohibition and `v*` tag restriction. The sole reviewer
-   is currently Sahel's shared GitHub identity; a run triggered by that identity
-   cannot be self-approved. Add a distinct trusted human reviewer with repository
-   access, or arrange a distinct authorized trigger identity and retain approval
-   separation. Never turn off self-review prevention to get a release through.
+4. Retain the GitHub `pypi` environment's required-reviewer approval, admin-bypass
+   prohibition and `v*` tag restriction. Since 2026-10-27 the sole reviewer is
+   Sahel's shared GitHub identity with self-review prevention **off** — an
+   owner-accepted deviation taken to publish v2.0.0, because tag pushes
+   authenticate with that same shared identity and prevention would leave the
+   gate with no eligible approver. The owner therefore approves runs triggered
+   by their own automation; publication still requires that human click, but
+   it is not an independent boundary while reviewer and trigger credential
+   are the same account. Hardening path (tracked): add a distinct trusted
+   human reviewer or a distinct release credential, then re-enable self-review
+   prevention.
 5. Only after reviewed CI and explicit human merge/release approval, confirm the
    publisher/protections and enable `PYPI_PUBLISH_ENABLED=true`. Until then keep it
    unset. An approved `v2.0.0` tag on main triggers gated publication; manual workflow
