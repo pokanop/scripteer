@@ -5,7 +5,7 @@ The twelve runtime Python files now in `src/scripteer/` (excluding the new
 
 - https://github.com/pokanop/scripts
 - commit `458104a52bafe619a259ed2b83ecd7a3b29c82c1`
-- source paths `scriptkit/*.py`, runtime version 1.3.0
+- the repository's then-named runtime package directory, runtime version 1.3.0
 - MIT, Copyright (c) 2026 Pokanop Apps LLC; full original LICENSE retained.
 
 Ten library test modules (`app`, `blocks`, `cli`, `cli_progress_tables`, `config`,

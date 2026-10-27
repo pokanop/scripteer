@@ -8,7 +8,7 @@ fi
 url=$1
 hash=$2
 shift 2
-python=${SCRIPTEER_PYTHON:-${SCRIPTKIT_PYTHON:-python3}}
+python=${SCRIPTEER_PYTHON:-python3}
 if ! command -v "$python" >/dev/null 2>&1; then
     echo 'Python 3.11+ is required. Install Python with venv/ensurepip, then rerun.' >&2
     exit 1

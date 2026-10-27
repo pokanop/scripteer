@@ -43,7 +43,7 @@ def test_deterministic_offline_backend_contract(tmp_path, spec, monkeypatch):
 
     inventory = {p: sha256(b) for p, b in (first.generated | first.user).items()}
     assert sha256(canonical(inventory)) == (
-        "d60734d4c0994721522100f47e5f8e40f341deac81366ce5d8fd58cc05945dde"
+        "77edc71b0be533bc200167b14cb1d73b41c750de4552f14179d82fd2b1455b24"
     )
     project = tomllib.loads(first.generated["pyproject.toml"].decode())
     assert project["project"]["scripts"][spec.name] == spec.entrypoint
@@ -120,7 +120,7 @@ def test_removed_generated_and_ownership_migrations(tmp_path, spec):
     with pytest.raises(ValueError, match="ownership"):
         preview(tmp_path, dataclasses.replace(reduced, user={"tool.json": b""}))
     with pytest.raises(ValueError, match="migration"):
-        preview(tmp_path, dataclasses.replace(reduced, template="2.0.0"))
+        preview(tmp_path, dataclasses.replace(reduced, template="3.0.0"))
 
 
 @pytest.mark.parametrize("name", ["../escape", "/absolute", "a/../../escape", "a\\b", "con", "a."])

@@ -52,7 +52,7 @@ and captured output from errors; captured output itself is the caller's responsi
 
 `LocalStateIO.replace(path, data, expected=old_bytes_or_None, mode=0o600)`:
 
-1. Acquire an exclusive sibling `.scriptkit-lock` (fail immediately if present).
+1. Acquire an exclusive sibling `.scripteer-lock` (fail immediately if present).
 2. Check target bytes under that lock; `None` means the target must not exist.
 3. Write a unique private sibling, set permissions before publication, flush/fsync.
 4. Atomically `os.replace` the target, then remove staging/lock files.

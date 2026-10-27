@@ -64,7 +64,7 @@ def render(spec: ToolSpec, *, template_version: str = TEMPLATE_VERSION) -> Rende
     prefix = "src/" + "/".join(parts[:-1])
     mapping = {"spec": repr(spec.canonical_json()), "function": function}
     generated = {
-        ".scriptkit-generator/.gitignore": template["ignore"].encode(),
+        ".scripteer-generator/.gitignore": template["ignore"].encode(),
         "tool.json": spec.canonical_json().encode() + b"\n",
         "pyproject.toml": Template(template["project"])
         .substitute(
@@ -90,4 +90,4 @@ def render(spec: ToolSpec, *, template_version: str = TEMPLATE_VERSION) -> Rende
 
 
 # Updated deliberately with a new template version/migration, never at runtime.
-TEMPLATE_SHA256 = "6edb4f99439801591fba1abe5fd1b5bb1eba6115a147c5d6729fefd4efa24f5a"
+TEMPLATE_SHA256 = "584945fd62c3c3a4a90757aa4d3fcd88f6925763de7a91f43293ddf0248cac36"

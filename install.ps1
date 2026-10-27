@@ -5,7 +5,7 @@ param(
     [Parameter(ValueFromRemainingArguments=$true)][string[]]$BootstrapArgs
 )
 $ErrorActionPreference = 'Stop'
-$python = if ($env:SCRIPTEER_PYTHON) { $env:SCRIPTEER_PYTHON } elseif ($env:SCRIPTKIT_PYTHON) { $env:SCRIPTKIT_PYTHON } else { 'python' }
+$python = if ($env:SCRIPTEER_PYTHON) { $env:SCRIPTEER_PYTHON } else { 'python' }
 if (-not (Get-Command $python -ErrorAction SilentlyContinue)) {
     [Console]::Error.WriteLine('Python 3.11+ with venv/ensurepip is required. Install Python, then rerun.')
     exit 1

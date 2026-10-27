@@ -1,5 +1,5 @@
 {
-  "$id": "urn:scriptkit:contracts:Receipt:1",
+  "$id": "urn:scripteer:contracts:Receipt:1",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {

@@ -78,7 +78,7 @@ class Record:
     def json_schema(cls) -> dict[str, Any]:
         return {
             "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "$id": f"urn:scriptkit:contracts:{cls.__name__}:1",
+            "$id": f"urn:scripteer:contracts:{cls.__name__}:1",
             "title": cls.__name__,
             **_schema(cls),
         }

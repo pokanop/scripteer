@@ -59,7 +59,7 @@ def test_concurrent_writers_one_wins(tmp_path):
 
 def test_stale_lock_is_not_stolen(tmp_path):
     path = tmp_path / "config"
-    lock = tmp_path / "config.scriptkit-lock"
+    lock = tmp_path / "config.scripteer-lock"
     lock.write_bytes(b"foreign lock")
     with pytest.raises(StateConflict):
         LocalStateIO().replace(path, b"new", expected=None)
