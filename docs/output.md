@@ -108,6 +108,6 @@ literal rendering/widths, ASCII, shared consoles, concurrent monochrome progress
 cancellation, custom columns, prompts and doctor. `tests/test_command.py` covers
 subprocess stdout purity, help/version, errors 1/2, interrupt 130, safe defaults
 and closed pipes (real POSIX descriptor plus portable fake-stream test).
-The same tests execute from installed bare and Rich wheels in the existing
-Linux/macOS/Windows × Python 3.11–3.14 CI matrix. Terminal emulation tests are
+The same tests execute from installed bare and Rich wheels in the
+Linux 3.11 plus macOS/Windows 3.14 runtime matrix. Terminal emulation tests are
 not a claim of pixel-identical rendering across terminal emulators.

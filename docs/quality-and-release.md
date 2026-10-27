@@ -7,9 +7,12 @@ Main gating is owner-accepted procedure-only as of 2026-10-10, not configured
 branch protection; see [security certification](security-certification.md).
 It always runs and rejects failed, cancelled **and skipped** prerequisite jobs:
 
-- `runtime`: all 12 Linux/macOS/Windows × Python 3.11–3.14 cells, unit/integration
-  tests, wheel built through sdist, metadata validation, two installed-artifact
-  suites outside the checkout (bare and Rich, no requests).
+- `runtime`: one Python per platform at the declared support boundaries — Linux
+  3.11, macOS 3.14, Windows 3.14 — unit/integration tests, wheel built through
+  sdist, metadata validation, two installed-artifact suites outside the checkout
+  (bare and Rich, no requests). The full suite also runs on Linux 3.14 in
+  `static-and-coverage` and on 3.13 across all three OSes in `certification`;
+  3.12 keeps its classifier without a dedicated runtime leg.
 - `static-and-coverage`: Ruff syntax/correctness lint, formatting, strict mypy for
   new modules, gate regression tests, and at least 90% changed executable framework
   line coverage relative to the PR base. Coverage includes all runtime modules;
@@ -35,7 +38,7 @@ platform/Rich-specific individual skips are allowed). Empty/all-skipped suites f
 No paths filters, continue-on-error, privileged PR events, or secret-bearing PR jobs.
 Job timeouts cover hangs/interruption; gate tests cover failure and recovery. Coverage
 and release artifacts are retained in Actions. Python 3.14 is the current stable
-release; extend the explicit matrix when a new stable Python is released.
+release; extend the explicit include list when a new stable Python is released.
 
 ## Reviewed migration debt, not exclusions for new code
 

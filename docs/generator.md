@@ -177,5 +177,5 @@ stale bases, path safety, interruption/recovery, locking and installed resources
 No Copier dependency ships at runtime.
 
 The release artifact suite runs those same tests outside checkout in bare and Rich
-wheel environments. The existing CI matrix covers Linux/macOS/Windows and Python
-3.11–3.14, including an actual child-process crash and subsequent recovery.
+wheel environments. The existing CI matrix covers Linux/macOS/Windows at the 3.11/3.14 support
+boundaries, including an actual child-process crash and subsequent recovery.

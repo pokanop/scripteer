@@ -73,7 +73,8 @@ python tools/check_artifact.py dist/scripteer-1.5.0-py3-none-any.whl --rich
 `check_artifact.py` copies tests to a clean directory, installs the wheel in a
 fresh venv and verifies imports come from that venv, not this source tree.
 Required CI runs source and both installed-wheel variants on **real Ubuntu,
-macOS and Windows runners**, Python 3.11–3.14, uploading per-runner JUnit/coverage.
+macOS and Windows runners** (Linux Python 3.11, macOS/Windows Python 3.14), uploading
+per-runner JUnit/coverage.
 Windows native locking and PowerShell probes are not replaced by Linux mocks.
 The optional uv path runs where uv is provisioned; a Linux-only Windows skip is
 not Windows evidence. Inspect skips as well as pass counts.

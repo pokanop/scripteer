@@ -172,4 +172,4 @@ self-update/self-rollback, missing Python, no-PATH roots containing spaces/non-A
 manager-only install followed by registered-tool lifecycle, broken-runtime repair,
 child exit propagation, competing updates and phase fault injection. The TLS key
 under `tests/fixtures/bootstrap` is intentionally public test data. Platform
-results come from the required macOS/Linux/Windows × Python 3.11–3.14 matrix.
+results come from the required Linux 3.11 plus macOS/Windows 3.14 runtime matrix.

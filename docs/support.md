@@ -3,7 +3,7 @@
 | Surface | Supported / tested contract |
 | --- | --- |
 | Framework 1.5.0 | CPython 3.11, 3.12, 3.13, 3.14; Linux, macOS, Windows |
-| Required runtime matrix | GitHub-hosted ubuntu-latest, macos-latest, windows-latest × all four Python versions |
+| Required runtime matrix | GitHub-hosted ubuntu-latest (Python 3.11), macos-latest and windows-latest (Python 3.14); full suite also on Linux 3.14, certification on 3.13 across all three OSes |
 | GitHub artifact certification | All three hosted OS runners, Python 3.13; signed/pinned wheel and sdist outside source checkout |
 | Unix bootstrap | POSIX shell plus separately installed Python with venv/ensurepip |
 | Windows bootstrap | Windows PowerShell 5.1 and PowerShell 7; NTFS/private ACLs; no automatic policy change |

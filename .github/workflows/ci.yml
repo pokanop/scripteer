@@ -14,14 +14,25 @@ jobs:
   runtime:
     name: runtime (${{ matrix.os }}, Python ${{ matrix.python }})
     runs-on: ${{ matrix.os }}
-    # Three complete suites plus real generated-tool lifecycle; Windows 3.11/12
-    # exceeded the former 20m total while still passing tests. No suite is skipped.
+    # One Python per platform at the declared support boundaries: ubuntu runs
+    # the oldest (3.11), where accidental newer-stdlib use fails cheapest and
+    # where the Rich lower-bound probe is pinned; macos/windows run the newest
+    # (3.14). static-and-coverage runs the full suite on ubuntu 3.14,
+    # release-rehearsal builds and inspects artifacts there, and certification
+    # runs 3.13 on all three OSes, so both boundaries stay covered without a
+    # 12-cell cross product. Widen the include list to give 3.12/3.13 their
+    # own runtime legs again.
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        python: ['3.11', '3.12', '3.13', '3.14']
+        include:
+          - os: ubuntu-latest
+            python: '3.11'
+          - os: macos-latest
+            python: '3.14'
+          - os: windows-latest
+            python: '3.14'
     env:
       PYTHONUTF8: '1'
     steps:
