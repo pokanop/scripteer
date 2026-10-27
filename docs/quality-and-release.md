@@ -114,10 +114,11 @@ signer identity. See the concrete
    would leave the gate with no eligible approver. The owner approves their
    own automation's deployments — a human click on every publish, but not an
    independent boundary until a second reviewer or a distinct release
-   credential exists and prevention is re-enabled (tracked). Configure trusted
-   publishing on TestPyPI separately if desired (not implicitly enabled).
-4. Only after naming, publisher, independent reviewer, bypass-off and tag policy
-   are confirmed, set the
+   credential exists and prevention is re-enabled (tracked in #29).
+   Configure trusted publishing on TestPyPI separately if desired
+   (not implicitly enabled).
+4. Only after naming, publisher, the required-reviewer gate (item 3), bypass-off
+   and tag policy are confirmed, set the
    repository variable `PYPI_PUBLISH_ENABLED=true`. It is absent/disabled by default.
 5. **Publish the reviewed 2.0.0 release only after explicit human merge/release
    approval.** Do not reuse `1.3.0`: the published

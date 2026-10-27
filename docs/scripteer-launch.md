@@ -161,9 +161,9 @@ has finished. Existing immutable release hashes and tests remain real inputs.
    gate with no eligible approver. The owner therefore approves runs triggered
    by their own automation; publication still requires that human click, but
    it is not an independent boundary while reviewer and trigger credential
-   are the same account. Hardening path (tracked): add a distinct trusted
-   human reviewer or a distinct release credential, then re-enable self-review
-   prevention.
+   are the same account. Hardening path (tracked in #29): add a distinct
+   trusted human reviewer or a distinct release credential, then re-enable
+   self-review prevention.
 5. Only after reviewed CI and explicit human merge/release approval, confirm the
    publisher/protections and enable `PYPI_PUBLISH_ENABLED=true`. Until then keep it
    unset. An approved `v2.0.0` tag on main triggers gated publication; manual workflow

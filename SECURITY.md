@@ -44,9 +44,15 @@ CI success and PR approval are not technically enforced at merge or direct-push
 time. The admin identity agents use can also bypass the tag ruleset. **Sahel
 accepted these residual risks on 2026-10-10 (option 2: procedure-only gating)**;
 this is owner risk acceptance, not mechanical enforcement or a security guarantee.
-Release/publish approvals are owner-managed: Sahel will perform or unblock them
-as needed. The assessed PyPI environment blocks admin bypass and self-review,
-with the agent push identity as sole reviewer; its approval constraint remains
-an **accepted-by-owner residual risk (2026-10-10)**, not a claim that publication
-is already unblocked. Agents leave environment, ruleset and reviewer settings
-unchanged. See the assessment for the recorded decision.
+Release/publish approvals are owner-managed: Sahel performs or unblocks them
+as needed. The assessed PyPI environment keeps admin bypass disabled and a
+required reviewer; at assessment it also blocked self-review with the agent
+push identity as sole reviewer, an **accepted-by-owner residual risk
+(2026-10-10)**. To publish v2.0.0 on **2026-10-27** the owner accepted a
+recorded deviation: self-review prevention is now **off**, and the owner
+approves release runs triggered by the shared credential — a human pause on
+every publish, not an independent boundary while reviewer and trigger
+credential are the same account. Hardening (tracked in #29): add a second
+reviewer or a distinct release credential, then re-enable prevention. Agents
+make no environment, ruleset or reviewer changes except owner-directed,
+recorded ones. See the assessment for the recorded decision.

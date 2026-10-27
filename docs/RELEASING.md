@@ -42,7 +42,7 @@ PyPI token exists anywhere (publication uses OpenID Connect trusted publishing).
    come from the shared owner credential, `prevent_self_review` is
    intentionally off (the owner approves a run triggered by their own
    automation); harden by adding a second reviewer and re-enabling it once a
-   distinct release credential exists. The upload authenticates as the PyPI
+   distinct release credential exists (#29). The upload authenticates as the PyPI
    trusted publisher (owner
    `pokanop`, repo `scripteer`, workflow `release.yml`, environment `pypi`);
    there is no API token to rotate or leak. A manual `workflow_dispatch` run

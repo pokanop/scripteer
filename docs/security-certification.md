@@ -149,8 +149,9 @@ now **off**, and the owner performs the approval click for release runs
 triggered by the shared credential. The gate is a human pause on the same
 account that triggers it, not an independent boundary; compensating controls
 are OIDC-only uploads (no tokens), the tag/version/ancestry guards, the full
-quality matrix, and provenance attestations. Hardening (tracked): add a
-second reviewer or a distinct release credential, then re-enable prevention.
+quality matrix, and provenance attestations. Hardening (tracked in #29):
+add a second reviewer or a distinct release credential, then re-enable
+prevention.
 Environment changes like this deviation are owner-directed and recorded here.
 Independent security approval remains **separate from passing tests**.
 
