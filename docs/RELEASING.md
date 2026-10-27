@@ -37,9 +37,13 @@ PyPI token exists anywhere (publication uses OpenID Connect trusted publishing).
    `ci.yml`), then `provenance` (build attestations verified against the exact
    source commit), then `publish`. `publish` only runs when the repository
    variable `PYPI_PUBLISH_ENABLED` is `true` **and** a required reviewer
-   approves the protected `pypi` environment deployment — the owner watches
-   the run and approves it; self-approval is prevented by the environment
-   rules. The upload authenticates as the PyPI trusted publisher (owner
+   approves the protected `pypi` environment deployment — the owner opens the
+   waiting run and clicks "Review deployments → Approve". Because tag pushes
+   come from the shared owner credential, `prevent_self_review` is
+   intentionally off (the owner approves a run triggered by their own
+   automation); harden by adding a second reviewer and re-enabling it once a
+   distinct release credential exists. The upload authenticates as the PyPI
+   trusted publisher (owner
    `pokanop`, repo `scripteer`, workflow `release.yml`, environment `pypi`);
    there is no API token to rotate or leak. A manual `workflow_dispatch` run
    is a rehearsal only and can never publish.
