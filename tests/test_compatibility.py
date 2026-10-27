@@ -11,7 +11,7 @@ import scripteer as sk
 def test_public_exports_and_signatures():
     golden = json.loads(Path(__file__).with_name("public_api_1_3_0.json").read_text())
     assert sk.__all__ == golden["exports"]
-    assert sk.__version__ == "1.6.0"
+    assert sk.__version__ == "2.0.0"
     for name in golden["exports"]:
         assert hasattr(sk, name)
     for name, signature in golden["signatures"].items():

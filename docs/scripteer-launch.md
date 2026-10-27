@@ -2,7 +2,9 @@
 
 Sahel selected **Scripteer** on POK-645 on 2026-10-11. Repository:
 <https://github.com/pokanop/scripteer>. Distribution, import and command are all
-`scripteer`. Candidate version **1.6.0** continues the framework's version lineage.
+`scripteer`. Release version **2.0.0** continues the framework's version lineage
+(the identity migration removed the pre-rename namespace, so the first published
+release takes the major bump; see [compatibility](compatibility.md)).
 This document does **not** claim a published PyPI release. No final merge or release
 is automatically authorized. The POK-614 delivery controller was deleted before
 naming research; it must not be recreated to merge this work.
@@ -14,7 +16,7 @@ From the reviewed checkout, with Python 3.11+ and build tooling installed:
 ```sh
 python -m build
 python -m venv candidate-env
-candidate-env/bin/python -m pip install --no-index dist/scripteer-1.6.0-py3-none-any.whl
+candidate-env/bin/python -m pip install --no-index dist/scripteer-2.0.0-py3-none-any.whl
 candidate-env/bin/python -m scripteer --version
 candidate-env/bin/python -m scripteer --help
 ```
@@ -31,15 +33,16 @@ pre-rename package.
 After the release is genuinely published and verified, public instructions become:
 
 ```sh
-python -m pip install scripteer==1.6.0
-uv tool install scripteer==1.6.0
-pipx install scripteer==1.6.0
+python -m pip install scripteer==2.0.0
+uv tool install scripteer==2.0.0
+pipx install scripteer==2.0.0
 # For Python-library consumers instead of isolated CLI installation:
-uv add scripteer==1.6.0
+uv add scripteer==2.0.0
 ```
 
 Do not advertise these as working until real clean pip/uv/pipx installation has
-been recorded on POK-645. All package extras, dependency declarations, lockfiles,
+been recorded on the release ticket (POK-703 for 2.0.0; see
+[RELEASING](RELEASING.md) for the verification steps). All package extras, dependency declarations, lockfiles,
 PyPI links and generated tools use `scripteer`. Never publish placeholder packages
 or claim the name by speculative uploads.
 
@@ -123,7 +126,7 @@ Sequence (no invented release URLs/hashes):
 1. Review this candidate independently and verify current-head CI on all supported
    platforms, including installed wheel/sdist, bootstrap/rollback and
    generated-project upgrade evidence. Get human merge/release approval.
-2. Publish/sign verified Scripteer 1.6.0 artifacts from the approved main commit.
+2. Publish/sign verified Scripteer 2.0.0 artifacts from the approved main commit.
 3. In the coordinated consumer update, switch imports and runtime distribution to
    `scripteer`, advance its compatible range and exact wheel URL/SHA-256 together,
    update bootstrap/catalog/docs/fixtures, and rehearse legacy migration, generated
@@ -147,7 +150,7 @@ has finished. Existing immutable release hashes and tests remain real inputs.
    - Workflow filename: **release.yml** (not a path)
    - Environment: **pypi**
 3. The PyPI project has been registered by the owner (2026-10-23); the first
-   successful authorized upload publishes 1.6.0. Do not upload an empty
+   successful authorized upload publishes 2.0.0. Do not upload an empty
    placeholder. No long-lived PyPI API token is needed. TestPyPI, if wanted,
    requires its own separate publisher.
 4. Retain the GitHub `pypi` environment's independent approval, self-review
@@ -158,7 +161,7 @@ has finished. Existing immutable release hashes and tests remain real inputs.
    separation. Never turn off self-review prevention to get a release through.
 5. Only after reviewed CI and explicit human merge/release approval, confirm the
    publisher/protections and enable `PYPI_PUBLISH_ENABLED=true`. Until then keep it
-   unset. An approved `v1.6.0` tag on main triggers gated publication; manual workflow
+   unset. An approved `v2.0.0` tag on main triggers gated publication; manual workflow
    dispatch is a rehearsal and **cannot publish**.
 6. Verify uploaded hashes, exact source/ref-bound GitHub provenance and release
    URLs, then execute real clean pip, uv and pipx installs. Record exact version,

@@ -1,13 +1,21 @@
 # Compatibility and versions
 
-Scripteer 1.6.0 continues the framework's version lineage from the
+Scripteer **2.0.0** continues the framework's version lineage from the
 previous-generation distribution (1.5.0, GitHub-only; its releases were removed
 by owner decision in POK-696). The distribution, import and CLI are `scripteer`.
 This is an explicit identity migration, not a drop-in index upgrade of the
 previous distribution. No legacy import alias is shipped (the previous
 namespace also belongs to an unrelated PyPI project).
 See [migration and release gates](scripteer-launch.md). Python 3.11 is the minimum.
-Rich is optional; requests is not required. PyPI publication is not yet implied.
+Rich is optional; requests is not required.
+
+The first published release is **2.0.0**, not 1.6.0 or 1.7.0, because the
+identity migration removed the pre-rename import namespace, CLI command and
+state identifiers with no compatibility alias — a removal and
+default-behavior break that this policy assigns to a major version. The 1.6.0
+number labeled several materially different pre-purge candidate states in git
+history and was never published, so reusing it would mislabel that history;
+1.7.0 would present a breaking identity migration as a compatible minor.
 
 Public API comprises `scripteer.__all__` and the documented runtime entry points.
 The original exported callable signatures are checked against a golden snapshot,

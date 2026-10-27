@@ -5,6 +5,7 @@ import json
 import pytest
 
 from test_conformance import project as project, codes
+from scripteer import __version__
 from scripteer.conformance import validate
 from scripteer.conformance.ownership import metadata_extension
 from scripteer.contracts import ToolSpec
@@ -35,10 +36,10 @@ def test_add_dependency_keeps_manifest_and_generator_conflict(project):
         ("An offline example", "different description"),
         ("setuptools>=68", "setuptools>=70"),
         ("setuptools.build_meta", "custom.backend"),
-        ("scripteer==1.6.0", "scripteer>=1.6.0"),
+        (f"scripteer=={__version__}", f"scripteer>={__version__}"),
         ("dependencies = [", 'dependencies = ["scripteer>=1", '),
-        ('dependencies = ["scripteer==1.6.0"]', "dependencies = []"),
-        ('dependencies = ["scripteer==1.6.0"]', "dependencies = 1"),
+        (f'dependencies = ["scripteer=={__version__}"]', "dependencies = []"),
+        (f'dependencies = ["scripteer=={__version__}"]', "dependencies = 1"),
         ('where = ["src"]', 'where = ["other"]'),
     ],
 )

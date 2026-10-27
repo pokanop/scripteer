@@ -1,7 +1,7 @@
 # Scripteer
 
 A dependency-light Python **3.11+** runtime for cohesive command-line tools.
-This repository prepares the 1.6.0 framework with its compatible runtime, versioned data contracts,
+This repository prepares the 2.0.0 framework with its compatible runtime, versioned data contracts,
 an opt-in [deterministic project generator](docs/generator.md),
 [offline tool/collection scaffolds](docs/scaffolds.md), and a
 [verified bootstrap and transactional tool manager](docs/bootstrap.md).
@@ -9,8 +9,10 @@ Optional [BYOK AI authoring](docs/ai-proposals.md) uses explicit disclosure and
 reviewed proposals; manual generation works entirely offline.
 
 > Distribution, Python import and CLI are all **`scripteer`** (owner-approved
-> name, POK-645, 2026-10-11). Version 1.6.0 is a release candidate; the PyPI
-> project is registered and the first publish follows the
+> name, POK-645, 2026-10-11). Version 2.0.0 is the first published release (the
+> identity migration takes the major bump); the PyPI
+> project is registered and each release follows the
+> [release runbook](docs/RELEASING.md) and the
 > [identity, migration and publication guide](docs/scripteer-launch.md). The
 > pre-rename clean break is documented there; no affiliation with other
 > similarly named projects is implied.
@@ -32,7 +34,7 @@ python -m venv .venv
 # Activate .venv using your shell's platform-specific activation command.
 python -m pip install '.[dev]'
 python -m build
-python -m pip install dist/scripteer-1.6.0-py3-none-any.whl
+python -m pip install dist/scripteer-2.0.0-py3-none-any.whl
 scripteer --version
 python -m scripteer --help
 ```

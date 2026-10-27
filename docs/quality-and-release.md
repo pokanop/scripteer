@@ -102,7 +102,7 @@ signer identity. See the concrete
 [owner setup and migration checklist](scripteer-launch.md).
 
 1. Recheck PyPI name eligibility immediately before publication. A 404 or pending
-   publisher does not reserve the name. Candidate version is **1.6.0**; never
+   publisher does not reserve the name. Release version is **2.0.0**; never
    overwrite historical releases or create a tag merely to test publication.
 2. In PyPI configure a pending/trusted publisher: owner `pokanop`, repository
    `scripteer`, workflow `release.yml`, environment `pypi`. No long-lived API token.
@@ -115,7 +115,7 @@ signer identity. See the concrete
 4. Only after naming, publisher, independent reviewer, bypass-off and tag policy
    are confirmed, set the
    repository variable `PYPI_PUBLISH_ENABLED=true`. It is absent/disabled by default.
-5. **Publish the reviewed 1.6.0 candidate only after explicit human merge/release
+5. **Publish the reviewed 2.0.0 release only after explicit human merge/release
    approval.** Do not reuse `1.3.0`: the published
    `runtime-1.3.0-7c17061` wheel already identifies different, runtime-only bytes.
    Record the new version and release hashes in the release ticket. The publishing
