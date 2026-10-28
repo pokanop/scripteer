@@ -139,13 +139,20 @@ cannot bypass controls. No main ruleset is being added. Green CI and independent
 exact-head review remain required by procedure; this acceptance does not waive
 them. No repository administration settings are changed by this PR.
 
-At the assessment, PyPI's environment enforces a required reviewer with admin
-bypass disabled and self-review blocked. Its only reviewer is the same identity
-used by agents, so a tag pushed by that identity has no eligible approver under
-those settings. **Release/publish approvals are owner-managed (Sahel,
-2026-10-10):** the owner accepts this residual risk and will perform or unblock
-tag/publish approvals himself as needed. This is not evidence that publishing
-is already unblocked. Agents make no environment, ruleset or reviewer changes.
+At the assessment, PyPI's environment enforced a required reviewer with admin
+bypass disabled and self-review blocked; its only reviewer was the same identity
+used by agents, so a tag pushed by that identity had no eligible approver.
+**Release/publish approvals are owner-managed (Sahel, 2026-10-10):** the owner
+accepted that residual risk. To publish v2.0.0 on **2026-10-27** the owner
+accepted an explicit, recorded deviation: self-review prevention on `pypi` is
+now **off**, and the owner performs the approval click for release runs
+triggered by the shared credential. The gate is a human pause on the same
+account that triggers it, not an independent boundary; compensating controls
+are OIDC-only uploads (no tokens), the tag/version/ancestry guards, the full
+quality matrix, and provenance attestations. Hardening (tracked in #29):
+add a second reviewer or a distinct release credential, then re-enable
+prevention.
+Environment changes like this deviation are owner-directed and recorded here.
 Independent security approval remains **separate from passing tests**.
 
 No runtime exploit was demonstrated by the added canaries. The stale SECURITY.md

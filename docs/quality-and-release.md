@@ -106,14 +106,19 @@ signer identity. See the concrete
    overwrite historical releases or create a tag merely to test publication.
 2. In PyPI configure a pending/trusted publisher: owner `pokanop`, repository
    `scripteer`, workflow `release.yml`, environment `pypi`. No long-lived API token.
-3. **Hard publication precondition:** retain `can_admins_bypass=false` and
-   prevent-self-review on `pypi`, and add an independent human reviewer with
-   repository access, distinct from the shared agent identity. The current sole
-   reviewer is the shared admin account, so it cannot approve its own runs.
-   Deployment tags must remain restricted to `v*`. Configure trusted publishing
-   on TestPyPI separately if desired (not implicitly enabled).
-4. Only after naming, publisher, independent reviewer, bypass-off and tag policy
-   are confirmed, set the
+3. **Hard publication precondition:** retain `can_admins_bypass=false` and the
+   required-reviewer gate on `pypi`; deployment tags must remain restricted to
+   `v*`. Prevent-self-review is **off** since 2026-10-27 as an owner-accepted
+   deviation to publish v2.0.0: the sole reviewer is the shared admin/owner
+   account, tag pushes authenticate with that same credential, and prevention
+   would leave the gate with no eligible approver. The owner approves their
+   own automation's deployments — a human click on every publish, but not an
+   independent boundary until a second reviewer or a distinct release
+   credential exists and prevention is re-enabled (tracked in #29).
+   Configure trusted publishing on TestPyPI separately if desired
+   (not implicitly enabled).
+4. Only after naming, publisher, the required-reviewer gate (item 3), bypass-off
+   and tag policy are confirmed, set the
    repository variable `PYPI_PUBLISH_ENABLED=true`. It is absent/disabled by default.
 5. **Publish the reviewed 2.0.0 release only after explicit human merge/release
    approval.** Do not reuse `1.3.0`: the published
@@ -128,12 +133,17 @@ If technical branch protection is restored, it should require `required-quality`
 up-to-date branches, one approval, resolved conversations and linear history,
 including administrators. The owner explicitly accepted procedure-only main gating
 on 2026-10-10; agents still require independent exact-head Studio review and green CI.
-The shared agent GitHub account cannot self-approve. Do not alter live protections
-or substitute a self-review. Tag rules restrict creation, update and
+GitHub still blocks the shared agent account from formally approving its own
+pull requests (platform rule, independent of environment settings), but since
+the 2026-10-27 deviation the `pypi` deployment gate allows owner self-approval
+(item 3). Do not alter live protections or substitute a self-review for
+independent review. Tag rules restrict creation, update and
 deletion but explicitly allow the repository-admin role to bypass them; the shared
 agent token has that role (`current_user_can_bypass: always`). This is **not** an
 independent publishing approval boundary. The `pypi` environment has admin bypass
-disabled and requires independent approval, even for a tag made with ruleset bypass.
+disabled and requires reviewer approval, even for a tag made with ruleset bypass
+(under the 2026-10-27 deviation that reviewer is the owner's own account, so the
+approval is a procedural pause, not an independent check).
 Repository admins can still edit configuration and remain the ultimate trust root;
 they must not disable these controls. Live configuration evidence belongs in the
 issue handoff; inability to configure any control is a publication blocker.
