@@ -1,4 +1,4 @@
-"""POK-619 round-one review regressions: reversible metadata and secret refs."""
+"""Regression tests for reversible metadata and secret references."""
 
 import os
 import stat

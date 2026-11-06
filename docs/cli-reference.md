@@ -1,7 +1,7 @@
 # CLI and API reference index
 
 Canonical identity is declared by `pyproject.toml`; this reference describes the
-provisional v1.5.0 `scripteer` command and `scripteer` import. Run `COMMAND --help`
+2.0.0 `scripteer` command and `scripteer` import. Run `COMMAND --help`
 for argument types/defaults. Global `--root PATH`, `--json`, `--quiet` precede
 subcommands. Bare invocation and help are read-only. `--version` reports the
 installed framework, not a selected tool's version.

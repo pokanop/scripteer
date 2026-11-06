@@ -1,4 +1,4 @@
-"""Regression tests for runtime sweep POK-638."""
+"""Regression tests for runtime edge cases."""
 
 import json
 import sys

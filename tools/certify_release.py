@@ -2,7 +2,7 @@
 
 Requires Python 3.11+, git and build tooling. Never publishes, changes trust
 settings, or uses PyPI to acquire the framework. Pre-rename release
-verification was retired together with those releases (POK-696): this gate
+verification was retired together with those releases: this gate
 certifies the candidate against itself — strict artifact manifest, clean-room
 installed suite, and sdist/wheel package parity.
 """

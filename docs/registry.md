@@ -25,7 +25,7 @@ python_version="3.13.0", generation="generation-one", destination="tools/name")`
 There is no unqualified lookup, latest/range resolution or fallback between
 registries. Catalog name must equal its registered namespace.
 
-For POK-621's injected `ArtifactSource` port, use
+For the manager's injected `ArtifactSource` port, use
 `RegistryArtifactSource(resolver, namespace, offline=False)`. Its
 `catalog(name, version)` requires the exact bound namespace and catalog version;
 `fetch(artifact)` accepts only artifacts in that pinned catalog and rechecks

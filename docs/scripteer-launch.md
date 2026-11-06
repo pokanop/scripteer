@@ -1,178 +1,71 @@
-# Scripteer: identity, migration and human-controlled launch
+# Installation and identity migration
 
-Sahel selected **Scripteer** on POK-645 on 2026-10-11. Repository:
-<https://github.com/pokanop/scripteer>. Distribution, import and command are all
-`scripteer`. Release version **2.0.0** continues the framework's version lineage
-(the identity migration removed the pre-rename namespace, so the first published
-release takes the major bump; see [compatibility](compatibility.md)).
-This document does **not** claim a published PyPI release. No final merge or release
-is automatically authorized. The POK-614 delivery controller was deleted before
-naming research; it must not be recreated to merge this work.
-
-## Try the candidate without a nonexistent index/release pin
-
-From the reviewed checkout, with Python 3.11+ and build tooling installed:
-
-```sh
-python -m build
-python -m venv candidate-env
-candidate-env/bin/python -m pip install --no-index dist/scripteer-2.0.0-py3-none-any.whl
-candidate-env/bin/python -m scripteer --version
-candidate-env/bin/python -m scripteer --help
-```
-
-On Windows use `candidate-env/Scripts/python.exe`. Run these smoke commands from
-outside the checkout as well. The installed console command is `scripteer`.
-The distribution provides only the `scripteer` import/console name: every
-pre-rename identifier was removed before the first public release, and that other
-import name also belongs to an unrelated PyPI project. Change consumer imports
-explicitly. The public Python API/return semantics remain equivalent; namespace
-migration is an explicit opt-in rather than a transparent upgrade of the
-pre-rename package.
-
-After the release is genuinely published and verified, public instructions become:
+The distribution, Python import and console command are all `scripteer`.
+Version **2.0.0** is the first published release under this identity. See
+[getting started](getting-started.md) for a complete tutorial.
 
 ```sh
 python -m pip install scripteer==2.0.0
-uv tool install scripteer==2.0.0
-pipx install scripteer==2.0.0
-# For Python-library consumers instead of isolated CLI installation:
-uv add scripteer==2.0.0
 ```
 
-Do not advertise these as working until real clean pip/uv/pipx installation has
-been recorded on the release ticket (POK-703 for 2.0.0; see
-[RELEASING](RELEASING.md) for the verification steps). All package extras, dependency declarations, lockfiles,
-PyPI links and generated tools use `scripteer`. Never publish placeholder packages
-or claim the name by speculative uploads.
+For standalone CLI installation, use `pipx install scripteer==2.0.0` or
+`uv tool install scripteer==2.0.0`. Library users need the package in their
+application's environment. Verified manager bootstrap is documented in
+[bootstrap](bootstrap.md); maintainers should use the [release runbook](RELEASING.md).
 
-## Clean break from pre-rename state
+## Migrating pre-release installations
 
-Nothing has shipped to PyPI, so Scripteer makes a clean break: no pre-rename
-environment variable, home directory, filename, receipt module, keyring service,
-region marker or schema identifier is read or written anywhere. The blast radius
-is pre-rename local installs only. Nothing is moved, copied or deleted
-automatically — old state stays on disk, inert, until you remove it yourself.
+Scripteer makes an explicit identity break from pre-rename development builds.
+There are no legacy import aliases. Old environment variables, home-directory
+names, receipts, keyring services, region markers and schema identifiers are not
+automatically migrated. Nothing is moved, copied or deleted for you.
 
-- Root precedence is explicit `--root`, then `SCRIPTEER_ROOT`, then `~/.scripteer`.
-  A pre-rename root environment variable or home directory is ignored. To adopt
-  existing tool data, pass `--root <old-root>` explicitly or move the directory to
-  `~/.scripteer` yourself.
-- Receipts record and accept `module: scripteer` only. The stable dispatcher and
-  rollback reject receipts recorded by pre-rename generations. To move a
-  pre-rename manager over, rerun the **new independently verified standalone
-  bootstrap** against the chosen root; to keep a pre-rename generation runnable,
-  reinstall it side by side under a separate `--root` using the old bootstrap you
-  retained. Neither foreign commands nor user-modified launchers are overwritten,
-  and ownership ledger entries for retired wrappers remain available for recovery.
-- `scripteer self-rollback` or the new bootstrap's `--rollback` continues to work
-  between Scripteer generations whose receipts record `module: scripteer`; it
-  does not cross the rename boundary. The `scripteer` wrapper then dispatches
-  that manager and reports its identity/version. To move forward again, rerun
-  the **new** bootstrap.
-- Keyring access stays opt-in and reads only `scripteer.ai` / `openai`;
-  `OPENAI_API_KEY` still takes precedence. To migrate a stored credential, save
-  it under the new service manually; no secret is copied, migrated or deleted for
-  you, and no key material reaches logs.
-- File-region markers `# >>> scripteer:...`, `.scripteer-lock` lock names,
-  `.scripteer-generator` ownership/journal directories and
-  `urn:scripteer:contracts:*:1` schema IDs use the new identity. Locks are
-  transient crash artifacts; older markers and manifests are simply not
-  recognized — re-apply managed regions with the new tool rather than editing
-  receipts by hand.
-
-Keep the verified old bootstrap/wheel and its hashes for emergency rollback if you
-retained them locally; the pre-rename GitHub releases themselves were removed by
-owner decision (POK-696), and the historical onboarding and release pins were
-removed with them. Attestations for the removed assets retain their original
-signer identity. Do not create a new repository at the old path: GitHub redirects
-from it must keep working.
+- Update application imports and dependency declarations to `scripteer`.
+  Public runtime return semantics are described in [compatibility](compatibility.md).
+- Root precedence is `--root`, then `SCRIPTEER_ROOT`, then `~/.scripteer`.
+  To adopt old tool data, explicitly choose the old root or move the directory
+  yourself after backing it up.
+- Manager receipts accept `module: scripteer` only. Re-run the independently
+  verified current bootstrap against your chosen root. Foreign commands and
+  user-modified launchers are not overwritten. Keep old environments separate
+  if you still need to run them.
+- `self-rollback` and bootstrap `--rollback` work between compatible Scripteer
+  generations, not across the rename boundary. Keep independently verified old
+  bootstrap/wheel inputs if you need to restore a pre-release installation;
+  retired pre-rename GitHub assets are no longer available.
+- Optional keyring access uses service `scripteer.ai` and account `openai`.
+  `OPENAI_API_KEY` takes precedence. Re-save credentials manually; no secret is
+  copied or deleted during migration.
+- Managed-region markers, `.scripteer-lock`, `.scripteer-generator` and
+  `urn:scripteer:contracts:*:1` use the current identity. Do not edit receipts
+  or rename control directories to trick the new tooling into accepting them.
 
 ## Generated projects
 
-New public scaffolds use **template 3.0.0**, with Scripteer imports, dependency
-pins and authoring docs; every generated path, marker and docstring uses the new
-identity. Projects generated by the current v1 renderer require an explicit
-upgrade:
+Current scaffolds use template **3.0.0**. Projects produced by the supported v1
+renderer can preview and apply an explicit migration:
 
 ```sh
-scripteer template-upgrade PROJECT --check
+scripteer template-upgrade PROJECT
 scripteer template-upgrade PROJECT --apply
 scripteer validate PROJECT
 ```
 
-Inspect the preview first and use version control. The upgrade validates old
-ownership hashes, replaces only owned files and refuses modified/foreign files.
-User-owned handlers, README, configuration and handwritten imports are preserved.
-Projects generated before the rename are not recognized (their ownership manifests
-live under the old control-directory name): regenerate them with
-`scripteer new-tool` into a fresh directory and copy your user-owned files
-(handlers, initializers, README, config examples, tests, CI) back over the
-result. Update any user-owned pre-rename imports and `[tool.*]` settings to
-`scripteer` manually; never blanket-replace user secrets or configuration. If a
-user extended a generated pyproject, reconcile the conflict manually using the
-preview rather than force overwrite. Pending legacy AI approvals must be rebuilt
-against the new hashes; AI authoring requires an upgraded v3 project.
+Commit or back up the entire project first. Upgrades replace only hash-matching
+owned files; handwritten handlers, docs, config, tests and CI are preserved.
+Modified generated files require manual reconciliation, not force overwrite.
+See [generator upgrades](generator-upgrades.md).
 
-## Scripts collection consumer update
+Projects created before the identity change are not recognized. Generate into a
+fresh directory and copy your handwritten handlers, initializers, docs, config,
+tests and CI across deliberately. Update handwritten imports and dependency
+metadata, but never blanket-replace secrets or local configuration. Rebuild any
+pending AI proposals against the new project hashes.
 
-`pokanop/scripts` consumes the independently verified pre-rename wheel it already
-pinned. Keep that consumer functional until a verified Scripteer release exists;
-that repository's own docs describe all imports, lock/bootstrap metadata, docs and
-tests requiring migration.
+## Collection consumers
 
-Sequence (no invented release URLs/hashes):
-
-1. Review this candidate independently and verify current-head CI on all supported
-   platforms, including installed wheel/sdist, bootstrap/rollback and
-   generated-project upgrade evidence. Get human merge/release approval.
-2. Publish/sign verified Scripteer 2.0.0 artifacts from the approved main commit.
-3. In the coordinated consumer update, switch imports and runtime distribution to
-   `scripteer`, advance its compatible range and exact wheel URL/SHA-256 together,
-   update bootstrap/catalog/docs/fixtures, and rehearse legacy migration, generated
-   tool registration and rollback. Do not merge a consumer with an unavailable pin.
-4. Review that release's provenance, advance the consumer revision to it, and
-   re-run certification with consumer rehearsal restored. Historical signatures and
-   hashes are not mechanically renamed.
-
-Thus the candidate PR is not a claim that publication or the consumer-pin phase
-has finished. Existing immutable release hashes and tests remain real inputs.
-
-## Owner-side PyPI setup (no API token to share)
-
-1. Sign into PyPI, verify your email and enable 2FA. Recheck the selected project's
-   eligibility. An HTTP 404 does not guarantee that PyPI will permit the upload.
-2. In **Publishing**, add the GitHub OpenID Connect publisher (a pending
-   publisher while the project page is still empty) with:
-   - PyPI project: **scripteer**
-   - GitHub owner: **pokanop**
-   - Repository: **scripteer**
-   - Workflow filename: **release.yml** (not a path)
-   - Environment: **pypi**
-3. The PyPI project has been registered by the owner (2026-10-23); the first
-   successful authorized upload publishes 2.0.0. Do not upload an empty
-   placeholder. No long-lived PyPI API token is needed. TestPyPI, if wanted,
-   requires its own separate publisher.
-4. Retain the GitHub `pypi` environment's required-reviewer approval, admin-bypass
-   prohibition and `v*` tag restriction. Since 2026-10-27 the sole reviewer is
-   Sahel's shared GitHub identity with self-review prevention **off** — an
-   owner-accepted deviation taken to publish v2.0.0, because tag pushes
-   authenticate with that same shared identity and prevention would leave the
-   gate with no eligible approver. The owner therefore approves runs triggered
-   by their own automation; publication still requires that human click, but
-   it is not an independent boundary while reviewer and trigger credential
-   are the same account. Hardening path (tracked in #29): add a distinct
-   trusted human reviewer or a distinct release credential, then re-enable
-   self-review prevention.
-5. Only after reviewed CI and explicit human merge/release approval, confirm the
-   publisher/protections and enable `PYPI_PUBLISH_ENABLED=true`. Until then keep it
-   unset. An approved `v2.0.0` tag on main triggers gated publication; manual workflow
-   dispatch is a rehearsal and **cannot publish**.
-6. Verify uploaded hashes, exact source/ref-bound GitHub provenance and release
-   URLs, then execute real clean pip, uv and pipx installs. Record exact version,
-   hashes and evidence on POK-645. If an upload fails, inspect before retrying;
-   never overwrite release assets or bypass the environment gate.
-
-No namesake was found on PyPI/npm/crates or as an established CLI in the 2026-10-11
-preflight. Two older unrelated Java/JavaScript repository namesakes exist. These
-checks are not domain/trademark clearance or a reservation.
+When migrating a collection, advance imports, compatible dependency ranges,
+wheel URLs and SHA-256 pins together. Publish and independently verify the new
+artifacts before referencing them. Rehearse install, update, rollback and removal
+with a separate root, retaining verified recovery inputs. Historical signatures
+and hashes must never be mechanically renamed or replaced.

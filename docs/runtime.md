@@ -1,8 +1,8 @@
-# 🧰 scripteer — Shared CLI scaffolding
+# Runtime API
 
-> Adapted from `pokanop/scripts@458104a` for the standalone installed runtime.
-> See [provenance](../NOTICE.md). Consumer tools, installers and templates are
-> not included in this repository.
+Use the runtime in existing Python scripts or generated tools. Start with
+[getting started](getting-started.md) for installation and a runnable project.
+See [NOTICE.md](../NOTICE.md) for attribution.
 
 **A common library for command-line tools: color, icons, semantic messages,
 prompts, progress, tables, three-tier config, subprocess handling,
@@ -47,18 +47,17 @@ From this repository, with a Python 3.11+ virtual environment activated:
 ```sh
 python -m pip install '.[dev]'
 python -m build
-python -m pip install dist/scripteer-1.5.0-py3-none-any.whl
+python -m pip install dist/scripteer-2.0.0-py3-none-any.whl
 # Optional: install the wheel's declared Rich extra instead.
-python -m pip install 'dist/scripteer-1.5.0-py3-none-any.whl[rich]'
+python -m pip install 'dist/scripteer-2.0.0-py3-none-any.whl[rich]'
 ```
 
 Tools then use `import scripteer as sk` from any working directory. Do not
 vendor the package, search parent directories or modify `sys.path`. Distribution
-metadata uses the provisional name `scripteer`; the import is `scripteer`.
-No public package release or namespace availability is implied.
+metadata and imports both use `scripteer`.
 
-`scripteer --help` and `python -m scripteer --version` expose the foundation's
-help/version CLI only, not an installer or generator. See the
+`scripteer --help` lists manager and generator commands;
+`python -m scripteer --version` reports the installed framework version. See the
 [compatibility policy](compatibility.md) for API and exit guarantees.
 
 ---
@@ -293,8 +292,8 @@ python -m pip install -e '.[dev,rich]'
 python -m pytest
 python -m mypy
 python -m build
-python tools/check_artifact.py dist/scripteer-1.5.0-py3-none-any.whl
-python tools/check_artifact.py dist/scripteer-1.5.0-py3-none-any.whl --rich
+python tools/check_artifact.py dist/scripteer-2.0.0-py3-none-any.whl
+python tools/check_artifact.py dist/scripteer-2.0.0-py3-none-any.whl --rich
 ```
 
 - `tests/test_{app,blocks,cli,cli_progress_tables,config,console,doctor,proc,style,text}.py`

@@ -20,7 +20,7 @@ from test_bootstrap import wheel_bytes
 # the repository-wide absence of that identifier is enforced by the test below.
 LEGACY = "script" + "kit"
 
-# The genuine receipt shape written by the pre-rename manager (POK-622): five
+# The genuine receipt shape written by the pre-rename manager: five
 # fields and no module key at all — unlike a merely wrong module value, this is
 # the shape real pre-rename installs carry on disk.
 PRE_RENAME_RECEIPT = {

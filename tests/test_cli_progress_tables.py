@@ -166,7 +166,7 @@ def test_parallel_map_worker_exception_propagates(no_color):
 def test_parallel_map_interrupt_is_prompt(no_color):
     """Ctrl-C surfaces promptly instead of blocking on in-flight workers.
 
-    Regression for POK-85: the old ThreadPoolExecutor implementation blocked at
+    Regression: the old ThreadPoolExecutor implementation blocked at
     shutdown until every started task finished (e.g. a 20s network timeout), so
     the interrupt looked like a hang. Daemon workers + an interruptible
     collection loop mean the interpreter can bail immediately.

@@ -9,7 +9,7 @@ PATH values, shell profiles or execution policies are changed automatically.
 
 The current Scripteer release is **2.0.0**. Commands
 below describe the new identity and require verified Scripteer release artifacts.
-The pre-rename GitHub releases were removed by owner decision (POK-696);
+The pre-rename GitHub releases were retired;
 installations made before that removal remain supported and locally
 rollback-capable through their receipts and the compatibility identifiers in
 the [launch/migration guide](scripteer-launch.md). See that guide for the approval

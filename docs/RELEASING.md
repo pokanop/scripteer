@@ -18,7 +18,7 @@ PyPI token exists anywhere (publication uses OpenID Connect trusted publishing).
    compatible APIs; removals/breaks take a major). Draft the release notes in
    the PR description — they become the GitHub release body.
 2. **Review and merge.** The PR goes through the normal required checks and
-   Code Reviewer approval; the owner merges it to `main`. Never merge a
+   independent reviewer approval; the owner merges it to `main`. Never merge a
    release PR with a red required check.
 3. **Tag.** From the merged `main` head, push an annotated tag whose name is
    exactly `v` + the new version (e.g. `v2.0.1`):
@@ -47,7 +47,7 @@ PyPI token exists anywhere (publication uses OpenID Connect trusted publishing).
    `pokanop`, repo `scripteer`, workflow `release.yml`, environment `pypi`);
    there is no API token to rotate or leak. A manual `workflow_dispatch` run
    is a rehearsal only and can never publish.
-5. **Verify the release** (record evidence on the release ticket):
+5. **Verify the release** (retain evidence with the release):
 
    - The run completed green: `gh run list --workflow release.yml --limit 1`
      (or the Actions URL for the tag).
@@ -81,6 +81,6 @@ PyPI token exists anywhere (publication uses OpenID Connect trusted publishing).
 
 - Workflow: [`.github/workflows/release.yml`](../.github/workflows/release.yml)
 - Quality contract: [quality-and-release](quality-and-release.md)
-- Identity, migration and owner-side PyPI setup:
+- Installation and identity migration:
   [scripteer-launch](scripteer-launch.md)
 - Version policy: [compatibility](compatibility.md)

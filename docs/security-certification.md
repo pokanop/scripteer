@@ -1,4 +1,4 @@
-# Executable trust-boundary assessment (POK-630)
+# Executable trust-boundary assessment
 
 This is a threat model and repeatable adversarial assessment, not a claim that
 arbitrary Python packages or AI output are safe. Independent security review
@@ -66,8 +66,8 @@ python -m ruff check src tests tools
 python -m ruff format --check src tests tools
 python -m mypy
 python -m build
-python tools/check_artifact.py dist/scripteer-1.5.0-py3-none-any.whl
-python tools/check_artifact.py dist/scripteer-1.5.0-py3-none-any.whl --rich
+python tools/check_artifact.py dist/scripteer-2.0.0-py3-none-any.whl
+python tools/check_artifact.py dist/scripteer-2.0.0-py3-none-any.whl --rich
 ```
 
 `check_artifact.py` copies tests to a clean directory, installs the wheel in a
@@ -126,50 +126,42 @@ PyPI additionally requires the enable variable and protected environment.
 **Merge enforcement is procedure-only (owner-accepted).** At the assessment,
 `main` has neither branch protection nor a branch ruleset: `required-quality`
 reports a result but does not technically prevent merging or direct pushes.
-The agent push identity is a repository admin and can bypass the `v*` tag
+The publishing identity is a repository admin and can bypass the `v*` tag
 ruleset. A direct push to main can satisfy the release main-ancestor check;
-that check is not evidence of PR review. Controller/human must verify green CI
+that check is not evidence of PR review. Maintainers must verify green CI
 and independent exact-head approval before merging, but the token can bypass
 that procedure. Do not equate procedural instructions with enforced controls.
 
-**Owner decision — Sahel, 2026-10-10:** option 2, procedure-only gating on
-`main`, is explicitly accepted. AC 3's merge-control position is therefore
-procedure-scoped risk acceptance, not a mechanical guarantee that the token
-cannot bypass controls. No main ruleset is being added. Green CI and independent
-exact-head review remain required by procedure; this acceptance does not waive
-them. No repository administration settings are changed by this PR.
+Procedure-only gating on `main` is a documented residual risk, not a mechanical
+guarantee that credentials cannot bypass controls. Green CI and independent
+exact-head review remain required by procedure. Check live repository settings
+before treating this assessment as evidence of enforced protection.
 
 At the assessment, PyPI's environment enforced a required reviewer with admin
 bypass disabled and self-review blocked; its only reviewer was the same identity
-used by agents, so a tag pushed by that identity had no eligible approver.
-**Release/publish approvals are owner-managed (Sahel, 2026-10-10):** the owner
-accepted that residual risk. To publish v2.0.0 on **2026-10-27** the owner
-accepted an explicit, recorded deviation: self-review prevention on `pypi` is
-now **off**, and the owner performs the approval click for release runs
+used for tag pushes, so a tag pushed by that identity had no eligible approver.
+For v2.0.0 on **2026-10-27**, self-review prevention on `pypi` was turned
+**off**, and a maintainer performs the approval click for release runs
 triggered by the shared credential. The gate is a human pause on the same
 account that triggers it, not an independent boundary; compensating controls
 are OIDC-only uploads (no tokens), the tag/version/ancestry guards, the full
 quality matrix, and provenance attestations. Hardening (tracked in #29):
 add a second reviewer or a distinct release credential, then re-enable
 prevention.
-Environment changes like this deviation are owner-directed and recorded here.
+Environment changes require explicit maintainer review.
 Independent security approval remains **separate from passing tests**.
 
 No runtime exploit was demonstrated by the added canaries. The stale SECURITY.md
 claim that registry/manager/AI were unimplemented was corrected rather than left
 as misleading guidance. Mutation checks exposed missing composed release/lock
 and installer hash evidence; the three named tests above cover those guards.
-The administrative merge/publish risks are explicitly accepted by the owner as
-recorded above, not deferred to a later ticket.
+The administrative merge/publish limitations remain as documented above.
 
 Residual risks, not security guarantees: same-user private-root compromise;
 trusted publisher/package code and inherited environment; undetected secrets in
 user-approved context; provider data retention; dependency vulnerabilities after
 this assessment; local filesystem/power-loss limitations; no signed monotonic
-catalog history. Administrative residual risks **accepted by owner Sahel on
-2026-10-10**: procedure-only main merge/direct-push controls and admin tag bypass;
-the same-identity PyPI approval constraint, with release/publish approvals
-owner-managed. Neither acceptance adds a mechanical control. Known consumer
-POK-648 Windows full-uninstall exit-code behavior is pre-existing and does not
-establish a trust-boundary bypass. Voxtract remains
-POSIX-only; install/help success is not end-to-end Windows media support.
+catalog history. Administrative risks include procedure-only main merge/direct-push
+controls, admin tag bypass and same-identity PyPI approval. Human approval does
+not add technical separation of duties. Consumer install/help success is not
+evidence of end-to-end application support on every platform.

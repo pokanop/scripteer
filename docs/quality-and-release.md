@@ -3,7 +3,7 @@
 ## Required checks
 
 `required-quality` is the stable aggregate check (GitHub Actions app 15368).
-Main gating is owner-accepted procedure-only as of 2026-10-10, not configured
+Main gating is procedure-only, not configured
 branch protection; see [security certification](security-certification.md).
 It always runs and rejects failed, cancelled **and skipped** prerequisite jobs:
 
@@ -28,9 +28,9 @@ It always runs and rejects failed, cancelled **and skipped** prerequisite jobs:
   byte-identical wheel/sdist comparison, all package resources and license present,
   strict metadata checks, SHA256 verification, and installed bare/Rich suites.
 
-- `certification`: three-OS verification of all pinned GitHub release attestations,
-  real bootstrap, installed-wheel/sdist and authored-tool journeys, original consumer
-  migration/rollback, and same-runner candidate/release performance budgets.
+- `certification`: three-OS clean-room wheel/sdist verification, real bootstrap
+  and authored-tool journeys, resource parity and offline rebuild checks.
+  See [certification scope](certification.md) for historical baseline limitations.
   Evidence is retained as `certification-<os>` artifacts.
 
 Every runtime/installed suite must execute at least 150 passing tests (over 1,000 now;
@@ -88,18 +88,14 @@ gh attestation verify artifact.whl --repo pokanop/scripteer \
   --source-ref "$EXPECTED_REF" --deny-self-hosted-runners
 ```
 
-Record a green **Release → Run workflow** on `main`, including provenance generation
-and verification, in POK-616 after merge before the provenance acceptance criterion
-is complete. PR CI validates pins but intentionally cannot exercise OIDC signing.
+Release evidence must include a green **Release → Run workflow** on `main`
+with provenance generation and verification. PR CI validates pins but
+intentionally cannot exercise OIDC signing.
 
-## Deferred owner setup before PyPI publication (POK-645 only)
+## Publication controls
 
-Sahel selected **Scripteer** on 2026-10-11. The repository is now
-`pokanop/scripteer`; current distribution/import/command are all `scripteer`.
-Naming approval is **not publication approval**. The pre-rename releases were
-removed by owner decision (POK-696); their attestations retain the original
-signer identity. See the concrete
-[owner setup and migration checklist](scripteer-launch.md).
+The distribution/import/command are all `scripteer`. Publication requires
+explicit maintainer approval. See the [release runbook](RELEASING.md).
 
 1. Recheck PyPI name eligibility immediately before publication. A 404 or pending
    publisher does not reserve the name. Release version is **2.0.0**; never
@@ -123,7 +119,7 @@ signer identity. See the concrete
 5. **Publish the reviewed 2.0.0 release only after explicit human merge/release
    approval.** Do not reuse `1.3.0`: the published
    `runtime-1.3.0-7c17061` wheel already identifies different, runtime-only bytes.
-   Record the new version and release hashes in the release ticket. The publishing
+   Record the new version and release hashes in the release verification record. The publishing
    workflow rejects `1.3.0`, even if metadata/tag equality would otherwise pass.
    Create a version tag pointing to an approved commit on main. Publishing validates
    ancestry and exact metadata/tag equality. Inspect the Release run and approve the
@@ -132,18 +128,18 @@ signer identity. See the concrete
 If technical branch protection is restored, it should require `required-quality`,
 up-to-date branches, one approval, resolved conversations and linear history,
 including administrators. The owner explicitly accepted procedure-only main gating
-on 2026-10-10; agents still require independent exact-head Studio review and green CI.
-GitHub still blocks the shared agent account from formally approving its own
+on 2026-10-10; contributors still require independent exact-head review and green CI.
+GitHub blocks a pull request author from formally approving their own
 pull requests (platform rule, independent of environment settings), but since
 the 2026-10-27 deviation the `pypi` deployment gate allows owner self-approval
 (item 3). Do not alter live protections or substitute a self-review for
 independent review. Tag rules restrict creation, update and
 deletion but explicitly allow the repository-admin role to bypass them; the shared
-agent token has that role (`current_user_can_bypass: always`). This is **not** an
+publishing credential has that role. This is **not** an
 independent publishing approval boundary. The `pypi` environment has admin bypass
 disabled and requires reviewer approval, even for a tag made with ruleset bypass
 (under the 2026-10-27 deviation that reviewer is the owner's own account, so the
 approval is a procedural pause, not an independent check).
 Repository admins can still edit configuration and remain the ultimate trust root;
 they must not disable these controls. Live configuration evidence belongs in the
-issue handoff; inability to configure any control is a publication blocker.
+release verification record; inability to configure any control is a publication blocker.
