@@ -2,8 +2,7 @@
 
 This gate certifies the current **Scripteer** candidate end to end, not a PyPI
 launch. No publishing credentials, Trusted Publisher, repository variable or
-release asset is changed. Scripteer was selected by the owner on 2026-10-11;
-publication remains independently human-approved. Independent exact-head review
+release asset is changed. Publication requires separate maintainer approval. Independent exact-head review
 and applicable QA are separate acceptance gates; author-run tests do not
 replace them. Their verdicts and exact CI run/head belong in the handoff, not a
 self-issued approval in this document.
@@ -42,15 +41,15 @@ The runner certifies only artifacts built from the current checkout:
 
 `certification.json` is written even on failure (`complete: false`); only a true
 completion plus green job represents a pass. JUnit `framework.xml` is uploaded by
-each of the three required CI jobs. The existing 12-cell Python/OS runtime matrix
+each of the three required CI jobs. The [supported Python/OS runtime matrix](support.md)
 still runs both bare and Rich installed-artifact tests. `required-quality` fails
 closed if any matrix or prerequisite is skipped, cancelled or failed.
 
-## Scope after pre-rename release removal (POK-696)
+## Historical baseline limitations
 
 The historical baseline journey — attested pre-rename release download, legacy
 manager bootstrap/rollback against it, cross-generation performance comparison
-and the pinned consumer rehearsal — was retired when the owner removed the
+and the pinned consumer rehearsal — was retired with the removal of the
 pre-rename GitHub releases; its pins and historical onboarding were removed with
 them. Certification therefore compares the candidate against itself
 (sdist↔wheel parity, offline rebuild, clean-room installs) rather than against a

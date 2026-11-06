@@ -1,22 +1,21 @@
 # Ownership and dependency direction
 
 Authoritative framework repository: https://github.com/pokanop/scripteer.
-`pokanop/scripts` remains the consumer; migration is separate work (POK-628).
+The runtime can be embedded in existing tools independently of the manager.
 
 | Component / path | Ownership / dependency rule |
 | --- | --- |
 | Runtime: `src/scripteer/{app,blocks,cli,config,console,doctor,proc,progress,style,tables,text}.py`, `__init__.py` | Existing 1.3.0 API, dependency-light, never imports manager/registry/generator/AI. |
 | Runtime IO: `safe_config.py`, `state.py`, `paths.py`, `regions.py`, `execution.py`, `_windows_job.py` | Opt-in strict/persistent/platform adapters; runtime-only imports. See [runtime IO](runtime-io.md). Composition roots inject these into upper-layer ports, except the narrow registry/manager IO edges below; no manager filesystem/sandbox semantics are implied. |
-| Composition root: `entrypoint.py`, `__main__.py` | Typed `main(argv: Sequence[str] \| None) -> int` injectable argument boundary. Help/version only. Do not put business logic here. |
-| Contracts: `scripteer.contracts` (POK-617) | Versioned frozen records, strict codec, resource schemas/examples and injected ports; depends only on stdlib. See [contracts](contracts.md). |
-| Manager: `scripteer.manager` (POK-621) | Per-tool transactions, stable launchers and rollback; inject `InstallationSource` / `EnvironmentBackend`. See [installation](installation.md). CLI orchestration remains POK-622. |
-| Registry: `scripteer.registry` (POK-620) | Resolution, verification/cache and `RegistryArtifactSource` port adapter; no CLI or AI dependency. |
-| Generator: future `scripteer.generator` (POK-623/624) | Deterministic spec-to-files logic, independent from manager and AI. |
-| Conformance: `scripteer.conformance` (POK-625) | Static data/AST checks reuse contracts and generator ownership readers; opt-in reference fixtures use narrow output/command/execution adapters. Never imports manager, registry or AI. Installed rules/examples are provider-independent. |
-| AI: future `scripteer.ai` (POK-626/627) | Optional proposal/provider adapters; calls generator contracts, never imported by runtime. |
+| Composition root: `entrypoint.py`, `__main__.py` | Typed `main(argv: Sequence[str] \| None) -> int` injectable argument boundary. Wires runtime, manager and authoring commands. Do not put business logic here. |
+| Contracts: `scripteer.contracts` | Versioned frozen records, strict codec, resource schemas/examples and injected ports; depends only on stdlib. See [contracts](contracts.md). |
+| Manager: `scripteer.manager` | Per-tool transactions, stable launchers and rollback; inject `InstallationSource` / `EnvironmentBackend`. See [installation](installation.md). CLI orchestration lives in `manager_cli.py`. |
+| Registry: `scripteer.registry` | Resolution, verification/cache and `RegistryArtifactSource` port adapter; no CLI or AI dependency. |
+| Generator: `scripteer.generator` | Deterministic spec-to-files logic, independent from manager and AI. |
+| Conformance: `scripteer.conformance` | Static data/AST checks reuse contracts and generator ownership readers; opt-in reference fixtures use narrow output/command/execution adapters. Never imports manager, registry or AI. Installed rules/examples are provider-independent. |
+| AI: `scripteer.ai` | Optional proposal/provider adapters; calls generator contracts, never imported by runtime. |
 
-Runtime, CLI composition boundary and contracts exist today; concrete upper-layer
-adapters remain in their owning tickets. Existing typed result records
+Each layer has concrete implementations behind narrow contracts. Existing typed result records
 (`proc.Result`, `doctor.Check`, `blocks.ManagedBlock`) and runtime signatures remain
 intact. We do not declare the whole inherited library PEP 561-complete (`py.typed`).
 
@@ -56,12 +55,10 @@ Run `python -m pytest tests/test_architecture.py` to check ownership boundaries.
 
 ## Template resources
 
-No templates or consumer-specific `template` scripts ship in this slice.
-POK-624 owns `scripteer.generator.templates` as an importable resource package,
-with immutable versioned directories and a manifest recording template/schema
-versions and checksums. Load text via `importlib.resources.files()`; use
+The generator ships immutable template rendering and version/checksum manifests
+in `scripteer.generator.resources`. Load text via `importlib.resources.files()`; use
 `as_file()` only for adapters requiring a temporary filesystem path. Never
 resolve templates relative to cwd, a Git checkout or `__file__` parents.
-When introduced, explicitly include resources in wheel/sdist and exercise them
-from installed artifacts outside the source tree. No runtime network fetch or
+Resources are included in wheel/sdist and exercised from installed artifacts
+outside the source tree. No runtime network fetch or
 AI generation may replace a missing bundled template.

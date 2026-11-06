@@ -125,7 +125,7 @@ def parallel_map(fn, items, description: str = "Working", max_workers: int = 8):
     in the main thread and the interpreter can exit without waiting on in-flight
     work. A plain ``ThreadPoolExecutor`` would instead block at shutdown until
     every started task finished — e.g. a version check stuck in a 20s network
-    timeout — making the interrupt look like a hang (POK-85).
+    timeout — making the interrupt look like a hang.
     """
     items = list(items)
     results = []

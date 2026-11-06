@@ -141,5 +141,5 @@ obligations, not guarantees supplied merely by implementing a Protocol.
 artifact bytes and fake implementations of every port, including a failed hash,
 missing catalog and interrupted backend. No production credentials are needed.
 Real package managers, atomic filesystem implementations, artifact verification
-adapters, remote providers and activation journals are the later owning tickets,
-not stub production implementations in the contracts package.
+adapters, remote providers and activation journals belong to their respective
+component packages, not to the contracts package.

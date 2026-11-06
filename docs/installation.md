@@ -157,7 +157,7 @@ Executable tests install a real local wheel, launch it, update and roll it back
 using both adapters. Pip offers zero-extra-tool availability; uv is useful when
 already provisioned but is not silently installed or selected. CI always exercises
 pip; uv execution is conditional on host provisioning (command-policy tests always
-run). Local POK-621 verification executed both adapters.
+run). Both adapters have local integration coverage.
 
 ### Windows programmatic invocation
 

@@ -41,18 +41,15 @@ must pass the same quality gates; dispatch alone cannot publish to PyPI.
 Independent review on the exact head remains a procedural delivery requirement,
 separate from test success. Currently `main` has no branch protection/ruleset;
 CI success and PR approval are not technically enforced at merge or direct-push
-time. The admin identity agents use can also bypass the tag ruleset. **Sahel
-accepted these residual risks on 2026-10-10 (option 2: procedure-only gating)**;
-this is owner risk acceptance, not mechanical enforcement or a security guarantee.
-Release/publish approvals are owner-managed: Sahel performs or unblocks them
-as needed. The assessed PyPI environment keeps admin bypass disabled and a
-required reviewer; at assessment it also blocked self-review with the agent
-push identity as sole reviewer, an **accepted-by-owner residual risk
-(2026-10-10)**. To publish v2.0.0 on **2026-10-27** the owner accepted a
-recorded deviation: self-review prevention is now **off**, and the owner
-approves release runs triggered by the shared credential — a human pause on
-every publish, not an independent boundary while reviewer and trigger
-credential are the same account. Hardening (tracked in #29): add a second
-reviewer or a distinct release credential, then re-enable prevention. Agents
-make no environment, ruleset or reviewer changes except owner-directed,
-recorded ones. See the assessment for the recorded decision.
+time. Administrative credentials can also bypass the tag ruleset. These are
+residual risks, not mechanical enforcement or security guarantees.
+
+The assessed PyPI environment keeps admin bypass disabled and requires a
+reviewer. For v2.0.0 on **2026-10-27**, self-review prevention was turned **off**:
+a maintainer approves releases triggered by the same credential. This is a human
+pause, not an independent boundary while reviewer and trigger are the same
+account. Hardening (tracked in #29): add a distinct reviewer or release
+credential, then re-enable prevention. Environment, ruleset and reviewer changes
+require explicit maintainer review. See the
+[security assessment](docs/security-certification.md) for limitations; verify live
+settings rather than assuming this document enforces them.
